@@ -1,0 +1,96 @@
+{
+  "app": {
+    "name": "שפע",
+    "tagline": "המרכז הפיננסי שלך"
+  },
+  "common": {
+    "save": "שמור",
+    "cancel": "ביטול",
+    "delete": "מחק",
+    "edit": "ערוך",
+    "add": "הוסף",
+    "search": "חיפוש",
+    "loading": "טוען...",
+    "noData": "אין נתונים להצגה"
+  },
+  "errors": {
+    "genericError": "משהו השתבש. נסה שוב.",
+    "retry": "נסה שוב",
+    "networkError": "לא ניתן להתחבר לשרת",
+    "unauthorized": "נדרשת התחברות"
+  },
+  "auth": {
+    "signIn": "התחברות",
+    "signOut": "התנתקות",
+    "signInWith": "התחבר עם {provider}"
+  },
+  "dashboard": {
+    "greeting": "בוקר טוב",
+    "title": "סקירה כללית",
+    "shefaPlaceholder": "בוקר טוב! הסיכום הפיננסי שלך יופיע כאן ברגע שנתונים ייטענו למערכת."
+  },
+  "sidebar": {
+    "dashboard": "לוח בקרה",
+    "consulting": "ייעוץ",
+    "loans": "הלוואות",
+    "expenses": "הוצאות",
+    "marketplace": "מרקטפלייס",
+    "migration": "ייבוא נתונים",
+    "settings": "הגדרות"
+  },
+  "viewport": {
+    "warning": "שפע מותאמת למסך רחב יותר. מומלץ רזולוציה של 1280 פיקסל לפחות."
+  },
+  "modules": {
+    "consulting": "ייעוץ",
+    "loans": "הלוואות",
+    "expenses": "הוצאות",
+    "marketplace": "מרקטפלייס",
+    "migration": "ייבוא נתונים",
+    "comingSoon": "בקרוב"
+  },
+  "settings": {
+    "title": "הגדרות",
+    "security": "אבטחה",
+    "entities": "ניהול ישויות"
+  },
+  "entities": {
+    "title": "ניהול ישויות",
+    "add": "הוסף ישות",
+    "edit": "ערוך",
+    "delete": "מחק",
+    "deleting": "מוחק...",
+    "save": "שמור",
+    "saving": "שומר...",
+    "cancel": "ביטול",
+    "name": "שם הישות",
+    "namePlaceholder": "הזן שם ישות",
+    "description": "תיאור",
+    "descriptionPlaceholder": "הזן תיאור (אופציונלי)",
+    "preSeeded": "מובנית"
+  },
+  "twoFactor": {
+    "title": "אימות דו-שלבי",
+    "description": "הזן את הקוד מאפליקציית האימות שלך",
+    "placeholder": "000000",
+    "verify": "אמת",
+    "verifying": "מאמת...",
+    "signOutInstead": "התנתק במקום",
+    "loading": "טוען...",
+    "setupTitle": "אימות דו-שלבי (TOTP)",
+    "setupDescription": "הוסף שכבת אבטחה נוספת לחשבון שלך באמצעות אפליקציית אימות",
+    "enable": "הפעל אימות דו-שלבי",
+    "disable": "בטל אימות דו-שלבי",
+    "enabledTitle": "אימות דו-שלבי מופעל",
+    "enabledDescription": "החשבון שלך מוגן באימות דו-שלבי",
+    "scanTitle": "סרוק את קוד ה-QR",
+    "scanDescription": "סרוק את קוד ה-QR עם אפליקציית האימות שלך (כגון Google Authenticator או Authy)",
+    "qrAlt": "קוד QR לאימות דו-שלבי",
+    "manualEntry": "או הזן את הקוד הבא ידנית:",
+    "next": "הבא",
+    "back": "חזור",
+    "verifySetupTitle": "אמת את ההגדרה",
+    "verifySetupDescription": "הזן את הקוד בן 6 הספרות מאפליקציית האימות לאימות ההגדרה",
+    "confirmEnable": "אשר והפעל"
+  }
+}

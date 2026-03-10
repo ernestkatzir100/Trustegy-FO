@@ -1,0 +1,120 @@
+# generated: 2026-03-10
+# project: Trustegy-FO
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-03-10
+project: Trustegy-FO
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  # Epic 1: Platform Foundation & Entity Management
+  epic-1: done
+  1-1-project-initialization-and-design-system: done
+  1-2-application-shell-and-sidebar-navigation: done
+  1-3-database-foundation-and-oauth-sign-in: done
+  1-4-session-management-and-sign-out: done
+  1-5-totp-two-factor-authentication: done
+  1-6-entity-schema-seed-data-and-money-utilities: done
+  1-7-entity-management-ui: done
+  1-8-audit-trail-infrastructure: done
+  epic-1-retrospective: optional
+
+  # Epic 2: Financial Dashboard & Morning Briefing
+  epic-2: backlog
+  2-1-dashboard-layout-and-morning-briefing-shell: backlog
+  2-2-kpi-cards-with-status-indicators: backlog
+  2-3-entity-drill-down-from-master-view: backlog
+  2-4-sparkline-charts-and-visual-trends: backlog
+  2-5-dashboard-auto-refresh-after-mutations: backlog
+  epic-2-retrospective: optional
+
+  # Epic 3: Shefa AI Assistant
+  epic-3: backlog
+  3-1-shefa-conversation-panel-ui: backlog
+  3-2-shefa-visual-character-and-micro-expressions: backlog
+  3-3-ai-morning-summary-on-dashboard: backlog
+  3-4-natural-language-financial-queries: backlog
+  3-5-proactive-nudges: backlog
+  3-6-user-feedback-on-shefa-suggestions: backlog
+  epic-3-retrospective: optional
+
+  # Epic 4: Data Migration (Excel Import)
+  epic-4: backlog
+  4-1-excel-upload-and-file-handling: backlog
+  4-2-ai-assisted-data-interpretation: backlog
+  4-3-uncertain-row-flagging: backlog
+  4-4-side-by-side-verification-with-progressive-disclosure: backlog
+  4-5-confirmation-gate-and-data-commitment: backlog
+  4-6-re-import-before-verification: backlog
+  epic-4-retrospective: optional
+
+  # Epic 5: Consulting & Billing Module
+  epic-5: backlog
+  5-1-client-management: backlog
+  5-2-project-and-milestone-tracking: backlog
+  5-3-milestone-status-workflow: backlog
+  5-4-invoice-tracking-on-milestones: backlog
+  5-5-milestone-status-views: backlog
+  5-6-monthly-billing-summary-and-client-history: backlog
+  5-7-proactive-billing-alerts: backlog
+  epic-5-retrospective: optional
+
+  # Epic 6: Expenses & Tax Module
+  epic-6: backlog
+  6-1-expense-management: backlog
+  6-2-vat-rate-assignment-and-computation: backlog
+  6-3-tax-category-assignment: backlog
+  6-4-revenue-and-expense-export-for-accountant: backlog
+  6-5-expense-status-indicators-and-dashboard-integration: backlog
+  epic-6-retrospective: optional
+
+  # Epic 7: Loans & Debt Management
+  epic-7: backlog
+  7-1-borrower-loan-management: backlog
+  7-2-lender-loan-management-inter-entity: backlog
+  7-3-consolidated-loan-view: backlog
+  7-4-payment-recording-and-balance-updates: backlog
+  7-5-repayment-schedule-and-payment-timeline: backlog
+  7-6-payment-collision-detection: backlog
+  7-7-high-rate-loan-optimization-and-dashboard-integration: backlog
+  epic-7-retrospective: optional
+
+  # Epic 8: Settings & Module Marketplace
+  epic-8: backlog
+  8-1-custom-alert-rules: backlog
+  8-2-module-marketplace-page: backlog
+  8-3-settings-navigation-and-entity-configuration-hub: backlog
+  epic-8-retrospective: optional

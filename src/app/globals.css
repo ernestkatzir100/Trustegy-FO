@@ -1,0 +1,160 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Shefa Living Room Palette */
+  --cream: #FAF8F5;
+  --cream-dark: #F2EDE7;
+  --cream-darker: #E8E0D6;
+  --gold: #C4954A;
+  --gold-light: #D4AD6E;
+  --gold-dark: #A67B35;
+  --gold-subtle: #F5EDD8;
+  --text-primary: #2C2520;
+  --text-secondary: #8A7E72;
+  --text-tertiary: #B5A99B;
+
+  /* Status Colors */
+  --status-green: #4A8C6F;
+  --status-green-bg: #EDF5F0;
+  --status-amber: #C48B2C;
+  --status-amber-bg: #FDF3E0;
+  --status-red: #B5544A;
+  --status-red-bg: #FAEDEB;
+
+  /* shadcn/ui semantic mappings */
+  --background: #FAF8F5;
+  --foreground: #2C2520;
+  --card: #F2EDE7;
+  --card-foreground: #2C2520;
+  --popover: #F2EDE7;
+  --popover-foreground: #2C2520;
+  --primary: #C4954A;
+  --primary-foreground: #FAF8F5;
+  --secondary: #F2EDE7;
+  --secondary-foreground: #2C2520;
+  --muted: #F2EDE7;
+  --muted-foreground: #8A7E72;
+  --accent: #F2EDE7;
+  --accent-foreground: #2C2520;
+  --destructive: #B5544A;
+  --destructive-foreground: #FAF8F5;
+  --border: #E8E0D6;
+  --input: #E8E0D6;
+  --ring: #C4954A;
+  --radius: 0.75rem;
+
+  /* Sidebar (Story 1.2) */
+  --sidebar-background: #2C2520;
+  --sidebar-foreground: #FAF8F5;
+  --sidebar-primary: #C4954A;
+  --sidebar-primary-foreground: #FAF8F5;
+  --sidebar-accent: rgba(255, 255, 255, 0.08);
+  --sidebar-accent-foreground: #FAF8F5;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #C4954A;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Shefa custom colors */
+  --color-cream: var(--cream);
+  --color-cream-dark: var(--cream-dark);
+  --color-cream-darker: var(--cream-darker);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-dark: var(--gold-dark);
+  --color-gold-subtle: var(--gold-subtle);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-status-green: var(--status-green);
+  --color-status-green-bg: var(--status-green-bg);
+  --color-status-amber: var(--status-amber);
+  --color-status-amber-bg: var(--status-amber-bg);
+  --color-status-red: var(--status-red);
+  --color-status-red-bg: var(--status-red-bg);
+
+  /* Sidebar colors */
+  --color-sidebar-background: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Shadow tokens (warm-toned) */
+  --shadow-sm: 0 1px 2px 0 rgba(44, 37, 32, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(44, 37, 32, 0.07), 0 2px 4px -2px rgba(44, 37, 32, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(44, 37, 32, 0.08), 0 4px 6px -4px rgba(44, 37, 32, 0.04);
+
+  /* Radius tokens */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Font mapping */
+  --font-sans: var(--font-heebo);
+  --font-mono: var(--font-ibm-plex-mono);
+
+  /* Spacing (4px base) */
+  --spacing: 4px;
+}
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes amber-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes panel-slide {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}

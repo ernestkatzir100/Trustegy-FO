@@ -1,0 +1,13 @@
+node_modules/
+.next/
+.env
+.env.local
+.env.production
+.env*.local
+.DS_Store
+*.tsbuildinfo
+.railway/
+dist/
+out/
+npm-debug.log*
+.vscode/
