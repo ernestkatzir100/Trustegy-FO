@@ -59,7 +59,15 @@ I want to sign in securely with my Google or Microsoft account so that only I ca
   - [x] 6.3 All text from he.json via getTranslations
   - [x] 6.4 Cream card styling consistent with Shefa palette
 
-- [x] Task 7: Verify and test (AC: all)
+- [x] Task 7: Add dev-only Credentials provider for local development
+  - [x] 7.1 Add `Credentials` provider to `auth/config.ts` — guarded by `NODE_ENV !== "production"`
+  - [x] 7.2 Dev credentials: `dev@shefa.local` / `dev123` — hardcoded, never in prod
+  - [x] 7.3 Auto-create dev user in DB on first credentials login (jwt callback in `auth/index.ts`)
+  - [x] 7.4 Add `loginWithCredentials` server action in `auth/actions.ts`
+  - [x] 7.5 Update sign-in page with pre-filled credentials form (dev mode only), separator, then OAuth buttons
+  - [x] 7.6 `pnpm build` passes cleanly
+
+- [x] Task 8: Verify and test (AC: all)
   - [x] 7.1 Run `pnpm build` — no errors, middleware compiled
   - [x] 7.2 Run `pnpm test` — no regressions (21/21 pass)
   - [x] 7.3 Verify /api/auth/[...nextauth] route exists in build output
@@ -102,6 +110,9 @@ Claude Opus 4.6
 - ✅ Server actions for loginWithGoogle, loginWithMicrosoft, logout
 - ✅ `pnpm build` clean — middleware 92KB, all routes generated
 - ✅ `pnpm test` 21/21 pass, no regressions
+- ✅ Dev-only Credentials provider (`dev@shefa.local` / `dev123`) for local development
+- ✅ Dev user auto-created in DB on first login — entity operations work immediately
+- ✅ Sign-in page shows pre-filled credentials form in dev mode with "Dev Login" badge
 
 ### File List
 
@@ -118,3 +129,4 @@ Claude Opus 4.6
 
 ### Change Log
 - 2026-03-10: Story 1.3 implemented — Auth.js v5 with Drizzle adapter, OAuth providers, middleware protection
+- 2026-03-10: Added dev-only Credentials provider for local development (Task 7) — bypasses OAuth for dev workflow

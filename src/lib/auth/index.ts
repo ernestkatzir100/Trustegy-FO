@@ -25,9 +25,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     ...authConfig.callbacks,
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user, trigger, account }) {
       if (user) {
         token.id = user.id;
+      }
+
+      // Dev credentials: ensure user exists in DB (adapter doesn't auto-create for credentials)
+      if (trigger === "signIn" && account?.provider === "credentials" && user) {
+        const existing = await db
+          .select({ id: users.id })
+          .from(users)
+          .where(eq(users.id, user.id!))
+          .limit(1);
+        if (existing.length === 0) {
+          await db.insert(users).values({
+            id: user.id!,
+            name: user.name,
+            email: user.email,
+          });
+        }
       }
 
       // On initial sign-in, check if user has TOTP enabled

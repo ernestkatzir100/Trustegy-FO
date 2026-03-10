@@ -1,5 +1,7 @@
 import { getTranslations } from "next-intl/server";
-import { loginWithGoogle, loginWithMicrosoft } from "@/lib/auth/actions";
+import { loginWithGoogle, loginWithMicrosoft, loginWithCredentials } from "@/lib/auth/actions";
+
+const isDev = process.env.NODE_ENV !== "production";
 
 export default async function SignInPage() {
   const tApp = await getTranslations("app");
@@ -19,6 +21,43 @@ export default async function SignInPage() {
           <p className="text-text-secondary text-[14px]">{tApp("tagline")}</p>
         </div>
       </div>
+
+      {/* Dev credentials login */}
+      {isDev && (
+        <form action={loginWithCredentials} className="flex flex-col gap-3 w-full">
+          <div className="text-center text-[12px] font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5">
+            Dev Login
+          </div>
+          <input
+            name="email"
+            type="email"
+            defaultValue="dev@shefa.local"
+            placeholder="Email"
+            className="w-full h-11 rounded-xl bg-white border border-cream-darker px-4 text-[14px] text-text-primary focus:outline-none focus:ring-2 focus:ring-gold/50"
+          />
+          <input
+            name="password"
+            type="password"
+            defaultValue="dev123"
+            placeholder="Password"
+            className="w-full h-11 rounded-xl bg-white border border-cream-darker px-4 text-[14px] text-text-primary focus:outline-none focus:ring-2 focus:ring-gold/50"
+          />
+          <button
+            type="submit"
+            className="w-full h-11 rounded-xl bg-gold hover:bg-gold/90 text-white text-[14px] font-medium transition-colors shadow-sm"
+          >
+            {tAuth("signIn")}
+          </button>
+        </form>
+      )}
+
+      {isDev && (
+        <div className="flex items-center gap-3 w-full">
+          <div className="flex-1 h-px bg-cream-darker" />
+          <span className="text-[12px] text-text-secondary">או</span>
+          <div className="flex-1 h-px bg-cream-darker" />
+        </div>
+      )}
 
       {/* OAuth buttons */}
       <div className="flex flex-col gap-3 w-full">
