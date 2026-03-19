@@ -12,8 +12,8 @@ const providers: NextAuthConfig["providers"] = [
   }),
 ];
 
-// Dev-only credentials provider — never available in production
-if (process.env.NODE_ENV !== "production") {
+// Dev credentials provider — enabled via DEV_LOGIN_ENABLED env var
+if (process.env.DEV_LOGIN_ENABLED === "true") {
   providers.push(
     Credentials({
       name: "Dev Login",

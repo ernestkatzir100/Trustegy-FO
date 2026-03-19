@@ -1,7 +1,9 @@
 import { db } from "./index";
 import { entities, taxCategories } from "./schema/entities";
+import { expenses } from "./schema/expenses";
 import { users } from "./schema/auth";
-import { eq, and, isNull } from "drizzle-orm";
+import { eq, and, isNull, sql } from "drizzle-orm";
+import { toAgorot } from "../lib/money";
 
 const PRE_SEEDED_ENTITIES = [
   {
@@ -92,6 +94,48 @@ export async function seed() {
     } else {
       console.log(`  Tax category already exists: ${category.name}`);
     }
+  }
+
+  // Seed expenses (only if table is empty for this user)
+  const existingExpenses = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(expenses)
+    .where(eq(expenses.ownerId, owner.id));
+
+  if (Number(existingExpenses[0]?.count ?? 0) === 0) {
+    const SEED_EXPENSES = [
+      { category: "SALARY" as const, description: "משכורת פברואר 2026", amount: 25000, date: "2026-02-28", vendorName: "שכר עובדים", isRecurring: true },
+      { category: "SALARY" as const, description: "משכורת מרץ 2026", amount: 25000, date: "2026-03-31", vendorName: "שכר עובדים", isRecurring: true },
+      { category: "VEHICLE" as const, description: "ליסינג רכב", amount: 3200, date: "2026-01-01", vendorName: "קל-אמ", isRecurring: true },
+      { category: "VEHICLE" as const, description: "דלק ינואר", amount: 800, date: "2026-01-31", vendorName: "פז", isRecurring: false },
+      { category: "ACCOUNTING" as const, description: "שירותי הנהלת חשבונות", amount: 2500, date: "2026-01-31", vendorName: 'רו"ח', isRecurring: true },
+      { category: "ACCOUNTING" as const, description: "ביקורת שנתית 2025", amount: 8000, date: "2026-01-15", vendorName: 'רו"ח', isRecurring: false },
+      { category: "LEGAL" as const, description: "ייעוץ משפטי", amount: 3000, date: "2026-02-01", vendorName: 'עו"ד', isRecurring: false },
+      { category: "FINANCING" as const, description: "ריבית הלוואה מזרחי", amount: 1200, date: "2026-01-31", vendorName: "בנק מזרחי", isRecurring: true },
+      { category: "FINANCING" as const, description: "ריבית הלוואה BTB", amount: 3800, date: "2026-01-31", vendorName: "BTB", isRecurring: true },
+      { category: "MAINTENANCE" as const, description: "תחזוקת משרד", amount: 600, date: "2026-01-15", vendorName: "ניקיון", isRecurring: true },
+      { category: "TAX" as const, description: "מקדמות מס הכנסה", amount: 4500, date: "2026-01-15", vendorName: "רשות המסים", isRecurring: true },
+      { category: "SUBCONTRACTOR" as const, description: "ייעוץ חיצוני", amount: 5000, date: "2026-02-10", vendorName: "יועץ חיצוני", isRecurring: false },
+      { category: "GIFTS" as const, description: "מתנות לקוחות", amount: 1200, date: "2025-12-31", vendorName: "שונים", isRecurring: false },
+      { category: "VEHICLE" as const, description: "ביטוח רכב שנתי", amount: 4800, date: "2025-12-01", vendorName: "הפניקס", isRecurring: false },
+      { category: "TAX" as const, description: 'מע"מ חודשי', amount: 3200, date: "2026-02-15", vendorName: "רשות המסים", isRecurring: true },
+    ];
+
+    for (const expense of SEED_EXPENSES) {
+      await db.insert(expenses).values({
+        ownerId: owner.id,
+        category: expense.category,
+        description: expense.description,
+        amount: toAgorot(expense.amount),
+        date: expense.date,
+        vendorName: expense.vendorName,
+        isRecurring: expense.isRecurring,
+        importSource: "MANUAL",
+      });
+    }
+    console.log(`  Created ${SEED_EXPENSES.length} seed expenses`);
+  } else {
+    console.log(`  Expenses already exist (${existingExpenses[0]?.count} rows)`);
   }
 
   console.log("Seed completed.");

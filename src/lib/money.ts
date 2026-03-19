@@ -16,14 +16,15 @@ export function fromAgorot(agorot: number): number {
 
 /**
  * Formats agorot as ILS currency string.
- * Example: formatILS(105497500) → "₪1,054,975.00"
+ * Example: formatILS(105497500) → "₪1,054,975"
+ * Pass showDecimals: true for exact amounts (e.g., invoices).
  */
-export function formatILS(agorot: number): string {
+export function formatILS(agorot: number, showDecimals = false): string {
   return new Intl.NumberFormat("he-IL", {
     style: "currency",
     currency: "ILS",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: showDecimals ? 2 : 0,
+    maximumFractionDigits: showDecimals ? 2 : 0,
   }).format(fromAgorot(agorot));
 }
 

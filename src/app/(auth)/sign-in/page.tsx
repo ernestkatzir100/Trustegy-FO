@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { loginWithGoogle, loginWithMicrosoft, loginWithCredentials } from "@/lib/auth/actions";
 
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env.DEV_LOGIN_ENABLED === "true";
 
 export default async function SignInPage() {
   const tApp = await getTranslations("app");
