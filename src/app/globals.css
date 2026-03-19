@@ -46,15 +46,21 @@
   --ring: #C4954A;
   --radius: 0.75rem;
 
+  /* Dashboard design tokens */
+  --bg: #F7F5F0;
+  --surface-card: #ffffff;
+  --sidebar-bg: #1C1C1E;
+  --accent-teal: #0d9488;
+
   /* Sidebar (Story 1.2) */
-  --sidebar-background: #2C2520;
+  --sidebar-background: #1C1C1E;
   --sidebar-foreground: #FAF8F5;
-  --sidebar-primary: #C4954A;
+  --sidebar-primary: #0d9488;
   --sidebar-primary-foreground: #FAF8F5;
   --sidebar-accent: rgba(255, 255, 255, 0.08);
   --sidebar-accent-foreground: #FAF8F5;
   --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #C4954A;
+  --sidebar-ring: #0d9488;
 }
 
 @theme inline {
@@ -158,26 +164,90 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-weight: 400;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: 'kern' 1;
 }
 
-/* Financial numbers — tabular, elegant */
+/* ── Numeric Display ─────────────────────────── */
 .font-mono {
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
+  font-feature-settings: 'tnum';
+}
+.num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  font-feature-settings: 'tnum';
 }
 
-/* Dashboard card base */
+/* ── Elevation System ────────────────────────── */
+.elev-0 { box-shadow: none; }
+.elev-1 { box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.06); }
+.elev-2 { box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05); }
+.elev-3 { box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04); }
+
+/* ── Card Base ───────────────────────────────── */
+.card-base {
+  background: #ffffff;
+  border-radius: 16px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-base:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
+  transform: translateY(-1px);
+}
+
+/* Legacy alias */
 .dashboard-card {
-  background: white;
-  border-radius: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .dashboard-card:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.09), 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
   transform: translateY(-1px);
+}
+
+/* ── Sparkline SVG ───────────────────────────── */
+.sparkline { overflow: visible; }
+.sparkline-line {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sparkline-area { opacity: 0.12; }
+
+/* ── Premium Card ───────────────────────────── */
+.card-premium {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border: 1px solid rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-premium:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+  transform: translateY(-1px);
+}
+
+/* ── Status Badges ──────────────────────────── */
+.badge-ok {
+  background: #f0fdf4;
+  color: #16a34a;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+}
+.badge-warning {
+  background: #fffbeb;
+  color: #b45309;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
 }

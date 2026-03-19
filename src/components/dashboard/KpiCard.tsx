@@ -1,99 +1,233 @@
 "use client";
 
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
-import type { ReactNode } from "react";
+import { TrendingUp, TrendingDown } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-type Status = "healthy" | "attention" | "urgent";
+/* ── Inline SVG sparkline — zero dependencies ── */
+function Sparkline({
+  data,
+  color,
+  width = 72,
+  height = 28,
+}: {
+  data: number[];
+  color: string;
+  width?: number;
+  height?: number;
+}) {
+  if (!data || data.length < 2) return null;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const step = width / (data.length - 1);
+
+  const points = data.map((v, i) => ({
+    x: i * step,
+    y: height - ((v - min) / range) * height,
+  }));
+
+  const linePath = points
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
+    .join(" ");
+
+  const areaPath =
+    `M ${points[0].x} ${height} ` +
+    points.map((p) => `L ${p.x} ${p.y}`).join(" ") +
+    ` L ${points[points.length - 1].x} ${height} Z`;
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
+      className="sparkline"
+    >
+      <path d={areaPath} fill={color} className="sparkline-area" />
+      <path d={linePath} stroke={color} className="sparkline-line" />
+      <circle
+        cx={points[points.length - 1].x}
+        cy={points[points.length - 1].y}
+        r={2.5}
+        fill={color}
+      />
+    </svg>
+  );
+}
+
+/* ── Types ── */
+type Status = "ok" | "warning" | "danger";
 
 interface KpiCardProps {
   label: string;
   value: string;
-  changePercent?: number;
-  changeLabel?: string;
+  trend?: number;
+  trendLabel?: string;
+  icon: LucideIcon;
   status?: Status;
-  statusText?: string;
-  icon?: ReactNode;
+  sparkData?: number[];
+  accentColor?: string;
 }
 
-const statusStyles: Record<Status, { bg: string; color: string; dot: string }> = {
-  healthy: { bg: "#dcfce7", color: "#16a34a", dot: "#16a34a" },
-  attention: { bg: "#fef9c3", color: "#a16207", dot: "#a16207" },
-  urgent: { bg: "#fee2e2", color: "#dc2626", dot: "#dc2626" },
+const statusStyles: Record<Status, { dot: string; bg: string; text: string; label: string }> = {
+  ok: { dot: "#22c55e", bg: "#f0fdf4", text: "#16a34a", label: "תקין" },
+  warning: { dot: "#f59e0b", bg: "#fffbeb", text: "#b45309", label: "דורש תשומת לב" },
+  danger: { dot: "#ef4444", bg: "#fef2f2", text: "#dc2626", label: "דחוף" },
 };
 
 export function KpiCard({
   label,
   value,
-  changePercent,
-  changeLabel,
-  status = "healthy",
-  statusText,
-  icon,
+  trend,
+  trendLabel,
+  icon: Icon,
+  status,
+  sparkData,
+  accentColor = "#0d9488",
 }: KpiCardProps) {
-  const isPositive = changePercent !== undefined && changePercent > 0;
-  const isNegative = changePercent !== undefined && changePercent < 0;
-  const st = statusStyles[status];
+  const trendUp = trend !== undefined && trend >= 0;
+  const trendColor = trend === undefined ? "#94a3b8" : trendUp ? "#16a34a" : "#dc2626";
+  const trendBg = trend === undefined ? "#f1f5f9" : trendUp ? "#f0fdf4" : "#fef2f2";
+  const st = status ? statusStyles[status] : null;
 
   return (
-    <div className="dashboard-card flex flex-col justify-between" style={{ padding: "20px 22px", minHeight: 136 }}>
+    <div
+      className="card-base elev-1"
+      style={{
+        padding: "20px 22px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 0,
+        minHeight: 144,
+      }}
+    >
       {/* Top: label + icon */}
-      <div className="flex items-center justify-between">
-        <span style={{ fontSize: 13, fontWeight: 500, color: "rgba(0,0,0,0.45)", letterSpacing: "0.1px" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: 12,
+        }}
+      >
+        <span
+          style={{
+            fontSize: 13,
+            fontWeight: 500,
+            color: "rgba(0,0,0,0.45)",
+            letterSpacing: "0.1px",
+          }}
+        >
           {label}
         </span>
-        {icon && (
-          <div style={{ opacity: 0.35 }}>
-            {icon}
-          </div>
-        )}
+        <div
+          style={{
+            width: 34,
+            height: 34,
+            borderRadius: 10,
+            background: `${accentColor}14`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Icon size={16} strokeWidth={2} style={{ color: accentColor }} />
+        </div>
       </div>
 
       {/* Value */}
       <div
-        className="font-mono"
+        className="num"
         dir="ltr"
-        style={{ fontSize: 30, fontWeight: 600, color: "#1a1a1a", letterSpacing: "-0.03em", lineHeight: 1.1 }}
+        style={{
+          fontSize: 30,
+          fontWeight: 700,
+          color: "#111",
+          letterSpacing: "-0.04em",
+          lineHeight: 1,
+          marginBottom: 12,
+        }}
       >
         {value}
       </div>
 
-      {/* Bottom: trend + status */}
-      <div className="flex items-center justify-between">
-        {changePercent !== undefined && (
-          <div
-            className="flex items-center gap-1"
-            style={{ fontSize: 12, color: isPositive ? "#16a34a" : isNegative ? "#dc2626" : "rgba(0,0,0,0.35)" }}
-          >
-            {isPositive ? (
-              <TrendingUp style={{ width: 14, height: 14 }} />
-            ) : isNegative ? (
-              <TrendingDown style={{ width: 14, height: 14 }} />
-            ) : (
-              <Minus style={{ width: 14, height: 14 }} />
-            )}
-            <span dir="ltr">{isPositive ? "+" : ""}{changePercent}%</span>
-            {changeLabel && (
-              <span style={{ color: "rgba(0,0,0,0.35)", marginInlineStart: 4 }}>{changeLabel}</span>
-            )}
-          </div>
-        )}
+      {/* Bottom: trend/status + sparkline */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          marginTop: "auto",
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          {st ? (
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                background: st.bg,
+                color: st.text,
+                fontSize: 11,
+                fontWeight: 600,
+                padding: "3px 8px",
+                borderRadius: 20,
+                width: "fit-content",
+              }}
+            >
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  background: st.dot,
+                  flexShrink: 0,
+                }}
+              />
+              {st.label}
+            </span>
+          ) : trend !== undefined ? (
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                background: trendBg,
+                color: trendColor,
+                fontSize: 11,
+                fontWeight: 600,
+                padding: "3px 8px",
+                borderRadius: 20,
+                width: "fit-content",
+              }}
+            >
+              {trendUp ? (
+                <TrendingUp size={11} strokeWidth={2.5} />
+              ) : (
+                <TrendingDown size={11} strokeWidth={2.5} />
+              )}
+              <span dir="ltr">
+                {trendUp ? "+" : ""}
+                {trend}%
+              </span>
+            </span>
+          ) : null}
 
-        {statusText && (
-          <div
-            className="flex items-center gap-1.5"
-            style={{
-              fontSize: 11,
-              fontWeight: 600,
-              padding: "3px 9px",
-              borderRadius: 20,
-              letterSpacing: "0.1px",
-              background: st.bg,
-              color: st.color,
-            }}
-          >
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: st.dot }} />
-            {statusText}
-          </div>
+          {trendLabel && (
+            <span
+              style={{
+                fontSize: 11,
+                color: "rgba(0,0,0,0.35)",
+                fontWeight: 400,
+              }}
+            >
+              {trendLabel}
+            </span>
+          )}
+        </div>
+
+        {sparkData && sparkData.length >= 2 && (
+          <Sparkline data={sparkData} color={accentColor} width={72} height={28} />
         )}
       </div>
     </div>

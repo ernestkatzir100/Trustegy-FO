@@ -162,22 +162,22 @@ export function ExpensesClient({ entities }: Props) {
             <KpiCard
               label={t("totalThisMonth")}
               value={formatILS(summary.thisMonth)}
-              icon={<Receipt className="w-4 h-4 text-text-tertiary" />}
+              icon={Receipt}
             />
             <KpiCard
               label={t("totalThisYear")}
               value={formatILS(summary.totalYear)}
-              icon={<TrendingUp className="w-4 h-4 text-text-tertiary" />}
+              icon={TrendingUp}
             />
             <KpiCard
               label={t("recurringMonthly")}
               value={formatILS(summary.recurringMonthly)}
-              icon={<RefreshCw className="w-4 h-4 text-text-tertiary" />}
+              icon={RefreshCw}
             />
             <KpiCard
               label={t("topCategory")}
               value={topCategoryLabel}
-              icon={<Award className="w-4 h-4 text-text-tertiary" />}
+              icon={Award}
             />
           </div>
 

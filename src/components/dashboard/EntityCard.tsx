@@ -47,7 +47,7 @@ export function EntityCard({
   const st = statusConfig[status];
 
   return (
-    <div className="dashboard-card flex flex-col gap-4" style={{ padding: "20px 22px" }}>
+    <div className="card-base elev-1 flex flex-col gap-4" style={{ padding: "20px 22px" }}>
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
@@ -91,13 +91,19 @@ export function EntityCard({
       </div>
 
       {/* Divider + Net */}
-      <div style={{ height: 1, background: "rgba(0,0,0,0.06)" }} />
-      <div className="flex items-center justify-between">
-        <span style={{ fontSize: 12, fontWeight: 500, color: "rgba(0,0,0,0.45)" }}>רווח נקי</span>
+      <div
+        className="flex items-center justify-between"
+        style={{
+          borderTop: "1px solid rgba(0,0,0,0.06)",
+          marginTop: 4,
+          paddingTop: 12,
+        }}
+      >
+        <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(0,0,0,0.5)" }}>רווח נקי</span>
         <span
-          className="font-mono"
+          className="num"
           dir="ltr"
-          style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", color: netIncome >= 0 ? "#16a34a" : "#dc2626" }}
+          style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.03em", color: netIncome >= 0 ? "#16a34a" : "#dc2626" }}
         >
           {formatILS(netIncome)}
         </span>
