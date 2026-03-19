@@ -15,15 +15,16 @@ const colorMap: Record<string, string> = {
   slate: "bg-slate-100 text-slate-700 border-slate-200",
 };
 
-export function CategoryBadge({ category }: { category: ExpenseCategory }) {
-  const cat = EXPENSE_CATEGORIES[category];
-  const colors = colorMap[cat.color] ?? colorMap.slate;
+export function CategoryBadge({ category }: { category: string }) {
+  const cat = EXPENSE_CATEGORIES[category as ExpenseCategory];
+  const colors = cat ? (colorMap[cat.color] ?? colorMap.slate) : colorMap.slate;
+  const label = cat?.label ?? category;
 
   return (
     <span
       className={`inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full border ${colors}`}
     >
-      {cat.label}
+      {label}
     </span>
   );
 }

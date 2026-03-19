@@ -123,7 +123,7 @@ export function ExpensesClient({ entities }: Props) {
   }
 
   const topCategoryLabel = summary.topCategory
-    ? EXPENSE_CATEGORIES[summary.topCategory as ExpenseCategory]?.label ?? "—"
+    ? EXPENSE_CATEGORIES[summary.topCategory as ExpenseCategory]?.label ?? summary.topCategory
     : "—";
 
   const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
