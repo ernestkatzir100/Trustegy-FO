@@ -125,6 +125,69 @@ export interface RecentActivity {
   type: "income" | "expense" | "payment";
 }
 
+/* ── Portfolio-level demo data ── */
+
+export interface PortfolioSummary {
+  totalValue: number;
+  yearlyReturn: number;
+  freeCash: number;
+  cumulativeReturn: number;
+  riskLevel: string;
+  riskPercent: number;
+  riskNote: string;
+  monthlyIncome: number;
+  monthlyIncomeNote: string;
+}
+
+export function getDemoPortfolioSummary(): PortfolioSummary {
+  return {
+    totalValue: toAgorot(12450890),
+    yearlyReturn: 14.2,
+    freeCash: toAgorot(840200),
+    cumulativeReturn: toAgorot(1560000),
+    riskLevel: "בינוני-גבוה",
+    riskPercent: 65,
+    riskNote: "מותאם ליעדי הצמיחה לשנת 2026",
+    monthlyIncome: toAgorot(42500),
+    monthlyIncomeNote: "כולל דיבידנדים ושכר דירה",
+  };
+}
+
+export interface AssetSlice {
+  label: string;
+  percent: number;
+  value: number;
+  color: string;
+}
+
+export function getDemoAssetAllocation(): { slices: AssetSlice[]; totalAssets: number } {
+  return {
+    totalAssets: 12,
+    slices: [
+      { label: "מניות", percent: 45, value: toAgorot(5602900), color: "#0d9488" },
+      { label: 'נדל"ן', percent: 25, value: toAgorot(3112700), color: "#0f172a" },
+      { label: 'אג"ח ונכסים חלופיים', percent: 30, value: toAgorot(3735290), color: "#94A3B8" },
+    ],
+  };
+}
+
+export interface HoldingData {
+  name: string;
+  category: string;
+  value: number;
+  returnPercent: number;
+  status: "active" | "pending" | "watching";
+}
+
+export function getDemoHoldings(): HoldingData[] {
+  return [
+    { name: "Apple Inc. (AAPL)", category: "טכנולוגיה / מניות", value: toAgorot(1450200), returnPercent: 24.5, status: "active" },
+    { name: 'נדל"ן — לונדון מזרח', category: 'נדל"ן מסחרי', value: toAgorot(3112700), returnPercent: 8.2, status: "active" },
+    { name: 'אג"ח ממשלתי ישראל', category: 'אג"ח ממשלתי', value: toAgorot(840000), returnPercent: 2.1, status: "pending" },
+    { name: "Microsoft (MSFT)", category: "טכנולוגיה / מניות", value: toAgorot(920400), returnPercent: 18.4, status: "active" },
+  ];
+}
+
 export function getDemoRecentActivity(): RecentActivity[] {
   return [
     {
