@@ -32,9 +32,14 @@ export default async function DashboardPage() {
   const holdings = getDemoHoldings();
   const recentActivity = getDemoRecentActivity();
 
-  // Real expense data from DB
-  const expResult = await getExpensesDashboardSummary();
-  const expSummary = expResult.data;
+  // Real expense data from DB (graceful fallback if DB fails)
+  let expSummary: Awaited<ReturnType<typeof getExpensesDashboardSummary>>["data"] = null;
+  try {
+    const expResult = await getExpensesDashboardSummary();
+    expSummary = expResult.data ?? null;
+  } catch {
+    // Dashboard still renders without expense data
+  }
 
   return (
     <div className="flex flex-col gap-7">
