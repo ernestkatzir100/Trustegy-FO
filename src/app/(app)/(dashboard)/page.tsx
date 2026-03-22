@@ -4,7 +4,6 @@ import {
   ArrowDownRight,
   CreditCard,
   Sparkles,
-  Receipt,
 } from "lucide-react";
 import { getEntities } from "@/lib/actions/entities";
 import { formatILS } from "@/lib/money";
@@ -20,7 +19,7 @@ import { PortfolioHero } from "@/components/dashboard/PortfolioHero";
 import { PerformanceChart } from "@/components/dashboard/PerformanceChart";
 import { AssetAllocation } from "@/components/dashboard/AssetAllocation";
 import { HoldingsTable } from "@/components/dashboard/HoldingsTable";
-import { KpiCard } from "@/components/dashboard/KpiCard";
+import { ExpenseKpis } from "@/components/dashboard/ExpenseKpis";
 
 export default async function DashboardPage() {
   const t = await getTranslations("dashboard");
@@ -116,37 +115,21 @@ export default async function DashboardPage() {
 
       {/* Expenses KPI — real data from DB */}
       {expSummary && (
-        <section className="grid grid-cols-4 gap-4">
-          <KpiCard
-            label={t("expensesThisMonth")}
-            value={formatILS(expSummary.thisMonth)}
-            trend={Math.round(expSummary.momChangePct)}
-            trendLabel={t("vsLastMonth")}
-            icon={Receipt}
-            status={expSummary.momChangePct > 20 ? "warning" : "ok"}
-            accentColor="#f59e0b"
-            sparkData={expSummary.byMonth.map((m) => m.total)}
-          />
-          <KpiCard
-            label={t("expensesThisYear")}
-            value={formatILS(expSummary.totalYear)}
-            icon={Receipt}
-            accentColor="#0d9488"
-            sparkData={expSummary.byMonth.map((m) => m.total)}
-          />
-          <KpiCard
-            label={t("topExpenseCategory")}
-            value={expSummary.topCategory ? (EXPENSE_CATEGORIES[expSummary.topCategory.category as ExpenseCategory]?.label ?? expSummary.topCategory.category) : "—"}
-            icon={Receipt}
-            accentColor="#8b5cf6"
-          />
-          <KpiCard
-            label={t("entityCount")}
-            value={String(entityList.length)}
-            icon={Receipt}
-            accentColor="#0d9488"
-          />
-        </section>
+        <ExpenseKpis
+          thisMonth={formatILS(expSummary.thisMonth)}
+          thisMonthTrend={Math.round(expSummary.momChangePct)}
+          vsLastMonth={t("vsLastMonth")}
+          totalYear={formatILS(expSummary.totalYear)}
+          topCategory={expSummary.topCategory ? (EXPENSE_CATEGORIES[expSummary.topCategory.category as ExpenseCategory]?.label ?? expSummary.topCategory.category) : "—"}
+          entityCount={String(entityList.length)}
+          sparkData={expSummary.byMonth.map((m) => m.total)}
+          labels={{
+            expensesThisMonth: t("expensesThisMonth"),
+            expensesThisYear: t("expensesThisYear"),
+            topExpenseCategory: t("topExpenseCategory"),
+            entityCount: t("entityCount"),
+          }}
+        />
       )}
 
       {/* Holdings + Recent Activity */}
