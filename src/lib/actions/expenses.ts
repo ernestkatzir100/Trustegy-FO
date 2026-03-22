@@ -80,6 +80,8 @@ export async function getExpenses(
       entityId: expenses.entityId,
       isRecurring: expenses.isRecurring,
       importSource: expenses.importSource,
+      notes: expenses.notes,
+      receiptUrl: expenses.receiptUrl,
       createdAt: expenses.createdAt,
       updatedAt: expenses.updatedAt,
       entityName: entities.name,
@@ -343,4 +345,223 @@ export async function importExpenses(
 
   revalidatePath("/expenses");
   return actionSuccess({ imported, duplicates });
+}
+
+// ---------------------------------------------------------------------------
+// Dashboard summary
+// ---------------------------------------------------------------------------
+
+interface DashboardExpenseSummary {
+  thisMonth: number;
+  lastMonth: number;
+  totalYear: number;
+  momChangePct: number;
+  byMonth: { month: number; total: number }[];
+  topCategory: { category: string; total: number } | null;
+  byEntity: { entityId: string | null; entityName: string | null; total: number }[];
+}
+
+export async function getExpensesDashboardSummary(
+  year?: number
+): Promise<ActionResult<DashboardExpenseSummary>> {
+  const { userId, error } = await requireAuth();
+  if (error) return actionError(error.code, error.message);
+
+  const currentYear = year ?? new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+  const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+  const prevMonthYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+
+  // This month total
+  const [thisMonthRow] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(${expenses.amount}), 0)`,
+    })
+    .from(expenses)
+    .where(
+      and(
+        eq(expenses.ownerId, userId),
+        sql`EXTRACT(YEAR FROM ${expenses.date}::date) = ${currentYear}` as ReturnType<typeof eq>,
+        sql`EXTRACT(MONTH FROM ${expenses.date}::date) = ${currentMonth}` as ReturnType<typeof eq>
+      )
+    );
+
+  // Last month total
+  const [lastMonthRow] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(${expenses.amount}), 0)`,
+    })
+    .from(expenses)
+    .where(
+      and(
+        eq(expenses.ownerId, userId),
+        sql`EXTRACT(YEAR FROM ${expenses.date}::date) = ${prevMonthYear}` as ReturnType<typeof eq>,
+        sql`EXTRACT(MONTH FROM ${expenses.date}::date) = ${prevMonth}` as ReturnType<typeof eq>
+      )
+    );
+
+  // Total year
+  const [totalYearRow] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(${expenses.amount}), 0)`,
+    })
+    .from(expenses)
+    .where(
+      and(
+        eq(expenses.ownerId, userId),
+        sql`EXTRACT(YEAR FROM ${expenses.date}::date) = ${currentYear}` as ReturnType<typeof eq>
+      )
+    );
+
+  // 12-month breakdown
+  const monthlyRows = await db
+    .select({
+      month: sql<number>`EXTRACT(MONTH FROM ${expenses.date}::date)`,
+      total: sql<number>`COALESCE(SUM(${expenses.amount}), 0)`,
+    })
+    .from(expenses)
+    .where(
+      and(
+        eq(expenses.ownerId, userId),
+        sql`EXTRACT(YEAR FROM ${expenses.date}::date) = ${currentYear}` as ReturnType<typeof eq>
+      )
+    )
+    .groupBy(sql`EXTRACT(MONTH FROM ${expenses.date}::date)`)
+    .orderBy(sql`EXTRACT(MONTH FROM ${expenses.date}::date)`);
+
+  // Fill all 12 months (months with no expenses get 0)
+  const monthMap = new Map(monthlyRows.map((r) => [Number(r.month), Number(r.total)]));
+  const byMonth = Array.from({ length: 12 }, (_, i) => ({
+    month: i + 1,
+    total: monthMap.get(i + 1) ?? 0,
+  }));
+
+  // Top category
+  const topCatRows = await db
+    .select({
+      category: expenses.category,
+      total: sql<number>`SUM(${expenses.amount})`,
+    })
+    .from(expenses)
+    .where(
+      and(
+        eq(expenses.ownerId, userId),
+        sql`EXTRACT(YEAR FROM ${expenses.date}::date) = ${currentYear}` as ReturnType<typeof eq>
+      )
+    )
+    .groupBy(expenses.category)
+    .orderBy(sql`SUM(${expenses.amount}) DESC`)
+    .limit(1);
+
+  const topCategory = topCatRows[0]
+    ? { category: topCatRows[0].category, total: Number(topCatRows[0].total) }
+    : null;
+
+  // By entity
+  const entityRows = await db
+    .select({
+      entityId: expenses.entityId,
+      entityName: entities.name,
+      total: sql<number>`SUM(${expenses.amount})`,
+    })
+    .from(expenses)
+    .leftJoin(entities, eq(expenses.entityId, entities.id))
+    .where(
+      and(
+        eq(expenses.ownerId, userId),
+        sql`EXTRACT(YEAR FROM ${expenses.date}::date) = ${currentYear}` as ReturnType<typeof eq>
+      )
+    )
+    .groupBy(expenses.entityId, entities.name)
+    .orderBy(sql`SUM(${expenses.amount}) DESC`);
+
+  const byEntity = entityRows.map((r) => ({
+    entityId: r.entityId,
+    entityName: r.entityName ?? null,
+    total: Number(r.total),
+  }));
+
+  const thisMonth = Number(thisMonthRow?.total ?? 0);
+  const lastMonth = Number(lastMonthRow?.total ?? 0);
+  const momChangePct = lastMonth > 0 ? ((thisMonth - lastMonth) / lastMonth) * 100 : 0;
+
+  return actionSuccess({
+    thisMonth,
+    lastMonth,
+    totalYear: Number(totalYearRow?.total ?? 0),
+    momChangePct,
+    byMonth,
+    topCategory,
+    byEntity,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Top vendors
+// ---------------------------------------------------------------------------
+
+interface TopVendor {
+  vendorName: string;
+  total: number;
+  count: number;
+  topCategory: string;
+}
+
+export async function getTopVendors(
+  year?: number
+): Promise<ActionResult<TopVendor[]>> {
+  const { userId, error } = await requireAuth();
+  if (error) return actionError(error.code, error.message);
+
+  const currentYear = year ?? new Date().getFullYear();
+
+  // Top 10 vendors by total spend
+  const vendorRows = await db
+    .select({
+      vendorName: expenses.vendorName,
+      total: sql<number>`SUM(${expenses.amount})`,
+      count: sql<number>`COUNT(*)`,
+    })
+    .from(expenses)
+    .where(
+      and(
+        eq(expenses.ownerId, userId),
+        sql`EXTRACT(YEAR FROM ${expenses.date}::date) = ${currentYear}` as ReturnType<typeof eq>,
+        sql`${expenses.vendorName} IS NOT NULL` as ReturnType<typeof eq>
+      )
+    )
+    .groupBy(expenses.vendorName)
+    .orderBy(sql`SUM(${expenses.amount}) DESC`)
+    .limit(10);
+
+  // For each vendor, find the most common category
+  const result: TopVendor[] = [];
+
+  for (const row of vendorRows) {
+    const [catRow] = await db
+      .select({
+        category: expenses.category,
+        cnt: sql<number>`COUNT(*)`,
+      })
+      .from(expenses)
+      .where(
+        and(
+          eq(expenses.ownerId, userId),
+          sql`EXTRACT(YEAR FROM ${expenses.date}::date) = ${currentYear}` as ReturnType<typeof eq>,
+          sql`${expenses.vendorName} = ${row.vendorName}` as ReturnType<typeof eq>
+        )
+      )
+      .groupBy(expenses.category)
+      .orderBy(sql`COUNT(*) DESC`)
+      .limit(1);
+
+    result.push({
+      vendorName: row.vendorName!,
+      total: Number(row.total),
+      count: Number(row.count),
+      topCategory: catRow?.category ?? "OTHER",
+    });
+  }
+
+  return actionSuccess(result);
 }

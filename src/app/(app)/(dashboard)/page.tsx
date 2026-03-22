@@ -4,6 +4,7 @@ import {
   ArrowDownRight,
   CreditCard,
   Sparkles,
+  Receipt,
 } from "lucide-react";
 import { getEntities } from "@/lib/actions/entities";
 import { formatILS } from "@/lib/money";
@@ -13,10 +14,13 @@ import {
   getDemoHoldings,
   getDemoRecentActivity,
 } from "@/lib/demo-data";
+import { getExpensesDashboardSummary } from "@/lib/actions/expenses";
+import { EXPENSE_CATEGORIES, type ExpenseCategory } from "@/lib/expense-categorizer";
 import { PortfolioHero } from "@/components/dashboard/PortfolioHero";
 import { PerformanceChart } from "@/components/dashboard/PerformanceChart";
 import { AssetAllocation } from "@/components/dashboard/AssetAllocation";
 import { HoldingsTable } from "@/components/dashboard/HoldingsTable";
+import { KpiCard } from "@/components/dashboard/KpiCard";
 
 export default async function DashboardPage() {
   const t = await getTranslations("dashboard");
@@ -27,6 +31,10 @@ export default async function DashboardPage() {
   const allocation = getDemoAssetAllocation();
   const holdings = getDemoHoldings();
   const recentActivity = getDemoRecentActivity();
+
+  // Real expense data from DB
+  const expResult = await getExpensesDashboardSummary();
+  const expSummary = expResult.data;
 
   return (
     <div className="flex flex-col gap-7">
@@ -101,6 +109,41 @@ export default async function DashboardPage() {
         <AssetAllocation slices={allocation.slices} totalAssets={allocation.totalAssets} />
       </section>
 
+      {/* Expenses KPI — real data from DB */}
+      {expSummary && (
+        <section className="grid grid-cols-4 gap-4">
+          <KpiCard
+            label={t("expensesThisMonth")}
+            value={formatILS(expSummary.thisMonth)}
+            trend={Math.round(expSummary.momChangePct)}
+            trendLabel={t("vsLastMonth")}
+            icon={Receipt}
+            status={expSummary.momChangePct > 20 ? "warning" : "ok"}
+            accentColor="#f59e0b"
+            sparkData={expSummary.byMonth.map((m) => m.total)}
+          />
+          <KpiCard
+            label={t("expensesThisYear")}
+            value={formatILS(expSummary.totalYear)}
+            icon={Receipt}
+            accentColor="#0d9488"
+            sparkData={expSummary.byMonth.map((m) => m.total)}
+          />
+          <KpiCard
+            label={t("topExpenseCategory")}
+            value={expSummary.topCategory ? (EXPENSE_CATEGORIES[expSummary.topCategory.category as ExpenseCategory]?.label ?? expSummary.topCategory.category) : "—"}
+            icon={Receipt}
+            accentColor="#8b5cf6"
+          />
+          <KpiCard
+            label={t("entityCount")}
+            value={String(entityList.length)}
+            icon={Receipt}
+            accentColor="#0d9488"
+          />
+        </section>
+      )}
+
       {/* Holdings + Recent Activity */}
       <section className="grid grid-cols-1 xl:grid-cols-4 gap-6">
         <HoldingsTable holdings={holdings} />
@@ -127,9 +170,6 @@ export default async function DashboardPage() {
                   : activity.type === "expense"
                     ? "#ef4444"
                     : "#64748b";
-              const amountColor =
-                activity.amount >= 0 ? "#0d9488" : "#dc2626";
-
               return (
                 <div key={i} className="flex gap-3">
                   <div

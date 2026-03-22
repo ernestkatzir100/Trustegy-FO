@@ -12,18 +12,18 @@ export type ExpenseCategory =
 
 export const EXPENSE_CATEGORIES: Record<
   ExpenseCategory,
-  { label: string; color: string }
+  { label: string; color: string; hex: string; bg: string }
 > = {
-  SALARY: { label: "משכורות", color: "blue" },
-  VEHICLE: { label: "רכב", color: "orange" },
-  ACCOUNTING: { label: "הנהלת חשבונות", color: "teal" },
-  MAINTENANCE: { label: "אחזקה", color: "gray" },
-  TAX: { label: "מיסים", color: "red" },
-  FINANCING: { label: "מימון", color: "purple" },
-  LEGAL: { label: "משפטי", color: "indigo" },
-  SUBCONTRACTOR: { label: "קבלני משנה", color: "amber" },
-  GIFTS: { label: "מתנות", color: "pink" },
-  OTHER: { label: "אחר", color: "slate" },
+  SALARY: { label: "משכורות", color: "blue", hex: "#3b82f6", bg: "#eff6ff" },
+  VEHICLE: { label: "רכב", color: "orange", hex: "#f97316", bg: "#fff7ed" },
+  ACCOUNTING: { label: "הנהלת חשבונות", color: "teal", hex: "#14b8a6", bg: "#f0fdfa" },
+  MAINTENANCE: { label: "אחזקה", color: "gray", hex: "#6b7280", bg: "#f9fafb" },
+  TAX: { label: "מיסים", color: "red", hex: "#ef4444", bg: "#fef2f2" },
+  FINANCING: { label: "מימון", color: "purple", hex: "#8b5cf6", bg: "#f5f3ff" },
+  LEGAL: { label: "משפטי", color: "indigo", hex: "#6366f1", bg: "#eef2ff" },
+  SUBCONTRACTOR: { label: "קבלני משנה", color: "amber", hex: "#f59e0b", bg: "#fffbeb" },
+  GIFTS: { label: "מתנות", color: "pink", hex: "#ec4899", bg: "#fdf2f8" },
+  OTHER: { label: "אחר", color: "slate", hex: "#9ca3af", bg: "#f9fafb" },
 };
 
 const RULES: { category: ExpenseCategory; keywords: string[] }[] = [
