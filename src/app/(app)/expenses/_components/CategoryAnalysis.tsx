@@ -22,19 +22,7 @@ import {
 import { formatILS, fromAgorot } from "@/lib/money";
 import { CategoryBadge } from "./CategoryBadge";
 
-type MonthKey =
-  | "1"
-  | "2"
-  | "3"
-  | "4"
-  | "5"
-  | "6"
-  | "7"
-  | "8"
-  | "9"
-  | "10"
-  | "11"
-  | "12";
+type MonthKey = "1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"10"|"11"|"12";
 
 interface TopVendor {
   vendorName: string;
@@ -43,24 +31,46 @@ interface TopVendor {
   topCategory: string;
 }
 
-const tooltipStyle = {
+/* ── Explicit category colors ── */
+const CATEGORY_COLORS: Record<string, string> = {
+  SALARY:        "#3b82f6",
+  VEHICLE:       "#f97316",
+  ACCOUNTING:    "#14b8a6",
+  MAINTENANCE:   "#6b7280",
+  TAX:           "#ef4444",
+  FINANCING:     "#8b5cf6",
+  LEGAL:         "#6366f1",
+  SUBCONTRACTOR: "#f59e0b",
+  GIFTS:         "#ec4899",
+  OTHER:         "#94a3b8",
+};
+
+const ALL_CATEGORIES: { key: ExpenseCategory; label: string }[] = [
+  { key: "SALARY", label: "משכורות" },
+  { key: "FINANCING", label: "מימון" },
+  { key: "VEHICLE", label: "רכב" },
+  { key: "ACCOUNTING", label: "הנהלת חשבונות" },
+  { key: "TAX", label: "מיסים" },
+  { key: "LEGAL", label: "משפטי" },
+  { key: "SUBCONTRACTOR", label: "קבלני משנה" },
+  { key: "MAINTENANCE", label: "אחזקה" },
+  { key: "GIFTS", label: "מתנות" },
+  { key: "OTHER", label: "אחר" },
+];
+
+const tooltipStyle: React.CSSProperties = {
   borderRadius: 12,
-  border: "1px solid var(--border-strong)",
+  border: "1px solid var(--border)",
   fontSize: 12,
-  background: "var(--surface-elevated)",
-  color: "#F1F5F9",
+  background: "var(--surface-card)",
+  color: "var(--text-primary)",
 };
 
 export function CategoryAnalysis() {
   const t = useTranslations("expenses");
   const [year, setYear] = useState(new Date().getFullYear());
   const [data, setData] = useState<
-    {
-      category: string;
-      total: number;
-      count: number;
-      months: Record<number, number>;
-    }[]
+    { category: string; total: number; count: number; months: Record<number, number> }[]
   >([]);
   const [vendors, setVendors] = useState<TopVendor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,35 +87,33 @@ export function CategoryAnalysis() {
   }, [year]);
 
   const grandTotal = data.reduce((s, d) => s + d.total, 0);
-  const years = Array.from(
-    { length: 5 },
-    (_, i) => new Date().getFullYear() - i
-  );
+  const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
 
-  // Build monthly chart data — stacked by top 5 categories
-  const top5 = data.slice(0, 5);
+  // Build monthly chart data — ALL categories, ALL 12 months
+  const dataByCategory = Object.fromEntries(data.map((d) => [d.category, d]));
   const monthlyChartData = Array.from({ length: 12 }, (_, m) => {
     const month = m + 1;
     const entry: Record<string, unknown> = {
-      name: t(`months.${String(month) as MonthKey}`).slice(0, 3),
+      month: t(`months.${String(month) as MonthKey}`).slice(0, 3),
     };
-    for (const cat of top5) {
-      entry[cat.category] = fromAgorot(cat.months[month] ?? 0);
+    for (const cat of ALL_CATEGORIES) {
+      const catData = dataByCategory[cat.key];
+      entry[cat.key] = catData ? fromAgorot(catData.months[month] ?? 0) : 0;
     }
     return entry;
   });
 
-  // Pie chart data
+  // Pie chart data — with explicit colors
   const pieData = data.map((d) => ({
     name: EXPENSE_CATEGORIES[d.category as ExpenseCategory]?.label ?? d.category,
     value: fromAgorot(d.total),
-    color: EXPENSE_CATEGORIES[d.category as ExpenseCategory]?.hex ?? "#9ca3af",
+    category: d.category,
   }));
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <span className="animate-pulse" style={{ fontSize: 13, color: "var(--text-tertiary)" }}>
+        <span className="animate-pulse" style={{ fontSize: 13, color: "var(--text-muted)" }}>
           טוען נתונים...
         </span>
       </div>
@@ -130,8 +138,8 @@ export function CategoryAnalysis() {
                 padding: "4px 12px",
                 borderRadius: 8,
                 fontSize: 13,
-                background: year === y ? "rgba(13,148,136,0.12)" : "transparent",
-                color: year === y ? "#0d9488" : "var(--text-secondary)",
+                background: year === y ? "var(--accent-subtle)" : "transparent",
+                color: year === y ? "var(--accent)" : "var(--text-secondary)",
                 fontWeight: year === y ? 700 : 400,
                 border: "none",
                 cursor: "pointer",
@@ -145,8 +153,7 @@ export function CategoryAnalysis() {
 
       {data.length === 0 ? (
         <div
-          className="flex items-center justify-center py-16 rounded-2xl"
-          style={{ background: "var(--surface-card)", border: "1px solid var(--border-subtle)" }}
+          className="flex items-center justify-center py-16 card-base"
         >
           <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("noExpenses")}</p>
         </div>
@@ -154,15 +161,15 @@ export function CategoryAnalysis() {
         <>
           {/* Charts row: Stacked bar + Donut */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-            {/* Stacked bar chart */}
-            <div className="lg:col-span-3 card-base elev-1 p-5">
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)", marginBottom: 16 }}>
+            {/* Stacked bar chart — ALL categories with explicit colors */}
+            <div className="lg:col-span-3 card-base" style={{ padding: 20 }}>
+              <h3 className="section-title" style={{ marginBottom: 16 }}>
                 הוצאות חודשיות לפי קטגוריה
               </h3>
-              <ResponsiveContainer width="100%" height={240}>
+              <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={monthlyChartData}>
-                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false}
+                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false}
                     tickFormatter={(v: number) => v >= 1000 ? `${(v / 1000).toFixed(0)}K` : String(v)}
                   />
                   <Tooltip
@@ -172,82 +179,87 @@ export function CategoryAnalysis() {
                     ]}
                     contentStyle={tooltipStyle}
                   />
-                  {top5.map((cat) => (
+                  <Legend
+                    iconSize={8}
+                    wrapperStyle={{ fontSize: 11, color: "var(--text-muted)" }}
+                    formatter={(value) => EXPENSE_CATEGORIES[value as ExpenseCategory]?.label ?? value}
+                  />
+                  {ALL_CATEGORIES.map((cat, i) => (
                     <Bar
-                      key={cat.category}
-                      dataKey={cat.category}
+                      key={cat.key}
+                      dataKey={cat.key}
                       stackId="a"
-                      fill={EXPENSE_CATEGORIES[cat.category as ExpenseCategory]?.hex ?? "#9ca3af"}
-                      radius={cat === top5[top5.length - 1] ? [4, 4, 0, 0] : undefined}
+                      fill={CATEGORY_COLORS[cat.key]}
+                      name={cat.key}
+                      radius={i === ALL_CATEGORIES.length - 1 ? [4, 4, 0, 0] : undefined}
                     />
                   ))}
                 </BarChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Donut chart */}
-            <div className="lg:col-span-2 card-base elev-1 p-5">
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)", marginBottom: 16 }}>
+            {/* Donut chart — explicit Cell fill colors */}
+            <div className="lg:col-span-2 card-base" style={{ padding: 20 }}>
+              <h3 className="section-title" style={{ marginBottom: 16 }}>
                 התפלגות לפי קטגוריה
               </h3>
-              <ResponsiveContainer width="100%" height={240}>
+              <ResponsiveContainer width="100%" height={260}>
                 <PieChart>
                   <Pie data={pieData} cx="50%" cy="45%" innerRadius={50} outerRadius={80} paddingAngle={2} dataKey="value">
                     {pieData.map((entry, i) => (
-                      <Cell key={i} fill={entry.color} />
+                      <Cell key={`cell-${i}`} fill={CATEGORY_COLORS[entry.category] ?? "#94a3b8"} />
                     ))}
                   </Pie>
                   <Tooltip
                     formatter={(value) => [`₪${Number(value).toLocaleString()}`]}
                     contentStyle={tooltipStyle}
                   />
-                  <Legend iconSize={8} wrapperStyle={{ fontSize: 11, color: "#94a3b8" }} />
+                  <Legend iconSize={8} wrapperStyle={{ fontSize: 11, color: "var(--text-muted)" }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* Category breakdown table */}
-          <div className="card-base elev-1 overflow-hidden">
-            <div className="flex items-center justify-between" style={{ padding: "14px 20px", borderBottom: "1px solid var(--border-subtle)" }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>
-                פירוט לפי קטגוריה
-              </h3>
+          <div className="card-base overflow-hidden">
+            <div className="flex items-center justify-between" style={{ padding: "14px 20px", borderBottom: "1px solid var(--border)" }}>
+              <h3 className="section-title">פירוט לפי קטגוריה</h3>
             </div>
             <table className="w-full" style={{ fontSize: 13 }}>
               <thead>
                 <tr style={{ background: "var(--bg-subtle)" }}>
-                  <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("category")}</th>
-                  <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("totalThisYear")}</th>
-                  <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("totalPercent")}</th>
-                  <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("monthlyAvg")}</th>
-                  <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("recordCount")}</th>
+                  <th className="table-header text-start p-3">{t("category")}</th>
+                  <th className="table-header text-start p-3">{t("totalThisYear")}</th>
+                  <th className="table-header text-start p-3">{t("totalPercent")}</th>
+                  <th className="table-header text-start p-3">{t("monthlyAvg")}</th>
+                  <th className="table-header text-start p-3">{t("recordCount")}</th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((row) => {
                   const percent = grandTotal > 0 ? ((row.total / grandTotal) * 100).toFixed(1) : "0";
                   const monthlyAvg = row.total / 12;
-                  const catConfig = EXPENSE_CATEGORIES[row.category as ExpenseCategory];
+                  const barColor = CATEGORY_COLORS[row.category] ?? "#94a3b8";
 
                   return (
                     <tr
                       key={row.category}
-                      style={{ borderTop: "1px solid var(--bg-tint)" }}
+                      className="tonal-shift"
+                      style={{ borderTop: "1px solid var(--border)" }}
                       onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                     >
                       <td className="p-3"><CategoryBadge category={row.category as ExpenseCategory} /></td>
-                      <td className="p-3 font-mono" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(row.total)}</td>
+                      <td className="p-3 num" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(row.total)}</td>
                       <td className="p-3">
                         <div className="flex items-center gap-2">
-                          <div className="overflow-hidden" style={{ width: 64, height: 6, borderRadius: 20, background: "var(--bg-tint)" }}>
-                            <div style={{ height: "100%", borderRadius: 20, width: `${percent}%`, background: catConfig?.hex ?? "#9ca3af" }} />
+                          <div className="overflow-hidden" style={{ width: 64, height: 4, borderRadius: 2, background: "var(--bg-tint)" }}>
+                            <div style={{ height: "100%", borderRadius: 2, width: `${percent}%`, background: barColor }} />
                           </div>
-                          <span dir="ltr" style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{percent}%</span>
+                          <span dir="ltr" style={{ fontSize: 12, color: "var(--text-muted)" }}>{percent}%</span>
                         </div>
                       </td>
-                      <td className="p-3 font-mono" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(Math.round(monthlyAvg))}</td>
+                      <td className="p-3 num" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(Math.round(monthlyAvg))}</td>
                       <td className="p-3" style={{ color: "var(--text-secondary)" }}>{row.count}</td>
                     </tr>
                   );
@@ -258,34 +270,33 @@ export function CategoryAnalysis() {
 
           {/* Top vendors table */}
           {vendors.length > 0 && (
-            <div className="card-base elev-1 overflow-hidden">
-              <div style={{ padding: "14px 20px", borderBottom: "1px solid var(--border-subtle)" }}>
-                <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>
-                  ספקים מובילים
-                </h3>
+            <div className="card-base overflow-hidden">
+              <div style={{ padding: "14px 20px", borderBottom: "1px solid var(--border)" }}>
+                <h3 className="section-title">ספקים מובילים</h3>
               </div>
               <table className="w-full" style={{ fontSize: 13 }}>
                 <thead>
                   <tr style={{ background: "var(--bg-subtle)" }}>
-                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>ספק</th>
-                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>מס&apos; עסקאות</th>
-                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>סה&quot;כ</th>
-                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>ממוצע לעסקה</th>
-                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>קטגוריה עיקרית</th>
+                    <th className="table-header text-start p-3">ספק</th>
+                    <th className="table-header text-start p-3">מס&apos; עסקאות</th>
+                    <th className="table-header text-start p-3">סה&quot;כ</th>
+                    <th className="table-header text-start p-3">ממוצע לעסקה</th>
+                    <th className="table-header text-start p-3">קטגוריה עיקרית</th>
                   </tr>
                 </thead>
                 <tbody>
                   {vendors.map((v, i) => (
                     <tr
                       key={i}
-                      style={{ borderTop: "1px solid var(--bg-tint)" }}
+                      className="tonal-shift"
+                      style={{ borderTop: "1px solid var(--border)" }}
                       onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                     >
                       <td className="p-3" style={{ fontWeight: 600, color: "var(--text-primary)" }}>{v.vendorName}</td>
                       <td className="p-3" style={{ color: "var(--text-secondary)" }}>{v.count}</td>
-                      <td className="p-3 font-mono" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(v.total)}</td>
-                      <td className="p-3 font-mono" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(v.count > 0 ? Math.round(v.total / v.count) : 0)}</td>
+                      <td className="p-3 num" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(v.total)}</td>
+                      <td className="p-3 num" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(v.count > 0 ? Math.round(v.total / v.count) : 0)}</td>
                       <td className="p-3"><CategoryBadge category={v.topCategory as ExpenseCategory} /></td>
                     </tr>
                   ))}
