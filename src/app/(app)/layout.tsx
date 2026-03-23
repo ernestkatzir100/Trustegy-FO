@@ -13,8 +13,11 @@ export default async function AppLayout({
   return (
     <div className="flex min-h-screen" style={{ background: "var(--bg)" }}>
       {/* Viewport warning for screens below 1280px */}
-      <div className="hidden max-[1279px]:flex fixed inset-0 z-[200] items-center justify-center p-10" style={{ background: "var(--bg)" }}>
-        <p className="text-text-secondary text-center text-[15px]">
+      <div
+        className="hidden max-[1279px]:flex fixed inset-0 z-[200] items-center justify-center p-10"
+        style={{ background: "var(--bg)" }}
+      >
+        <p style={{ fontSize: 15, color: "var(--text-secondary)", textAlign: "center" }}>
           {t("warning")}
         </p>
       </div>

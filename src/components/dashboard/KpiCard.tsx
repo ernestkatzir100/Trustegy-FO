@@ -1,235 +1,115 @@
 "use client";
 
-import { TrendingUp, TrendingDown } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-/* ── Inline SVG sparkline — zero dependencies ── */
-function Sparkline({
-  data,
-  color,
-  width = 72,
-  height = 28,
-}: {
-  data: number[];
-  color: string;
-  width?: number;
-  height?: number;
-}) {
+/* ── Mini bar chart (Stitch style) ── */
+function MiniBarChart({ data, color }: { data: number[]; color: string }) {
   if (!data || data.length < 2) return null;
-  const min = Math.min(...data);
   const max = Math.max(...data);
-  const range = max - min || 1;
-  const step = width / (data.length - 1);
-
-  const points = data.map((v, i) => ({
-    x: i * step,
-    y: height - ((v - min) / range) * height,
-  }));
-
-  const linePath = points
-    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
-    .join(" ");
-
-  const areaPath =
-    `M ${points[0].x} ${height} ` +
-    points.map((p) => `L ${p.x} ${p.y}`).join(" ") +
-    ` L ${points[points.length - 1].x} ${height} Z`;
-
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
-      className="sparkline"
-    >
-      <path d={areaPath} fill={color} className="sparkline-area" />
-      <path d={linePath} stroke={color} className="sparkline-line" />
-      <circle
-        cx={points[points.length - 1].x}
-        cy={points[points.length - 1].y}
-        r={2.5}
-        fill={color}
-      />
-    </svg>
+    <div className="flex items-end gap-[3px]" style={{ height: 40, width: "100%" }}>
+      {data.map((v, i) => {
+        const pct = max > 0 ? (v / max) * 100 : 0;
+        const opacity = 0.15 + (i / (data.length - 1)) * 0.85;
+        return (
+          <div
+            key={i}
+            style={{
+              flex: 1,
+              height: `${pct}%`,
+              background: color,
+              opacity,
+              borderRadius: "2px 2px 0 0",
+              minHeight: 2,
+            }}
+          />
+        );
+      })}
+    </div>
   );
 }
 
 /* ── Types ── */
-type Status = "ok" | "warning" | "danger";
-
 interface KpiCardProps {
   label: string;
   value: string;
-  trend?: number;
-  trendLabel?: string;
+  trend?: string;
+  trendType?: "up" | "down" | "neutral";
   icon: LucideIcon;
-  status?: Status;
   sparkData?: number[];
   accentColor?: string;
 }
-
-const statusStyles: Record<Status, { dot: string; bg: string; text: string; label: string }> = {
-  ok: { dot: "#22c55e", bg: "var(--status-green-bg)", text: "#22c55e", label: "תקין" },
-  warning: { dot: "#f59e0b", bg: "var(--status-amber-bg)", text: "#f59e0b", label: "דורש תשומת לב" },
-  danger: { dot: "#ef4444", bg: "var(--status-red-bg)", text: "#ef4444", label: "דחוף" },
-};
 
 export function KpiCard({
   label,
   value,
   trend,
-  trendLabel,
+  trendType = "up",
   icon: Icon,
-  status,
   sparkData,
-  accentColor = "#0d9488",
+  accentColor = "var(--accent)",
 }: KpiCardProps) {
-  const trendUp = trend !== undefined && trend >= 0;
-  const trendColor = trend === undefined ? "#94a3b8" : trendUp ? "#22c55e" : "#ef4444";
-  const trendBg = trend === undefined ? "var(--bg-muted)" : trendUp ? "var(--status-green-bg)" : "var(--status-red-bg)";
-  const st = status ? statusStyles[status] : null;
+  const trendBg = trendType === "down" ? "var(--danger-subtle)" : "var(--accent-subtle)";
+  const trendColor = trendType === "down" ? "var(--danger)" : "var(--accent)";
 
   return (
     <div
-      className="card-base elev-1"
-      style={{
-        padding: "20px 22px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 0,
-        minHeight: 144,
-      }}
+      className="card-base"
+      style={{ padding: "var(--space-card)" }}
     >
-      {/* Top: label + icon */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 12,
-        }}
-      >
-        <span
-          style={{
-            fontSize: 13,
-            fontWeight: 500,
-            color: "var(--text-secondary)",
-            letterSpacing: "0.1px",
-          }}
-        >
-          {label}
-        </span>
+      {/* Top: icon + trend badge */}
+      <div className="flex justify-between items-start" style={{ marginBottom: 16 }}>
         <div
           style={{
-            width: 34,
-            height: 34,
-            borderRadius: 10,
-            background: `${accentColor}14`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            padding: 12,
+            borderRadius: "var(--radius-md)",
+            background: "var(--accent-subtle)",
+            color: "var(--accent)",
           }}
         >
-          <Icon size={16} strokeWidth={2} style={{ color: accentColor }} />
+          <Icon size={22} strokeWidth={2} />
         </div>
+        {trend && (
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              color: trendColor,
+              background: trendBg,
+              padding: "4px 10px",
+              borderRadius: "var(--radius-full)",
+            }}
+          >
+            {trend}
+          </span>
+        )}
       </div>
 
-      {/* Value */}
-      <div
+      {/* Label */}
+      <p style={{ fontSize: 14, fontWeight: 500, color: "var(--text-muted)", marginBottom: 4 }}>
+        {label}
+      </p>
+
+      {/* Value — large bold */}
+      <h3
         className="num"
         dir="ltr"
         style={{
           fontSize: 30,
-          fontWeight: 700,
+          fontWeight: 800,
           color: "var(--text-primary)",
           letterSpacing: "-0.04em",
           lineHeight: 1,
-          marginBottom: 12,
+          marginBottom: 16,
         }}
       >
         {value}
-      </div>
+      </h3>
 
-      {/* Bottom: trend/status + sparkline */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-end",
-          justifyContent: "space-between",
-          marginTop: "auto",
-        }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          {st ? (
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 5,
-                background: st.bg,
-                color: st.text,
-                fontSize: 11,
-                fontWeight: 600,
-                padding: "3px 8px",
-                borderRadius: 20,
-                width: "fit-content",
-              }}
-            >
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  background: st.dot,
-                  flexShrink: 0,
-                }}
-              />
-              {st.label}
-            </span>
-          ) : trend !== undefined ? (
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 4,
-                background: trendBg,
-                color: trendColor,
-                fontSize: 11,
-                fontWeight: 600,
-                padding: "3px 8px",
-                borderRadius: 20,
-                width: "fit-content",
-              }}
-            >
-              {trendUp ? (
-                <TrendingUp size={11} strokeWidth={2.5} />
-              ) : (
-                <TrendingDown size={11} strokeWidth={2.5} />
-              )}
-              <span dir="ltr">
-                {trendUp ? "+" : ""}
-                {trend}%
-              </span>
-            </span>
-          ) : null}
-
-          {trendLabel && (
-            <span
-              style={{
-                fontSize: 11,
-                color: "var(--text-tertiary)",
-                fontWeight: 400,
-              }}
-            >
-              {trendLabel}
-            </span>
-          )}
-        </div>
-
-        {sparkData && sparkData.length >= 2 && (
-          <Sparkline data={sparkData} color={accentColor} width={72} height={28} />
-        )}
-      </div>
+      {/* Mini bar chart */}
+      {sparkData && sparkData.length >= 2 && (
+        <MiniBarChart data={sparkData} color={accentColor === "var(--accent)" ? "#00685f" : accentColor} />
+      )}
     </div>
   );
 }

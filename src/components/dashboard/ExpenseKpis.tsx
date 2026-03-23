@@ -22,22 +22,22 @@ interface ExpenseKpisProps {
 export function ExpenseKpis({
   thisMonth,
   thisMonthTrend,
-  vsLastMonth,
   totalYear,
   topCategory,
   entityCount,
   sparkData,
   labels,
 }: ExpenseKpisProps) {
+  const trendStr = thisMonthTrend >= 0 ? `+${thisMonthTrend}%` : `${thisMonthTrend}%`;
+
   return (
-    <section className="grid grid-cols-4 gap-4">
+    <section className="grid grid-cols-4" style={{ gap: "var(--space-gap)" }}>
       <KpiCard
         label={labels.expensesThisMonth}
         value={thisMonth}
-        trend={thisMonthTrend}
-        trendLabel={vsLastMonth}
+        trend={trendStr}
+        trendType={thisMonthTrend > 20 ? "down" : "up"}
         icon={Receipt}
-        status={thisMonthTrend > 20 ? "warning" : "ok"}
         accentColor="#f59e0b"
         sparkData={sparkData}
       />
@@ -45,7 +45,6 @@ export function ExpenseKpis({
         label={labels.expensesThisYear}
         value={totalYear}
         icon={Receipt}
-        accentColor="#0d9488"
         sparkData={sparkData}
       />
       <KpiCard
@@ -58,7 +57,6 @@ export function ExpenseKpis({
         label={labels.entityCount}
         value={entityCount}
         icon={Receipt}
-        accentColor="#0d9488"
       />
     </section>
   );

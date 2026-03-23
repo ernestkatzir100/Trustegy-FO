@@ -155,8 +155,8 @@ export function ExpensesClient({ entities }: Props) {
               borderRadius: 8,
               fontSize: 13,
               fontWeight: 600,
-              background: tab === tb.key ? "rgba(13,148,136,0.12)" : "transparent",
-              color: tab === tb.key ? "#0d9488" : "var(--text-secondary)",
+              background: tab === tb.key ? "var(--accent-subtle)" : "transparent",
+              color: tab === tb.key ? "var(--accent)" : "var(--text-secondary)",
               border: "none",
               cursor: "pointer",
             }}
