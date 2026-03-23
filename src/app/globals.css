@@ -60,6 +60,11 @@
   --cream-dark:      #f0f5f2;
   --cream-darker:    rgba(23, 29, 28, 0.06);
 
+  /* Additional semantic tokens */
+  --surface-raised:  #ffffff;
+  --accent-muted:    rgba(0, 104, 95, 0.10);
+  --border-default:  rgba(23, 29, 28, 0.10);
+
   /* Backward compat */
   --border-subtle:   var(--border);
   --accent-teal:     var(--accent);

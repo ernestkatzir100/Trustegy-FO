@@ -55,7 +55,7 @@ export default async function DashboardPage() {
         </div>
         {/* Tabs */}
         <nav className="flex gap-5" style={{ fontSize: 13, fontWeight: 600 }}>
-          <span style={{ color: "#0d9488", borderBottom: "2px solid #0d9488", paddingBottom: 4 }}>
+          <span style={{ color: "var(--accent)", borderBottom: "2px solid var(--accent)", paddingBottom: 4 }}>
             {t("summary")}
           </span>
           <span className="cursor-pointer transition-colors" style={{ color: "var(--text-tertiary)", paddingBottom: 4 }}>
@@ -158,10 +158,10 @@ export default async function DashboardPage() {
                     : "var(--bg-tint)";
               const iconColor =
                 activity.type === "income"
-                  ? "#0d9488"
+                  ? "var(--accent)"
                   : activity.type === "expense"
-                    ? "#ef4444"
-                    : "#64748b";
+                    ? "var(--danger)"
+                    : "var(--text-muted)";
               return (
                 <div key={i} className="flex gap-3">
                   <div
