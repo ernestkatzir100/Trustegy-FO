@@ -1,4 +1,5 @@
 import { formatILS } from "@/lib/money";
+import { CashflowChart } from "./_components/CashflowChart";
 
 /* ── Demo data ──────────────────────────────────────────── */
 const DEMO_CASHFLOW = [
@@ -199,6 +200,9 @@ export default function CashflowPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Cashflow Chart */}
+      <CashflowChart data={DEMO_CASHFLOW} />
     </div>
   );
 }

@@ -20,6 +20,7 @@ import { PerformanceChart } from "@/components/dashboard/PerformanceChart";
 import { AssetAllocation } from "@/components/dashboard/AssetAllocation";
 import { HoldingsTable } from "@/components/dashboard/HoldingsTable";
 import { ExpenseKpis } from "@/components/dashboard/ExpenseKpis";
+import { RevenueChart } from "@/components/dashboard/RevenueChart";
 
 export default async function DashboardPage() {
   const t = await getTranslations("dashboard");
@@ -131,6 +132,9 @@ export default async function DashboardPage() {
           }}
         />
       )}
+
+      {/* Revenue vs Expenses Chart */}
+      <RevenueChart />
 
       {/* Holdings + Recent Activity */}
       <section className="grid grid-cols-1 xl:grid-cols-4 gap-6">

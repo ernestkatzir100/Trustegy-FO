@@ -296,25 +296,66 @@ body {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 
+/* ═══ TYPOGRAPHY UTILITIES ════════════════════════════════ */
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+.table-header {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+  color: var(--text-primary);
+}
+.card-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.1px;
+}
+
 /* ═══ CARD SYSTEM — Stitch "ambient shadow" ══════════════ */
 .card-base {
-  background: var(--surface-card);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 100, 80, 0.08);
+  box-shadow: 0 2px 8px rgba(23, 29, 28, 0.06), 0 0 0 1px rgba(23,29,28,0.03);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .card-base:hover {
-  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(23, 29, 28, 0.10), 0 0 0 1px rgba(23,29,28,0.04);
+  transform: translateY(-2px);
 }
 
 .dashboard-card {
-  background: var(--surface-card);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 100, 80, 0.08);
+  box-shadow: 0 2px 8px rgba(23, 29, 28, 0.06), 0 0 0 1px rgba(23,29,28,0.03);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .dashboard-card:hover {
-  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(23, 29, 28, 0.10), 0 0 0 1px rgba(23,29,28,0.04);
+  transform: translateY(-2px);
 }
 
 /* ═══ ELEVATION ═══════════════════════════════════════════ */
@@ -331,6 +372,39 @@ body {
 /* ═══ STATUS BADGES ═══════════════════════════════════════ */
 .badge-ok { background: var(--success-subtle); color: var(--success); font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: var(--radius-full); }
 .badge-warning { background: var(--warning-subtle); color: var(--warning); font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: var(--radius-full); }
+
+/* ═══ BUTTONS ═════════════════════════════════════════════ */
+.btn-primary {
+  background: #00685f;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,104,95,0.25);
+  transition: all 0.15s ease;
+}
+.btn-primary:hover {
+  background: #005249;
+  box-shadow: 0 4px 12px rgba(0,104,95,0.35);
+  transform: translateY(-1px);
+}
+.btn-outline {
+  background: white;
+  color: var(--text-secondary);
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-outline:hover {
+  border-color: rgba(0,104,95,0.3);
+  color: #00685f;
+}
 
 /* ═══ TONAL SHIFT ═════════════════════════════════════════ */
 .tonal-shift { transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
