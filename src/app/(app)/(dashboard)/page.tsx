@@ -75,7 +75,7 @@ export default async function DashboardPage() {
         style={{
           padding: "16px 22px",
           background: "linear-gradient(135deg, var(--surface-card) 0%, rgba(13,148,136,0.06) 100%)",
-          border: "1px solid rgba(13,148,136,0.15)",
+          border: "1px solid var(--accent-teal-subtle)",
         }}
       >
         <div className="flex items-center gap-3">
@@ -148,10 +148,10 @@ export default async function DashboardPage() {
             {recentActivity.map((activity, i) => {
               const iconBg =
                 activity.type === "income"
-                  ? "rgba(13,148,136,0.12)"
+                  ? "var(--accent-teal-subtle)"
                   : activity.type === "expense"
-                    ? "rgba(239,68,68,0.12)"
-                    : "rgba(100,116,139,0.12)";
+                    ? "var(--status-red-bg)"
+                    : "var(--bg-tint)";
               const iconColor =
                 activity.type === "income"
                   ? "#0d9488"
@@ -192,7 +192,7 @@ export default async function DashboardPage() {
               fontSize: 13,
               fontWeight: 600,
               color: "var(--text-secondary)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              border: "1px solid var(--border-subtle)",
               borderRadius: 8,
               background: "transparent",
             }}

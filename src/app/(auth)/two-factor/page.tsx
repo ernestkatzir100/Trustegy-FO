@@ -69,8 +69,8 @@ export default function TwoFactorPage() {
             fontSize: 24,
             letterSpacing: "0.5em",
             borderRadius: 12,
-            background: "rgba(255,255,255,0.06)",
-            border: "1px solid rgba(255,255,255,0.08)",
+            background: "var(--bg-tint)",
+            border: "1px solid var(--border-subtle)",
             color: "var(--text-primary)",
             outline: "none",
           }}

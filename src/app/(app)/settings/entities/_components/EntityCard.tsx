@@ -48,7 +48,7 @@ export function EntityCard({ entity }: { entity: Entity }) {
 
   const cardStyle = {
     background: "var(--surface-card)",
-    border: "1px solid rgba(255,255,255,0.08)",
+    border: "1px solid var(--border-subtle)",
   };
 
   if (editing) {
@@ -94,7 +94,7 @@ export function EntityCard({ entity }: { entity: Entity }) {
         <button
           onClick={() => setEditing(true)}
           className="flex items-center gap-1.5 transition-colors"
-          style={{ padding: "4px 10px", borderRadius: 8, fontSize: 11, color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.1)", background: "transparent" }}
+          style={{ padding: "4px 10px", borderRadius: 8, fontSize: 11, color: "var(--text-secondary)", border: "1px solid var(--border-strong)", background: "transparent" }}
         >
           <Pencil style={{ width: 12, height: 12 }} />
           {t("edit")}

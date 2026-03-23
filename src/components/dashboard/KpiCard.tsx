@@ -69,9 +69,9 @@ interface KpiCardProps {
 }
 
 const statusStyles: Record<Status, { dot: string; bg: string; text: string; label: string }> = {
-  ok: { dot: "#22c55e", bg: "rgba(34,197,94,0.15)", text: "#22c55e", label: "תקין" },
-  warning: { dot: "#f59e0b", bg: "rgba(245,158,11,0.15)", text: "#f59e0b", label: "דורש תשומת לב" },
-  danger: { dot: "#ef4444", bg: "rgba(239,68,68,0.15)", text: "#ef4444", label: "דחוף" },
+  ok: { dot: "#22c55e", bg: "var(--status-green-bg)", text: "#22c55e", label: "תקין" },
+  warning: { dot: "#f59e0b", bg: "var(--status-amber-bg)", text: "#f59e0b", label: "דורש תשומת לב" },
+  danger: { dot: "#ef4444", bg: "var(--status-red-bg)", text: "#ef4444", label: "דחוף" },
 };
 
 export function KpiCard({
@@ -86,7 +86,7 @@ export function KpiCard({
 }: KpiCardProps) {
   const trendUp = trend !== undefined && trend >= 0;
   const trendColor = trend === undefined ? "#94a3b8" : trendUp ? "#22c55e" : "#ef4444";
-  const trendBg = trend === undefined ? "rgba(148,163,184,0.15)" : trendUp ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)";
+  const trendBg = trend === undefined ? "var(--bg-muted)" : trendUp ? "var(--status-green-bg)" : "var(--status-red-bg)";
   const st = status ? statusStyles[status] : null;
 
   return (

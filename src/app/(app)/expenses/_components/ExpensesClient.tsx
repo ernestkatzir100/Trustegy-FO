@@ -38,8 +38,8 @@ interface Props {
 type Tab = "list" | "analysis" | "recurring";
 
 const inputStyle = {
-  background: "rgba(255,255,255,0.06)",
-  border: "1px solid rgba(255,255,255,0.08)",
+  background: "var(--bg-tint)",
+  border: "1px solid var(--border-subtle)",
   borderRadius: 8,
   color: "var(--text-primary)",
   fontSize: 13,
@@ -144,7 +144,7 @@ export function ExpensesClient({ entities }: Props) {
   return (
     <div className="flex flex-col gap-6">
       {/* Tabs */}
-      <div className="flex gap-1 rounded-xl p-1 self-start" style={{ background: "rgba(255,255,255,0.04)" }}>
+      <div className="flex gap-1 rounded-xl p-1 self-start" style={{ background: "var(--bg-muted)" }}>
         {tabs.map((tb) => (
           <button
             key={tb.key}
@@ -228,7 +228,7 @@ export function ExpensesClient({ entities }: Props) {
               <button
                 onClick={() => setShowImport(true)}
                 className="flex items-center gap-1.5 transition-colors"
-                style={{ height: 36, padding: "0 12px", borderRadius: 8, fontSize: 13, color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.1)", background: "transparent", cursor: "pointer" }}
+                style={{ height: 36, padding: "0 12px", borderRadius: 8, fontSize: 13, color: "var(--text-secondary)", border: "1px solid var(--border-strong)", background: "transparent", cursor: "pointer" }}
               >
                 <Upload style={{ width: 16, height: 16 }} />
                 {t("importFile")}
@@ -246,7 +246,7 @@ export function ExpensesClient({ entities }: Props) {
 
           {/* Add form */}
           {showAddForm && (
-            <div className="rounded-2xl p-5 max-w-lg" style={{ background: "var(--surface-card)", border: "1px solid rgba(13,148,136,0.3)" }}>
+            <div className="rounded-2xl p-5 max-w-lg" style={{ background: "var(--surface-card)", border: "1px solid var(--accent-teal)" }}>
               <h3 style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)", marginBottom: 12 }}>
                 {t("addExpense")}
               </h3>
@@ -262,7 +262,7 @@ export function ExpensesClient({ entities }: Props) {
 
           {/* Edit form */}
           {editingExpense && (
-            <div className="rounded-2xl p-5 max-w-lg" style={{ background: "var(--surface-card)", border: "1px solid rgba(13,148,136,0.3)" }}>
+            <div className="rounded-2xl p-5 max-w-lg" style={{ background: "var(--surface-card)", border: "1px solid var(--accent-teal)" }}>
               <h3 style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)", marginBottom: 12 }}>
                 {t("editExpense")}
               </h3>
@@ -295,18 +295,18 @@ export function ExpensesClient({ entities }: Props) {
           ) : expenses.length === 0 ? (
             <div
               className="flex flex-col items-center justify-center py-20 rounded-2xl"
-              style={{ background: "var(--surface-card)", border: "1px solid rgba(255,255,255,0.08)" }}
+              style={{ background: "var(--surface-card)", border: "1px solid var(--border-subtle)" }}
             >
-              <div className="flex items-center justify-center mb-4" style={{ width: 48, height: 48, borderRadius: 16, background: "rgba(255,255,255,0.06)" }}>
+              <div className="flex items-center justify-center mb-4" style={{ width: 48, height: 48, borderRadius: 16, background: "var(--bg-tint)" }}>
                 <Receipt style={{ width: 24, height: 24, color: "var(--text-tertiary)" }} />
               </div>
               <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("noExpenses")}</p>
             </div>
           ) : (
-            <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface-card)", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface-card)", border: "1px solid var(--border-subtle)" }}>
               <table className="w-full" style={{ fontSize: 13 }}>
                 <thead>
-                  <tr style={{ background: "rgba(255,255,255,0.03)" }}>
+                  <tr style={{ background: "var(--bg-subtle)" }}>
                     <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("date")}</th>
                     <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("description")}</th>
                     <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("vendor")}</th>
@@ -323,8 +323,8 @@ export function ExpensesClient({ entities }: Props) {
                     <tr
                       key={expense.id}
                       className="group transition-colors"
-                      style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
+                      style={{ borderTop: "1px solid var(--bg-tint)" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                     >
                       <td className="p-3 font-mono" dir="ltr" style={{ fontSize: 12, color: "var(--text-primary)" }}>{expense.date}</td>

@@ -98,7 +98,7 @@ export function PortfolioHero({
               width: 34,
               height: 34,
               borderRadius: 10,
-              background: "rgba(13,148,136,0.12)",
+              background: "var(--accent-teal-subtle)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -108,7 +108,7 @@ export function PortfolioHero({
           </div>
         </div>
         <div>
-          <div style={{ width: "100%", height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 20, marginTop: 16, overflow: "hidden" }}>
+          <div style={{ width: "100%", height: 6, background: "var(--bg-tint)", borderRadius: 20, marginTop: 16, overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${riskPercent}%`, background: "#0d9488", borderRadius: 20 }} />
           </div>
           <p style={{ fontSize: 12, color: "var(--text-tertiary)", marginTop: 8 }}>{riskNote}</p>
@@ -131,7 +131,7 @@ export function PortfolioHero({
               width: 34,
               height: 34,
               borderRadius: 10,
-              background: "rgba(13,148,136,0.12)",
+              background: "var(--accent-teal-subtle)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

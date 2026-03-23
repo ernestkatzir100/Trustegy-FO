@@ -74,7 +74,7 @@ export function TwoFactorSetup() {
 
   const cardStyle = {
     background: "var(--surface-card)",
-    border: "1px solid rgba(255,255,255,0.08)",
+    border: "1px solid var(--border-subtle)",
   };
 
   if (step === "loading") {
@@ -90,7 +90,7 @@ export function TwoFactorSetup() {
     return (
       <div className="rounded-2xl p-5 flex flex-col gap-4" style={cardStyle}>
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 12, background: "rgba(34,197,94,0.15)" }}>
+          <div className="flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 12, background: "var(--status-green-bg)" }}>
             <Check style={{ width: 16, height: 16, color: "#22c55e" }} />
           </div>
           <div>
@@ -164,7 +164,7 @@ export function TwoFactorSetup() {
               <p style={{ fontSize: 11, color: "var(--text-tertiary)" }}>{t("manualEntry")}</p>
               <code
                 className="select-all break-all font-mono"
-                style={{ fontSize: 12, padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", color: "var(--text-primary)" }}
+                style={{ fontSize: 12, padding: "8px 12px", borderRadius: 8, background: "var(--bg-tint)", border: "1px solid var(--border-subtle)", color: "var(--text-primary)" }}
               >
                 {manualSecret}
               </code>
@@ -205,8 +205,8 @@ export function TwoFactorSetup() {
               fontSize: 22,
               letterSpacing: "0.5em",
               borderRadius: 12,
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.08)",
+              background: "var(--bg-tint)",
+              border: "1px solid var(--border-subtle)",
               color: "var(--text-primary)",
               outline: "none",
             }}
@@ -222,7 +222,7 @@ export function TwoFactorSetup() {
               type="button"
               onClick={() => { setStep("scan"); setCode(""); setError(null); }}
               className="transition-colors"
-              style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.1)", background: "transparent" }}
+              style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, color: "var(--text-secondary)", border: "1px solid var(--border-strong)", background: "transparent" }}
             >
               {t("back")}
             </button>

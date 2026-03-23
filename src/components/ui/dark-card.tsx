@@ -15,7 +15,7 @@ export function DarkCard({
     <div
       style={{
         background: "var(--surface-card)",
-        border: "1px solid var(--border-subtle, rgba(255,255,255,0.08))",
+        border: "1px solid var(--border-subtle, var(--border-subtle))",
         borderRadius: "16px",
         padding: "20px 24px",
         transition: hover

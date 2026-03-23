@@ -45,9 +45,9 @@ interface TopVendor {
 
 const tooltipStyle = {
   borderRadius: 12,
-  border: "1px solid rgba(255,255,255,0.1)",
+  border: "1px solid var(--border-strong)",
   fontSize: 12,
-  background: "#1E2538",
+  background: "var(--surface-elevated)",
   color: "#F1F5F9",
 };
 
@@ -146,7 +146,7 @@ export function CategoryAnalysis() {
       {data.length === 0 ? (
         <div
           className="flex items-center justify-center py-16 rounded-2xl"
-          style={{ background: "var(--surface-card)", border: "1px solid rgba(255,255,255,0.08)" }}
+          style={{ background: "var(--surface-card)", border: "1px solid var(--border-subtle)" }}
         >
           <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("noExpenses")}</p>
         </div>
@@ -209,14 +209,14 @@ export function CategoryAnalysis() {
 
           {/* Category breakdown table */}
           <div className="card-base elev-1 overflow-hidden">
-            <div className="flex items-center justify-between" style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+            <div className="flex items-center justify-between" style={{ padding: "14px 20px", borderBottom: "1px solid var(--border-subtle)" }}>
               <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>
                 פירוט לפי קטגוריה
               </h3>
             </div>
             <table className="w-full" style={{ fontSize: 13 }}>
               <thead>
-                <tr style={{ background: "rgba(255,255,255,0.03)" }}>
+                <tr style={{ background: "var(--bg-subtle)" }}>
                   <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("category")}</th>
                   <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("totalThisYear")}</th>
                   <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("totalPercent")}</th>
@@ -233,15 +233,15 @@ export function CategoryAnalysis() {
                   return (
                     <tr
                       key={row.category}
-                      style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
+                      style={{ borderTop: "1px solid var(--bg-tint)" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                     >
                       <td className="p-3"><CategoryBadge category={row.category as ExpenseCategory} /></td>
                       <td className="p-3 font-mono" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(row.total)}</td>
                       <td className="p-3">
                         <div className="flex items-center gap-2">
-                          <div className="overflow-hidden" style={{ width: 64, height: 6, borderRadius: 20, background: "rgba(255,255,255,0.06)" }}>
+                          <div className="overflow-hidden" style={{ width: 64, height: 6, borderRadius: 20, background: "var(--bg-tint)" }}>
                             <div style={{ height: "100%", borderRadius: 20, width: `${percent}%`, background: catConfig?.hex ?? "#9ca3af" }} />
                           </div>
                           <span dir="ltr" style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{percent}%</span>
@@ -259,14 +259,14 @@ export function CategoryAnalysis() {
           {/* Top vendors table */}
           {vendors.length > 0 && (
             <div className="card-base elev-1 overflow-hidden">
-              <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+              <div style={{ padding: "14px 20px", borderBottom: "1px solid var(--border-subtle)" }}>
                 <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>
                   ספקים מובילים
                 </h3>
               </div>
               <table className="w-full" style={{ fontSize: 13 }}>
                 <thead>
-                  <tr style={{ background: "rgba(255,255,255,0.03)" }}>
+                  <tr style={{ background: "var(--bg-subtle)" }}>
                     <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>ספק</th>
                     <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>מס&apos; עסקאות</th>
                     <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>סה&quot;כ</th>
@@ -278,8 +278,8 @@ export function CategoryAnalysis() {
                   {vendors.map((v, i) => (
                     <tr
                       key={i}
-                      style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
+                      style={{ borderTop: "1px solid var(--bg-tint)" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg-hover)"; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                     >
                       <td className="p-3" style={{ fontWeight: 600, color: "var(--text-primary)" }}>{v.vendorName}</td>

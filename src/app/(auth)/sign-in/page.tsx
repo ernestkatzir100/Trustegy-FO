@@ -11,8 +11,8 @@ export default async function SignInPage() {
     width: "100%",
     height: 44,
     borderRadius: 12,
-    background: "rgba(255,255,255,0.06)",
-    border: "1px solid rgba(255,255,255,0.08)",
+    background: "var(--bg-tint)",
+    border: "1px solid var(--border-subtle)",
     padding: "0 16px",
     fontSize: 14,
     color: "var(--text-primary)",
@@ -78,9 +78,9 @@ export default async function SignInPage() {
 
       {isDev && (
         <div className="flex items-center gap-3 w-full">
-          <div className="flex-1" style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
+          <div className="flex-1" style={{ height: 1, background: "var(--border-subtle)" }} />
           <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>או</span>
-          <div className="flex-1" style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
+          <div className="flex-1" style={{ height: 1, background: "var(--border-subtle)" }} />
         </div>
       )}
 
@@ -93,8 +93,8 @@ export default async function SignInPage() {
             style={{
               height: 44,
               borderRadius: 12,
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              background: "var(--bg-tint)",
+              border: "1px solid var(--border-strong)",
               fontSize: 14,
               fontWeight: 600,
               color: "var(--text-primary)",
@@ -130,8 +130,8 @@ export default async function SignInPage() {
             style={{
               height: 44,
               borderRadius: 12,
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              background: "var(--bg-tint)",
+              border: "1px solid var(--border-strong)",
               fontSize: 14,
               fontWeight: 600,
               color: "var(--text-primary)",

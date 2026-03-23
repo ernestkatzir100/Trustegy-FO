@@ -55,7 +55,7 @@ export function EntityList({
       </div>
 
       {showForm ? (
-        <div className="rounded-2xl p-5 max-w-md" style={{ background: "var(--surface-card)", border: "1px solid rgba(13,148,136,0.3)" }}>
+        <div className="rounded-2xl p-5 max-w-md" style={{ background: "var(--surface-card)", border: "1px solid var(--accent-teal)" }}>
           <EntityForm
             onSubmit={handleCreate}
             onCancel={() => { setShowForm(false); setFormError(null); }}

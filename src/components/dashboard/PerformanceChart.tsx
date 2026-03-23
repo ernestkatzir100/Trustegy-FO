@@ -22,7 +22,7 @@ export function PerformanceChart() {
             השוואה למדד S&amp;P 500 ואינפלציה
           </p>
         </div>
-        <div className="flex p-1 rounded-lg" style={{ background: "rgba(255,255,255,0.04)" }}>
+        <div className="flex p-1 rounded-lg" style={{ background: "var(--bg-muted)" }}>
           {TIME_RANGES.map((range) => (
             <button
               key={range.key}
@@ -35,7 +35,7 @@ export function PerformanceChart() {
                 fontWeight: 700,
                 borderRadius: 6,
                 color: activeRange === range.key ? "#0d9488" : "var(--text-tertiary)",
-                background: activeRange === range.key ? "rgba(13,148,136,0.12)" : "transparent",
+                background: activeRange === range.key ? "var(--accent-teal-subtle)" : "transparent",
                 boxShadow: "none",
               }}
             >
@@ -50,7 +50,7 @@ export function PerformanceChart() {
         {/* Grid lines */}
         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none" style={{ opacity: 0.15 }}>
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.15)", width: "100%" }} />
+            <div key={i} style={{ borderBottom: "1px solid var(--grid-line)", width: "100%" }} />
           ))}
         </div>
 

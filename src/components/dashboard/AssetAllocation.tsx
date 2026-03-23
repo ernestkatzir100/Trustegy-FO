@@ -30,7 +30,7 @@ export function AssetAllocation({ slices, totalAssets }: AssetAllocationProps) {
       {/* Donut chart */}
       <div className="relative mx-auto" style={{ width: 180, height: 180, marginBottom: 28 }}>
         <svg className="w-full h-full" viewBox="0 0 36 36" style={{ transform: "rotate(-90deg)" }}>
-          <circle cx="18" cy="18" r="16" fill="transparent" stroke="rgba(255,255,255,0.06)" strokeWidth="3.5" />
+          <circle cx="18" cy="18" r="16" fill="transparent" stroke="var(--bg-tint)" strokeWidth="3.5" />
           {segments.map((seg, i) => (
             <circle
               key={i}

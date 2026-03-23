@@ -29,7 +29,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html dir="rtl" lang="he">
+    <html dir="rtl" lang="he" suppressHydrationWarning>
+      <head>
+        {/* Anti-flash: apply stored theme before first paint. Content is a static string — no user input, safe from XSS. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('trustegy-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body
         className={`${heebo.variable} ${ibmPlexMono.variable} font-sans antialiased bg-background text-foreground`}
       >

@@ -17,8 +17,8 @@ const inputStyle = {
   height: 36,
   padding: "0 12px",
   borderRadius: 8,
-  background: "rgba(255,255,255,0.06)",
-  border: "1px solid rgba(255,255,255,0.08)",
+  background: "var(--bg-tint)",
+  border: "1px solid var(--border-subtle)",
   fontSize: 13,
   color: "var(--text-primary)",
   outline: "none",
@@ -86,7 +86,7 @@ export function EntityForm({
           type="button"
           onClick={onCancel}
           className="transition-colors"
-          style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.1)", background: "transparent" }}
+          style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, color: "var(--text-secondary)", border: "1px solid var(--border-strong)", background: "transparent" }}
         >
           {t("cancel")}
         </button>

@@ -24,11 +24,11 @@ export default async function SettingsPage() {
         <Link
           href="/settings/entities"
           className="rounded-2xl p-4 transition-colors flex items-center gap-3 group"
-          style={{ background: "var(--surface-card)", border: "1px solid rgba(255,255,255,0.08)" }}
+          style={{ background: "var(--surface-card)", border: "1px solid var(--border-subtle)" }}
         >
           <div
             className="flex items-center justify-center group-hover:opacity-80 transition-opacity"
-            style={{ width: 36, height: 36, borderRadius: 12, background: "rgba(255,255,255,0.06)" }}
+            style={{ width: 36, height: 36, borderRadius: 12, background: "var(--bg-tint)" }}
           >
             <Building2 style={{ width: 18, height: 18, color: "var(--text-secondary)" }} />
           </div>

@@ -17,8 +17,8 @@ interface ImportModalProps {
 type Step = 1 | 2 | 3;
 
 const inputStyle = {
-  background: "rgba(255,255,255,0.06)",
-  border: "1px solid rgba(255,255,255,0.08)",
+  background: "var(--bg-tint)",
+  border: "1px solid var(--border-subtle)",
   borderRadius: 8,
   color: "var(--text-primary)",
   outline: "none",
@@ -98,9 +98,9 @@ export function ImportModal({ onClose }: ImportModalProps) {
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}>
-      <div className="w-full max-w-3xl max-h-[85vh] flex flex-col" style={{ background: "#1A2035", borderRadius: 16, border: "1px solid rgba(255,255,255,0.1)" }}>
+      <div className="w-full max-w-3xl max-h-[85vh] flex flex-col" style={{ background: "var(--surface-card)", borderRadius: 16, border: "1px solid var(--border-strong)" }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-primary)" }}>
             {t("import_title")}
           </h2>
@@ -136,7 +136,7 @@ export function ImportModal({ onClose }: ImportModalProps) {
                         padding: "8px 16px",
                         borderRadius: 8,
                         fontSize: 13,
-                        border: source === opt.value ? "1px solid rgba(13,148,136,0.4)" : "1px solid rgba(255,255,255,0.08)",
+                        border: source === opt.value ? "1px solid rgba(13,148,136,0.4)" : "1px solid var(--border-subtle)",
                         background: source === opt.value ? "rgba(13,148,136,0.12)" : "transparent",
                         color: source === opt.value ? "#0d9488" : "var(--text-secondary)",
                         fontWeight: source === opt.value ? 600 : 400,
@@ -157,7 +157,7 @@ export function ImportModal({ onClose }: ImportModalProps) {
                 <div
                   onClick={() => fileRef.current?.click()}
                   className="flex flex-col items-center justify-center gap-2 py-10 rounded-xl cursor-pointer transition-colors"
-                  style={{ border: "2px dashed rgba(255,255,255,0.1)" }}
+                  style={{ border: "2px dashed var(--border-strong)" }}
                 >
                   <Upload style={{ width: 32, height: 32, color: "var(--text-tertiary)" }} />
                   <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
@@ -209,10 +209,10 @@ export function ImportModal({ onClose }: ImportModalProps) {
               </div>
 
               {/* Preview table */}
-              <div className="overflow-auto rounded-xl" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
+              <div className="overflow-auto rounded-xl" style={{ border: "1px solid var(--border-subtle)" }}>
                 <table className="w-full" style={{ fontSize: 12 }}>
                   <thead>
-                    <tr style={{ background: "rgba(255,255,255,0.03)" }}>
+                    <tr style={{ background: "var(--bg-subtle)" }}>
                       <th className="text-start p-2" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("import_include")}</th>
                       <th className="text-start p-2" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("date")}</th>
                       <th className="text-start p-2" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("description")}</th>
@@ -226,7 +226,7 @@ export function ImportModal({ onClose }: ImportModalProps) {
                       <tr
                         key={i}
                         style={{
-                          borderTop: "1px solid rgba(255,255,255,0.06)",
+                          borderTop: "1px solid var(--bg-tint)",
                           opacity: row.included ? 1 : 0.4,
                         }}
                       >
@@ -292,12 +292,12 @@ export function ImportModal({ onClose }: ImportModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderTop: "1px solid var(--border-subtle)" }}>
           {step === 2 ? (
             <button
               onClick={() => setStep(1)}
               className="transition-colors"
-              style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.1)", background: "transparent", cursor: "pointer" }}
+              style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, color: "var(--text-secondary)", border: "1px solid var(--border-strong)", background: "transparent", cursor: "pointer" }}
             >
               {t("import_back")}
             </button>

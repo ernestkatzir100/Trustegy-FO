@@ -15,9 +15,9 @@ interface HoldingsTableProps {
 }
 
 const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
-  active: { label: "פעיל", bg: "rgba(13,148,136,0.15)", color: "#0d9488" },
-  pending: { label: "בהמתנה", bg: "rgba(245,158,11,0.15)", color: "#f59e0b" },
-  watching: { label: "במעקב", bg: "rgba(100,116,139,0.15)", color: "#94a3b8" },
+  active: { label: "פעיל", bg: "var(--accent-teal-subtle)", color: "#0d9488" },
+  pending: { label: "בהמתנה", bg: "var(--status-amber-bg)", color: "#f59e0b" },
+  watching: { label: "במעקב", bg: "var(--bg-muted)", color: "#94a3b8" },
 };
 
 export function HoldingsTable({ holdings }: HoldingsTableProps) {
@@ -25,7 +25,7 @@ export function HoldingsTable({ holdings }: HoldingsTableProps) {
     <div className="card-base elev-1 overflow-hidden xl:col-span-3">
       <div
         className="flex justify-between items-center"
-        style={{ padding: "20px 24px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+        style={{ padding: "20px 24px", borderBottom: "1px solid var(--border-subtle)" }}
       >
         <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
           פירוט החזקות
@@ -41,7 +41,7 @@ export function HoldingsTable({ holdings }: HoldingsTableProps) {
 
       <table className="w-full text-start" style={{ borderCollapse: "collapse" }}>
         <thead>
-          <tr style={{ background: "rgba(255,255,255,0.03)" }}>
+          <tr style={{ background: "var(--bg-subtle)" }}>
             {["שם הנכס", "קטגוריה", "שווי נוכחי", "תשואה כוללת", "סטטוס"].map((header) => (
               <th
                 key={header}
@@ -66,8 +66,8 @@ export function HoldingsTable({ holdings }: HoldingsTableProps) {
               <tr
                 key={i}
                 className="transition-colors"
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.02)"; }}
+                style={{ borderBottom: "1px solid var(--border-subtle)" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
               >
                 <td style={{ padding: "16px 24px", fontWeight: 700, color: "var(--text-primary)", fontSize: 14 }}>
