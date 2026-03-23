@@ -1,23 +1,17 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 
 type Theme = "light" | "dark";
 
 interface ThemeContextValue {
   theme: Theme;
-  toggleTheme: () => void;
+  toggle: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
   theme: "light",
-  toggleTheme: () => {},
+  toggle: () => {},
 });
 
 const STORAGE_KEY = "trustegy-theme";
@@ -25,26 +19,29 @@ const STORAGE_KEY = "trustegy-theme";
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
-  // Read stored preference on mount
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-    if (stored === "dark" || stored === "light") {
-      setTheme(stored);
-      document.documentElement.setAttribute("data-theme", stored);
+    const saved = localStorage.getItem(STORAGE_KEY) as Theme | null;
+    if (saved === "dark") {
+      setTheme("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
     }
   }, []);
 
-  const toggleTheme = useCallback(() => {
+  const toggle = useCallback(() => {
     setTheme((prev) => {
       const next = prev === "light" ? "dark" : "light";
       localStorage.setItem(STORAGE_KEY, next);
-      document.documentElement.setAttribute("data-theme", next);
+      if (next === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+      }
       return next;
     });
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggle }}>
       {children}
     </ThemeContext.Provider>
   );

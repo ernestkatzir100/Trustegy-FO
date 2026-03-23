@@ -7,12 +7,15 @@ import "./globals.css";
 const heebo = Heebo({
   variable: "--font-heebo",
   subsets: ["hebrew", "latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -29,9 +32,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html dir="rtl" lang="he" suppressHydrationWarning>
+    <html dir="rtl" lang="he" className={heebo.variable} suppressHydrationWarning>
       <head>
-        {/* Anti-flash: apply stored theme before first paint. Content is a static string — no user input, safe from XSS. */}
+        {/* Anti-flash: apply stored theme before first paint. Static string — no XSS risk. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('trustegy-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}})()`,
@@ -39,7 +42,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${heebo.variable} ${ibmPlexMono.variable} font-sans antialiased bg-background text-foreground`}
+        className={`${ibmPlexMono.variable} font-sans antialiased bg-background text-foreground`}
       >
         <Providers>{children}</Providers>
       </body>
