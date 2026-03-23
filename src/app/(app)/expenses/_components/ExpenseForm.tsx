@@ -41,6 +41,17 @@ interface ExpenseFormProps {
   submitting: boolean;
 }
 
+const inputStyle = {
+  height: 36,
+  padding: "0 12px",
+  borderRadius: 8,
+  background: "rgba(255,255,255,0.06)",
+  border: "1px solid rgba(255,255,255,0.08)",
+  fontSize: 13,
+  color: "var(--text-primary)",
+  outline: "none",
+} as const;
+
 export function ExpenseForm({
   defaultValues,
   entities,
@@ -66,20 +77,14 @@ export function ExpenseForm({
     },
   });
 
-  const inputClass =
-    "h-9 px-3 rounded-lg border border-cream-darker bg-cream text-[13px] text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent";
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
       {/* Category */}
       <div className="flex flex-col gap-1">
-        <label
-          htmlFor="category"
-          className="text-[12px] font-medium text-text-secondary"
-        >
+        <label htmlFor="category" style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>
           {t("category")} *
         </label>
-        <select id="category" {...register("category")} className={inputClass}>
+        <select id="category" {...register("category")} style={inputStyle}>
           {(
             Object.entries(EXPENSE_CATEGORIES) as [ExpenseCategory, { label: string }][]
           ).map(([key, { label }]) => (
@@ -89,51 +94,30 @@ export function ExpenseForm({
           ))}
         </select>
         {errors.category && (
-          <p className="text-status-red text-[11px]">
-            {errors.category.message}
-          </p>
+          <p style={{ fontSize: 11, color: "#ef4444" }}>{errors.category.message}</p>
         )}
       </div>
 
       {/* Description */}
       <div className="flex flex-col gap-1">
-        <label
-          htmlFor="description"
-          className="text-[12px] font-medium text-text-secondary"
-        >
+        <label htmlFor="description" style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>
           {t("description")}
         </label>
-        <input
-          id="description"
-          {...register("description")}
-          className={inputClass}
-          placeholder={t("descriptionPlaceholder")}
-        />
+        <input id="description" {...register("description")} style={inputStyle} placeholder={t("descriptionPlaceholder")} />
       </div>
 
       {/* Vendor */}
       <div className="flex flex-col gap-1">
-        <label
-          htmlFor="vendorName"
-          className="text-[12px] font-medium text-text-secondary"
-        >
+        <label htmlFor="vendorName" style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>
           {t("vendor")}
         </label>
-        <input
-          id="vendorName"
-          {...register("vendorName")}
-          className={inputClass}
-          placeholder={t("vendorPlaceholder")}
-        />
+        <input id="vendorName" {...register("vendorName")} style={inputStyle} placeholder={t("vendorPlaceholder")} />
       </div>
 
       {/* Amount + Date row */}
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1">
-          <label
-            htmlFor="amount"
-            className="text-[12px] font-medium text-text-secondary"
-          >
+          <label htmlFor="amount" style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>
             {t("amount")} *
           </label>
           <input
@@ -141,34 +125,21 @@ export function ExpenseForm({
             type="number"
             step="0.01"
             {...register("amount", { valueAsNumber: true })}
-            className={inputClass}
+            style={inputStyle}
             placeholder={t("amountPlaceholder")}
             dir="ltr"
           />
           {errors.amount && (
-            <p className="text-status-red text-[11px]">
-              {errors.amount.message}
-            </p>
+            <p style={{ fontSize: 11, color: "#ef4444" }}>{errors.amount.message}</p>
           )}
         </div>
         <div className="flex flex-col gap-1">
-          <label
-            htmlFor="date"
-            className="text-[12px] font-medium text-text-secondary"
-          >
+          <label htmlFor="date" style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>
             {t("date")} *
           </label>
-          <input
-            id="date"
-            type="date"
-            {...register("date")}
-            className={inputClass}
-            dir="ltr"
-          />
+          <input id="date" type="date" {...register("date")} style={inputStyle} dir="ltr" />
           {errors.date && (
-            <p className="text-status-red text-[11px]">
-              {errors.date.message}
-            </p>
+            <p style={{ fontSize: 11, color: "#ef4444" }}>{errors.date.message}</p>
           )}
         </div>
       </div>
@@ -176,13 +147,10 @@ export function ExpenseForm({
       {/* Entity */}
       {entities.length > 0 && (
         <div className="flex flex-col gap-1">
-          <label
-            htmlFor="entityId"
-            className="text-[12px] font-medium text-text-secondary"
-          >
+          <label htmlFor="entityId" style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>
             {t("entity")}
           </label>
-          <select id="entityId" {...register("entityId")} className={inputClass}>
+          <select id="entityId" {...register("entityId")} style={inputStyle}>
             <option value="">{t("selectEntity")}</option>
             {entities.map((e) => (
               <option key={e.id} value={e.id}>
@@ -198,25 +166,27 @@ export function ExpenseForm({
         <input
           type="checkbox"
           {...register("isRecurring")}
-          className="w-4 h-4 rounded border-cream-darker text-gold focus:ring-gold"
+          style={{ width: 16, height: 16, borderRadius: 4, accentColor: "#0d9488" }}
         />
-        <span className="text-[13px] text-text-primary">{t("recurring")}</span>
+        <span style={{ fontSize: 13, color: "var(--text-primary)" }}>{t("recurring")}</span>
       </label>
 
-      {error && <p className="text-status-red text-[12px]">{error}</p>}
+      {error && <p style={{ fontSize: 12, color: "#ef4444" }}>{error}</p>}
 
       <div className="flex gap-2 mt-1">
         <button
           type="submit"
           disabled={submitting}
-          className="px-3 py-1.5 rounded-lg text-[12px] font-medium bg-gold text-white hover:bg-gold-dark transition-colors disabled:opacity-50"
+          className="transition-colors disabled:opacity-50"
+          style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600, background: "var(--accent-teal)", color: "#fff", border: "none" }}
         >
           {submitting ? t("saving") : tc("save")}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1.5 rounded-lg text-[12px] text-text-secondary border border-cream-darker hover:bg-cream-dark transition-colors"
+          className="transition-colors"
+          style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.1)", background: "transparent" }}
         >
           {tc("cancel")}
         </button>

@@ -72,35 +72,41 @@ export function TwoFactorSetup() {
     setStep("idle");
   }
 
+  const cardStyle = {
+    background: "var(--surface-card)",
+    border: "1px solid rgba(255,255,255,0.08)",
+  };
+
   if (step === "loading") {
     return (
-      <div className="rounded-2xl border border-cream-darker bg-white p-5 shadow-sm flex items-center gap-3">
-        <Loader2 className="w-4 h-4 text-text-tertiary animate-spin" />
-        <p className="text-text-secondary text-[13px]">{t("loading")}</p>
+      <div className="rounded-2xl p-5 flex items-center gap-3" style={cardStyle}>
+        <Loader2 style={{ width: 16, height: 16, color: "var(--text-tertiary)" }} className="animate-spin" />
+        <p style={{ fontSize: 13, color: "var(--text-secondary)" }}>{t("loading")}</p>
       </div>
     );
   }
 
   if (step === "enabled") {
     return (
-      <div className="rounded-2xl border border-cream-darker bg-white p-5 shadow-sm flex flex-col gap-4">
+      <div className="rounded-2xl p-5 flex flex-col gap-4" style={cardStyle}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-status-green/10 flex items-center justify-center">
-            <Check className="w-4 h-4 text-status-green" />
+          <div className="flex items-center justify-center" style={{ width: 32, height: 32, borderRadius: 12, background: "rgba(34,197,94,0.15)" }}>
+            <Check style={{ width: 16, height: 16, color: "#22c55e" }} />
           </div>
           <div>
-            <p className="text-[14px] font-medium text-text-primary">
+            <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>
               {t("enabledTitle")}
             </p>
-            <p className="text-[12px] text-text-secondary">
+            <p style={{ fontSize: 12, color: "var(--text-secondary)" }}>
               {t("enabledDescription")}
             </p>
           </div>
         </div>
-        {error && <p className="text-status-red text-[12px]">{error}</p>}
+        {error && <p style={{ fontSize: 12, color: "#ef4444" }}>{error}</p>}
         <button
           onClick={handleDisable}
-          className="self-start px-3 py-1.5 rounded-lg text-[12px] text-status-red border border-status-red/20 hover:bg-status-red/5 transition-colors"
+          className="self-start transition-colors"
+          style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", background: "transparent" }}
         >
           {t("disable")}
         </button>
@@ -110,19 +116,20 @@ export function TwoFactorSetup() {
 
   if (step === "idle") {
     return (
-      <div className="rounded-2xl border border-cream-darker bg-white p-5 shadow-sm flex flex-col gap-4">
+      <div className="rounded-2xl p-5 flex flex-col gap-4" style={cardStyle}>
         <div>
-          <p className="text-[14px] font-medium text-text-primary">
+          <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>
             {t("setupTitle")}
           </p>
-          <p className="text-[12px] text-text-secondary mt-0.5">
+          <p style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
             {t("setupDescription")}
           </p>
         </div>
-        {error && <p className="text-status-red text-[12px]">{error}</p>}
+        {error && <p style={{ fontSize: 12, color: "#ef4444" }}>{error}</p>}
         <button
           onClick={handleSetup}
-          className="self-start px-3 py-1.5 rounded-lg text-[12px] font-medium bg-gold text-white hover:bg-gold-dark transition-colors"
+          className="self-start transition-colors"
+          style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600, background: "var(--accent-teal)", color: "#fff", border: "none" }}
         >
           {t("enable")}
         </button>
@@ -131,14 +138,14 @@ export function TwoFactorSetup() {
   }
 
   return (
-    <div className="rounded-2xl border border-cream-darker bg-white p-5 shadow-sm flex flex-col gap-5">
+    <div className="rounded-2xl p-5 flex flex-col gap-5" style={cardStyle}>
       {step === "scan" && qrDataUrl && (
         <>
           <div>
-            <p className="text-[14px] font-medium text-text-primary">
+            <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>
               {t("scanTitle")}
             </p>
-            <p className="text-[12px] text-text-secondary mt-0.5">
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
               {t("scanDescription")}
             </p>
           </div>
@@ -154,15 +161,19 @@ export function TwoFactorSetup() {
           </div>
           {manualSecret && (
             <div className="flex flex-col gap-1">
-              <p className="text-[11px] text-text-tertiary">{t("manualEntry")}</p>
-              <code className="text-[12px] font-mono bg-cream px-3 py-2 rounded-lg select-all break-all text-text-primary border border-cream-darker">
+              <p style={{ fontSize: 11, color: "var(--text-tertiary)" }}>{t("manualEntry")}</p>
+              <code
+                className="select-all break-all font-mono"
+                style={{ fontSize: 12, padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", color: "var(--text-primary)" }}
+              >
                 {manualSecret}
               </code>
             </div>
           )}
           <button
             onClick={() => setStep("verify")}
-            className="self-start px-3 py-1.5 rounded-lg text-[12px] font-medium bg-gold text-white hover:bg-gold-dark transition-colors"
+            className="self-start transition-colors"
+            style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600, background: "var(--accent-teal)", color: "#fff", border: "none" }}
           >
             {t("next")}
           </button>
@@ -172,10 +183,10 @@ export function TwoFactorSetup() {
       {step === "verify" && (
         <form onSubmit={handleVerify} className="flex flex-col gap-4">
           <div>
-            <p className="text-[14px] font-medium text-text-primary">
+            <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>
               {t("verifySetupTitle")}
             </p>
-            <p className="text-[12px] text-text-secondary mt-0.5">
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
               {t("verifySetupDescription")}
             </p>
           </div>
@@ -187,26 +198,39 @@ export function TwoFactorSetup() {
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
             placeholder={t("placeholder")}
-            className="w-full h-12 text-center text-[22px] font-mono tracking-[0.5em] rounded-xl bg-cream border border-cream-darker text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+            className="w-full font-mono"
+            style={{
+              height: 48,
+              textAlign: "center",
+              fontSize: 22,
+              letterSpacing: "0.5em",
+              borderRadius: 12,
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "var(--text-primary)",
+              outline: "none",
+            }}
             autoFocus
             autoComplete="one-time-code"
             disabled={submitting}
           />
           {error && (
-            <p className="text-status-red text-[12px] text-center">{error}</p>
+            <p style={{ fontSize: 12, color: "#ef4444", textAlign: "center" }}>{error}</p>
           )}
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => { setStep("scan"); setCode(""); setError(null); }}
-              className="px-3 py-1.5 rounded-lg text-[12px] text-text-secondary border border-cream-darker hover:bg-cream-dark transition-colors"
+              className="transition-colors"
+              style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.1)", background: "transparent" }}
             >
               {t("back")}
             </button>
             <button
               type="submit"
               disabled={code.length !== 6 || submitting}
-              className="px-3 py-1.5 rounded-lg text-[12px] font-medium bg-gold text-white hover:bg-gold-dark transition-colors disabled:opacity-50"
+              className="transition-colors disabled:opacity-50"
+              style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600, background: "var(--accent-teal)", color: "#fff", border: "none" }}
             >
               {submitting ? t("verifying") : t("confirmEnable")}
             </button>

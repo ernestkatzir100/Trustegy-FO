@@ -12,7 +12,7 @@ export default async function ExpensesPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-[24px] font-semibold text-text-primary tracking-tight">
+      <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
         {t("title")}
       </h1>
       <ExpensesClient entities={entityList} />

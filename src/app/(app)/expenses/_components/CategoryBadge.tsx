@@ -3,26 +3,49 @@
 import { EXPENSE_CATEGORIES, type ExpenseCategory } from "@/lib/expense-categorizer";
 
 const colorMap: Record<string, string> = {
-  blue: "bg-blue-50 text-blue-700 border-blue-200",
-  orange: "bg-orange-50 text-orange-700 border-orange-200",
-  teal: "bg-teal-50 text-teal-700 border-teal-200",
-  gray: "bg-gray-100 text-gray-700 border-gray-200",
-  red: "bg-red-50 text-red-700 border-red-200",
-  purple: "bg-purple-50 text-purple-700 border-purple-200",
-  indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  amber: "bg-amber-50 text-amber-700 border-amber-200",
-  pink: "bg-pink-50 text-pink-700 border-pink-200",
-  slate: "bg-slate-100 text-slate-700 border-slate-200",
+  blue: "rgba(59,130,246,0.15)",
+  orange: "rgba(249,115,22,0.15)",
+  teal: "rgba(13,148,136,0.15)",
+  gray: "rgba(148,163,184,0.15)",
+  red: "rgba(239,68,68,0.15)",
+  purple: "rgba(139,92,246,0.15)",
+  indigo: "rgba(99,102,241,0.15)",
+  amber: "rgba(245,158,11,0.15)",
+  pink: "rgba(236,72,153,0.15)",
+  slate: "rgba(148,163,184,0.15)",
+};
+
+const textColorMap: Record<string, string> = {
+  blue: "#60a5fa",
+  orange: "#fb923c",
+  teal: "#2dd4bf",
+  gray: "#94a3b8",
+  red: "#f87171",
+  purple: "#a78bfa",
+  indigo: "#818cf8",
+  amber: "#fbbf24",
+  pink: "#f472b6",
+  slate: "#94a3b8",
 };
 
 export function CategoryBadge({ category }: { category: string }) {
   const cat = EXPENSE_CATEGORIES[category as ExpenseCategory];
-  const colors = cat ? (colorMap[cat.color] ?? colorMap.slate) : colorMap.slate;
+  const bg = cat ? (colorMap[cat.color] ?? colorMap.slate) : colorMap.slate;
+  const textColor = cat ? (textColorMap[cat.color] ?? textColorMap.slate) : textColorMap.slate;
   const label = cat?.label ?? category;
 
   return (
     <span
-      className={`inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full border ${colors}`}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        fontSize: 11,
+        fontWeight: 600,
+        padding: "2px 8px",
+        borderRadius: 20,
+        background: bg,
+        color: textColor,
+      }}
     >
       {label}
     </span>

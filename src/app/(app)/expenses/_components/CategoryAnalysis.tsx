@@ -43,6 +43,14 @@ interface TopVendor {
   topCategory: string;
 }
 
+const tooltipStyle = {
+  borderRadius: 12,
+  border: "1px solid rgba(255,255,255,0.1)",
+  fontSize: 12,
+  background: "#1E2538",
+  color: "#F1F5F9",
+};
+
 export function CategoryAnalysis() {
   const t = useTranslations("expenses");
   const [year, setYear] = useState(new Date().getFullYear());
@@ -97,7 +105,7 @@ export function CategoryAnalysis() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <span className="text-[13px] text-text-tertiary animate-pulse">
+        <span className="animate-pulse" style={{ fontSize: 13, color: "var(--text-tertiary)" }}>
           טוען נתונים...
         </span>
       </div>
@@ -108,7 +116,7 @@ export function CategoryAnalysis() {
     <div className="flex flex-col gap-6">
       {/* Year selector */}
       <div className="flex items-center gap-3">
-        <label className="text-[13px] font-medium text-text-secondary">
+        <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)" }}>
           {t("year")}:
         </label>
         <div className="flex gap-1">
@@ -117,11 +125,17 @@ export function CategoryAnalysis() {
               key={y}
               type="button"
               onClick={() => setYear(y)}
-              className={`px-3 py-1 rounded-lg text-[13px] font-mono transition-colors ${
-                year === y
-                  ? "bg-gold text-white"
-                  : "text-text-secondary hover:bg-cream-dark"
-              }`}
+              className="font-mono transition-colors"
+              style={{
+                padding: "4px 12px",
+                borderRadius: 8,
+                fontSize: 13,
+                background: year === y ? "rgba(13,148,136,0.12)" : "transparent",
+                color: year === y ? "#0d9488" : "var(--text-secondary)",
+                fontWeight: year === y ? 700 : 400,
+                border: "none",
+                cursor: "pointer",
+              }}
             >
               {y}
             </button>
@@ -130,8 +144,11 @@ export function CategoryAnalysis() {
       </div>
 
       {data.length === 0 ? (
-        <div className="flex items-center justify-center py-16 rounded-2xl border border-cream-darker bg-white">
-          <p className="text-[14px] text-text-secondary">{t("noExpenses")}</p>
+        <div
+          className="flex items-center justify-center py-16 rounded-2xl"
+          style={{ background: "var(--surface-card)", border: "1px solid rgba(255,255,255,0.08)" }}
+        >
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("noExpenses")}</p>
         </div>
       ) : (
         <>
@@ -139,55 +156,29 @@ export function CategoryAnalysis() {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
             {/* Stacked bar chart */}
             <div className="lg:col-span-3 card-base elev-1 p-5">
-              <h3
-                style={{
-                  fontSize: 15,
-                  fontWeight: 700,
-                  color: "#111",
-                  marginBottom: 16,
-                }}
-              >
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)", marginBottom: 16 }}>
                 הוצאות חודשיות לפי קטגוריה
               </h3>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={monthlyChartData}>
-                  <XAxis
-                    dataKey="name"
-                    tick={{ fontSize: 11, fill: "#8A7E72" }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 11, fill: "#8A7E72" }}
-                    axisLine={false}
-                    tickLine={false}
-                    tickFormatter={(v: number) =>
-                      v >= 1000 ? `${(v / 1000).toFixed(0)}K` : String(v)
-                    }
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false}
+                    tickFormatter={(v: number) => v >= 1000 ? `${(v / 1000).toFixed(0)}K` : String(v)}
                   />
                   <Tooltip
                     formatter={(value, name) => [
                       `₪${Number(value).toLocaleString()}`,
                       EXPENSE_CATEGORIES[name as ExpenseCategory]?.label ?? String(name),
                     ]}
-                    contentStyle={{
-                      borderRadius: 12,
-                      border: "1px solid rgba(0,0,0,0.06)",
-                      fontSize: 12,
-                    }}
+                    contentStyle={tooltipStyle}
                   />
                   {top5.map((cat) => (
                     <Bar
                       key={cat.category}
                       dataKey={cat.category}
                       stackId="a"
-                      fill={
-                        EXPENSE_CATEGORIES[cat.category as ExpenseCategory]
-                          ?.hex ?? "#9ca3af"
-                      }
-                      radius={
-                        cat === top5[top5.length - 1] ? [4, 4, 0, 0] : undefined
-                      }
+                      fill={EXPENSE_CATEGORIES[cat.category as ExpenseCategory]?.hex ?? "#9ca3af"}
+                      radius={cat === top5[top5.length - 1] ? [4, 4, 0, 0] : undefined}
                     />
                   ))}
                 </BarChart>
@@ -196,45 +187,21 @@ export function CategoryAnalysis() {
 
             {/* Donut chart */}
             <div className="lg:col-span-2 card-base elev-1 p-5">
-              <h3
-                style={{
-                  fontSize: 15,
-                  fontWeight: 700,
-                  color: "#111",
-                  marginBottom: 16,
-                }}
-              >
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)", marginBottom: 16 }}>
                 התפלגות לפי קטגוריה
               </h3>
               <ResponsiveContainer width="100%" height={240}>
                 <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="45%"
-                    innerRadius={50}
-                    outerRadius={80}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
+                  <Pie data={pieData} cx="50%" cy="45%" innerRadius={50} outerRadius={80} paddingAngle={2} dataKey="value">
                     {pieData.map((entry, i) => (
                       <Cell key={i} fill={entry.color} />
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value) => [
-                      `₪${Number(value).toLocaleString()}`,
-                    ]}
-                    contentStyle={{
-                      borderRadius: 12,
-                      border: "1px solid rgba(0,0,0,0.06)",
-                      fontSize: 12,
-                    }}
+                    formatter={(value) => [`₪${Number(value).toLocaleString()}`]}
+                    contentStyle={tooltipStyle}
                   />
-                  <Legend
-                    iconSize={8}
-                    wrapperStyle={{ fontSize: 11, color: "#8A7E72" }}
-                  />
+                  <Legend iconSize={8} wrapperStyle={{ fontSize: 11, color: "#94a3b8" }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -242,89 +209,46 @@ export function CategoryAnalysis() {
 
           {/* Category breakdown table */}
           <div className="card-base elev-1 overflow-hidden">
-            <div
-              className="flex items-center justify-between"
-              style={{
-                padding: "14px 20px",
-                borderBottom: "1px solid rgba(0,0,0,0.06)",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: 15,
-                  fontWeight: 700,
-                  color: "#111",
-                }}
-              >
+            <div className="flex items-center justify-between" style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>
                 פירוט לפי קטגוריה
               </h3>
             </div>
-            <table className="w-full text-[13px]">
+            <table className="w-full" style={{ fontSize: 13 }}>
               <thead>
-                <tr style={{ background: "rgba(0,0,0,0.015)" }}>
-                  <th className="text-start p-3 font-medium text-text-secondary">
-                    {t("category")}
-                  </th>
-                  <th className="text-start p-3 font-medium text-text-secondary">
-                    {t("totalThisYear")}
-                  </th>
-                  <th className="text-start p-3 font-medium text-text-secondary">
-                    {t("totalPercent")}
-                  </th>
-                  <th className="text-start p-3 font-medium text-text-secondary">
-                    {t("monthlyAvg")}
-                  </th>
-                  <th className="text-start p-3 font-medium text-text-secondary">
-                    {t("recordCount")}
-                  </th>
+                <tr style={{ background: "rgba(255,255,255,0.03)" }}>
+                  <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("category")}</th>
+                  <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("totalThisYear")}</th>
+                  <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("totalPercent")}</th>
+                  <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("monthlyAvg")}</th>
+                  <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>{t("recordCount")}</th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((row) => {
-                  const percent =
-                    grandTotal > 0
-                      ? ((row.total / grandTotal) * 100).toFixed(1)
-                      : "0";
+                  const percent = grandTotal > 0 ? ((row.total / grandTotal) * 100).toFixed(1) : "0";
                   const monthlyAvg = row.total / 12;
-                  const catConfig =
-                    EXPENSE_CATEGORIES[row.category as ExpenseCategory];
+                  const catConfig = EXPENSE_CATEGORIES[row.category as ExpenseCategory];
 
                   return (
                     <tr
                       key={row.category}
-                      className="border-t border-cream-darker hover:bg-cream/50"
+                      style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                     >
-                      <td className="p-3">
-                        <CategoryBadge
-                          category={row.category as ExpenseCategory}
-                        />
-                      </td>
-                      <td className="p-3 font-mono" dir="ltr">
-                        {formatILS(row.total)}
-                      </td>
+                      <td className="p-3"><CategoryBadge category={row.category as ExpenseCategory} /></td>
+                      <td className="p-3 font-mono" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(row.total)}</td>
                       <td className="p-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-16 h-1.5 rounded-full bg-cream-darker overflow-hidden">
-                            <div
-                              className="h-full rounded-full"
-                              style={{
-                                width: `${percent}%`,
-                                background: catConfig?.hex ?? "#9ca3af",
-                              }}
-                            />
+                          <div className="overflow-hidden" style={{ width: 64, height: 6, borderRadius: 20, background: "rgba(255,255,255,0.06)" }}>
+                            <div style={{ height: "100%", borderRadius: 20, width: `${percent}%`, background: catConfig?.hex ?? "#9ca3af" }} />
                           </div>
-                          <span
-                            className="text-[12px] text-text-tertiary"
-                            dir="ltr"
-                          >
-                            {percent}%
-                          </span>
+                          <span dir="ltr" style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{percent}%</span>
                         </div>
                       </td>
-                      <td className="p-3 font-mono" dir="ltr">
-                        {formatILS(Math.round(monthlyAvg))}
-                      </td>
-                      <td className="p-3 text-text-secondary">{row.count}</td>
+                      <td className="p-3 font-mono" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(Math.round(monthlyAvg))}</td>
+                      <td className="p-3" style={{ color: "var(--text-secondary)" }}>{row.count}</td>
                     </tr>
                   );
                 })}
@@ -335,68 +259,34 @@ export function CategoryAnalysis() {
           {/* Top vendors table */}
           {vendors.length > 0 && (
             <div className="card-base elev-1 overflow-hidden">
-              <div
-                style={{
-                  padding: "14px 20px",
-                  borderBottom: "1px solid rgba(0,0,0,0.06)",
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: 15,
-                    fontWeight: 700,
-                    color: "#111",
-                  }}
-                >
+              <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>
                   ספקים מובילים
                 </h3>
               </div>
-              <table className="w-full text-[13px]">
+              <table className="w-full" style={{ fontSize: 13 }}>
                 <thead>
-                  <tr style={{ background: "rgba(0,0,0,0.015)" }}>
-                    <th className="text-start p-3 font-medium text-text-secondary">
-                      ספק
-                    </th>
-                    <th className="text-start p-3 font-medium text-text-secondary">
-                      מס&apos; עסקאות
-                    </th>
-                    <th className="text-start p-3 font-medium text-text-secondary">
-                      סה&quot;כ
-                    </th>
-                    <th className="text-start p-3 font-medium text-text-secondary">
-                      ממוצע לעסקה
-                    </th>
-                    <th className="text-start p-3 font-medium text-text-secondary">
-                      קטגוריה עיקרית
-                    </th>
+                  <tr style={{ background: "rgba(255,255,255,0.03)" }}>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>ספק</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>מס&apos; עסקאות</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>סה&quot;כ</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>ממוצע לעסקה</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)" }}>קטגוריה עיקרית</th>
                   </tr>
                 </thead>
                 <tbody>
                   {vendors.map((v, i) => (
                     <tr
                       key={i}
-                      className="border-t border-cream-darker hover:bg-cream/50"
+                      style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                     >
-                      <td
-                        className="p-3 font-medium"
-                        style={{ color: "#111" }}
-                      >
-                        {v.vendorName}
-                      </td>
-                      <td className="p-3 text-text-secondary">{v.count}</td>
-                      <td className="p-3 font-mono" dir="ltr">
-                        {formatILS(v.total)}
-                      </td>
-                      <td className="p-3 font-mono" dir="ltr">
-                        {formatILS(
-                          v.count > 0 ? Math.round(v.total / v.count) : 0
-                        )}
-                      </td>
-                      <td className="p-3">
-                        <CategoryBadge
-                          category={v.topCategory as ExpenseCategory}
-                        />
-                      </td>
+                      <td className="p-3" style={{ fontWeight: 600, color: "var(--text-primary)" }}>{v.vendorName}</td>
+                      <td className="p-3" style={{ color: "var(--text-secondary)" }}>{v.count}</td>
+                      <td className="p-3 font-mono" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(v.total)}</td>
+                      <td className="p-3 font-mono" dir="ltr" style={{ color: "var(--text-primary)" }}>{formatILS(v.count > 0 ? Math.round(v.total / v.count) : 0)}</td>
+                      <td className="p-3"><CategoryBadge category={v.topCategory as ExpenseCategory} /></td>
                     </tr>
                   ))}
                 </tbody>

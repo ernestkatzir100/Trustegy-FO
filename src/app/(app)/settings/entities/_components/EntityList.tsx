@@ -43,7 +43,7 @@ export function EntityList({
   }
 
   if (error) {
-    return <p className="text-status-red text-[13px]">{error}</p>;
+    return <p style={{ fontSize: 13, color: "#ef4444" }}>{error}</p>;
   }
 
   return (
@@ -55,7 +55,7 @@ export function EntityList({
       </div>
 
       {showForm ? (
-        <div className="rounded-2xl border border-gold/30 bg-white p-5 shadow-sm max-w-md">
+        <div className="rounded-2xl p-5 max-w-md" style={{ background: "var(--surface-card)", border: "1px solid rgba(13,148,136,0.3)" }}>
           <EntityForm
             onSubmit={handleCreate}
             onCancel={() => { setShowForm(false); setFormError(null); }}
@@ -66,9 +66,10 @@ export function EntityList({
       ) : (
         <button
           onClick={() => setShowForm(true)}
-          className="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium bg-gold text-white hover:bg-gold-dark transition-colors"
+          className="self-start flex items-center gap-1.5 transition-colors"
+          style={{ padding: "6px 12px", borderRadius: 8, fontSize: 13, fontWeight: 600, background: "var(--accent-teal)", color: "#fff", border: "none" }}
         >
-          <Plus className="w-4 h-4" />
+          <Plus style={{ width: 16, height: 16 }} />
           {t("add")}
         </button>
       )}

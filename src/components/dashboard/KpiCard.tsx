@@ -69,9 +69,9 @@ interface KpiCardProps {
 }
 
 const statusStyles: Record<Status, { dot: string; bg: string; text: string; label: string }> = {
-  ok: { dot: "#22c55e", bg: "#f0fdf4", text: "#16a34a", label: "תקין" },
-  warning: { dot: "#f59e0b", bg: "#fffbeb", text: "#b45309", label: "דורש תשומת לב" },
-  danger: { dot: "#ef4444", bg: "#fef2f2", text: "#dc2626", label: "דחוף" },
+  ok: { dot: "#22c55e", bg: "rgba(34,197,94,0.15)", text: "#22c55e", label: "תקין" },
+  warning: { dot: "#f59e0b", bg: "rgba(245,158,11,0.15)", text: "#f59e0b", label: "דורש תשומת לב" },
+  danger: { dot: "#ef4444", bg: "rgba(239,68,68,0.15)", text: "#ef4444", label: "דחוף" },
 };
 
 export function KpiCard({
@@ -85,8 +85,8 @@ export function KpiCard({
   accentColor = "#0d9488",
 }: KpiCardProps) {
   const trendUp = trend !== undefined && trend >= 0;
-  const trendColor = trend === undefined ? "#94a3b8" : trendUp ? "#16a34a" : "#dc2626";
-  const trendBg = trend === undefined ? "#f1f5f9" : trendUp ? "#f0fdf4" : "#fef2f2";
+  const trendColor = trend === undefined ? "#94a3b8" : trendUp ? "#22c55e" : "#ef4444";
+  const trendBg = trend === undefined ? "rgba(148,163,184,0.15)" : trendUp ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)";
   const st = status ? statusStyles[status] : null;
 
   return (
@@ -113,7 +113,7 @@ export function KpiCard({
           style={{
             fontSize: 13,
             fontWeight: 500,
-            color: "rgba(0,0,0,0.45)",
+            color: "var(--text-secondary)",
             letterSpacing: "0.1px",
           }}
         >
@@ -141,7 +141,7 @@ export function KpiCard({
         style={{
           fontSize: 30,
           fontWeight: 700,
-          color: "#111",
+          color: "var(--text-primary)",
           letterSpacing: "-0.04em",
           lineHeight: 1,
           marginBottom: 12,
@@ -217,7 +217,7 @@ export function KpiCard({
             <span
               style={{
                 fontSize: 11,
-                color: "rgba(0,0,0,0.35)",
+                color: "var(--text-tertiary)",
                 fontWeight: 400,
               }}
             >

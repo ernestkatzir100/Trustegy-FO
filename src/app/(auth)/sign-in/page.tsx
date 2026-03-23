@@ -7,25 +7,40 @@ export default async function SignInPage() {
   const tApp = await getTranslations("app");
   const tAuth = await getTranslations("auth");
 
+  const inputStyle = {
+    width: "100%",
+    height: 44,
+    borderRadius: 12,
+    background: "rgba(255,255,255,0.06)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    padding: "0 16px",
+    fontSize: 14,
+    color: "var(--text-primary)",
+    outline: "none",
+  } as const;
+
   return (
     <div className="flex flex-col items-center gap-10 w-full max-w-[360px]">
       {/* Brand */}
       <div className="flex flex-col items-center gap-3">
-        <div className="w-12 h-12 rounded-2xl bg-gold flex items-center justify-center shadow-md">
-          <span className="text-[20px] font-bold text-white leading-none">ש</span>
+        <div
+          className="flex items-center justify-center"
+          style={{ width: 48, height: 48, borderRadius: 16, background: "#0d9488", boxShadow: "0 4px 20px rgba(13,148,136,0.3)" }}
+        >
+          <span style={{ fontSize: 20, fontWeight: 700, color: "#fff", lineHeight: 1 }}>ש</span>
         </div>
         <div className="flex flex-col items-center gap-1">
-          <h1 className="text-[28px] font-semibold text-text-primary tracking-tight">
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.03em" }}>
             {tApp("name")}
           </h1>
-          <p className="text-text-secondary text-[14px]">{tApp("tagline")}</p>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{tApp("tagline")}</p>
         </div>
       </div>
 
       {/* Dev credentials login */}
       {isDev && (
         <form action={loginWithCredentials} className="flex flex-col gap-3 w-full">
-          <div className="text-center text-[12px] font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5">
+          <div style={{ textAlign: "center", fontSize: 12, fontWeight: 600, color: "#f59e0b", background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 8, padding: "4px 12px" }}>
             Dev Login
           </div>
           <input
@@ -33,18 +48,28 @@ export default async function SignInPage() {
             type="email"
             defaultValue="dev@shefa.local"
             placeholder="Email"
-            className="w-full h-11 rounded-xl bg-white border border-cream-darker px-4 text-[14px] text-text-primary focus:outline-none focus:ring-2 focus:ring-gold/50"
+            style={inputStyle}
           />
           <input
             name="password"
             type="password"
             defaultValue="dev123"
             placeholder="Password"
-            className="w-full h-11 rounded-xl bg-white border border-cream-darker px-4 text-[14px] text-text-primary focus:outline-none focus:ring-2 focus:ring-gold/50"
+            style={inputStyle}
           />
           <button
             type="submit"
-            className="w-full h-11 rounded-xl bg-gold hover:bg-gold/90 text-white text-[14px] font-medium transition-colors shadow-sm"
+            style={{
+              width: "100%",
+              height: 44,
+              borderRadius: 12,
+              background: "#0d9488",
+              color: "#fff",
+              fontSize: 14,
+              fontWeight: 600,
+              border: "none",
+              cursor: "pointer",
+            }}
           >
             {tAuth("signIn")}
           </button>
@@ -53,9 +78,9 @@ export default async function SignInPage() {
 
       {isDev && (
         <div className="flex items-center gap-3 w-full">
-          <div className="flex-1 h-px bg-cream-darker" />
-          <span className="text-[12px] text-text-secondary">או</span>
-          <div className="flex-1 h-px bg-cream-darker" />
+          <div className="flex-1" style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
+          <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>או</span>
+          <div className="flex-1" style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
         </div>
       )}
 
@@ -64,7 +89,17 @@ export default async function SignInPage() {
         <form action={loginWithGoogle}>
           <button
             type="submit"
-            className="flex items-center justify-center gap-3 w-full h-11 rounded-xl bg-white hover:bg-cream-dark border border-cream-darker transition-colors text-[14px] font-medium text-text-primary shadow-sm"
+            className="flex items-center justify-center gap-3 w-full transition-colors"
+            style={{
+              height: 44,
+              borderRadius: 12,
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              fontSize: 14,
+              fontWeight: 600,
+              color: "var(--text-primary)",
+              cursor: "pointer",
+            }}
           >
             <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24">
               <path
@@ -91,7 +126,17 @@ export default async function SignInPage() {
         <form action={loginWithMicrosoft}>
           <button
             type="submit"
-            className="flex items-center justify-center gap-3 w-full h-11 rounded-xl bg-white hover:bg-cream-dark border border-cream-darker transition-colors text-[14px] font-medium text-text-primary shadow-sm"
+            className="flex items-center justify-center gap-3 w-full transition-colors"
+            style={{
+              height: 44,
+              borderRadius: 12,
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              fontSize: 14,
+              fontWeight: 600,
+              color: "var(--text-primary)",
+              cursor: "pointer",
+            }}
           >
             <svg className="w-[18px] h-[18px]" viewBox="0 0 21 21">
               <rect x="1" y="1" width="9" height="9" fill="#F25022" />

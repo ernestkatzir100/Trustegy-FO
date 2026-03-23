@@ -15,14 +15,14 @@ export function PerformanceChart() {
     <div className="card-base elev-1 lg:col-span-2" style={{ padding: "28px" }}>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h3 style={{ fontSize: 18, fontWeight: 700, color: "#111", letterSpacing: "-0.02em" }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
             ביצועים לאורך זמן
           </h3>
-          <p style={{ fontSize: 13, color: "rgba(0,0,0,0.4)", marginTop: 2 }}>
+          <p style={{ fontSize: 13, color: "var(--text-tertiary)", marginTop: 2 }}>
             השוואה למדד S&amp;P 500 ואינפלציה
           </p>
         </div>
-        <div className="flex p-1 rounded-lg" style={{ background: "#f8fafc" }}>
+        <div className="flex p-1 rounded-lg" style={{ background: "rgba(255,255,255,0.04)" }}>
           {TIME_RANGES.map((range) => (
             <button
               key={range.key}
@@ -34,9 +34,9 @@ export function PerformanceChart() {
                 fontSize: 12,
                 fontWeight: 700,
                 borderRadius: 6,
-                color: activeRange === range.key ? "#0d9488" : "rgba(0,0,0,0.4)",
-                background: activeRange === range.key ? "#fff" : "transparent",
-                boxShadow: activeRange === range.key ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+                color: activeRange === range.key ? "#0d9488" : "var(--text-tertiary)",
+                background: activeRange === range.key ? "rgba(13,148,136,0.12)" : "transparent",
+                boxShadow: "none",
               }}
             >
               {range.label}
@@ -50,7 +50,7 @@ export function PerformanceChart() {
         {/* Grid lines */}
         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none" style={{ opacity: 0.15 }}>
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} style={{ borderBottom: "1px solid #0f172a", width: "100%" }} />
+            <div key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.15)", width: "100%" }} />
           ))}
         </div>
 
@@ -72,14 +72,14 @@ export function PerformanceChart() {
           <path
             d="M0 90 C 40 88, 80 85, 120 82 C 160 79, 200 75, 240 70 C 280 66, 320 62, 360 58 C 380 56, 400 54, 400 53"
             fill="none"
-            stroke="#94A3B8"
+            stroke="#64748b"
             strokeWidth="1.5"
             strokeDasharray="6 4"
             strokeLinecap="round"
           />
           <defs>
             <linearGradient id="tealGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#0d9488" stopOpacity="0.15" />
+              <stop offset="0%" stopColor="#0d9488" stopOpacity="0.2" />
               <stop offset="100%" stopColor="#0d9488" stopOpacity="0" />
             </linearGradient>
           </defs>
@@ -88,7 +88,7 @@ export function PerformanceChart() {
         {/* X-axis labels */}
         <div
           className="absolute w-full flex justify-between"
-          style={{ bottom: -20, fontSize: 10, color: "rgba(0,0,0,0.35)", fontWeight: 600 }}
+          style={{ bottom: -20, fontSize: 10, color: "var(--text-tertiary)", fontWeight: 600 }}
         >
           <span>ינואר</span>
           <span>מרץ</span>
@@ -103,11 +103,11 @@ export function PerformanceChart() {
       <div className="mt-10 flex gap-6">
         <div className="flex items-center gap-2">
           <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#0d9488" }} />
-          <span style={{ fontSize: 12, fontWeight: 600, color: "rgba(0,0,0,0.5)" }}>תיק נוכחי</span>
+          <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>תיק נוכחי</span>
         </div>
         <div className="flex items-center gap-2">
-          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#94A3B8" }} />
-          <span style={{ fontSize: 12, fontWeight: 600, color: "rgba(0,0,0,0.5)" }}>S&amp;P 500 Index</span>
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#64748b" }} />
+          <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>S&amp;P 500 Index</span>
         </div>
       </div>
     </div>

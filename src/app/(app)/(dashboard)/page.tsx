@@ -45,10 +45,10 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#111", letterSpacing: "-0.03em" }}>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.03em" }}>
             {t("portfolioOverview")}
           </h1>
-          <p style={{ fontSize: 13, color: "rgba(0,0,0,0.4)", marginTop: 2 }}>
+          <p style={{ fontSize: 13, color: "var(--text-tertiary)", marginTop: 2 }}>
             {t("title")}
           </p>
         </div>
@@ -57,13 +57,13 @@ export default async function DashboardPage() {
           <span style={{ color: "#0d9488", borderBottom: "2px solid #0d9488", paddingBottom: 4 }}>
             {t("summary")}
           </span>
-          <span className="cursor-pointer transition-colors" style={{ color: "rgba(0,0,0,0.35)", paddingBottom: 4 }}>
+          <span className="cursor-pointer transition-colors" style={{ color: "var(--text-tertiary)", paddingBottom: 4 }}>
             {t("assets")}
           </span>
-          <span className="cursor-pointer transition-colors" style={{ color: "rgba(0,0,0,0.35)", paddingBottom: 4 }}>
+          <span className="cursor-pointer transition-colors" style={{ color: "var(--text-tertiary)", paddingBottom: 4 }}>
             {t("transactions")}
           </span>
-          <span className="cursor-pointer transition-colors" style={{ color: "rgba(0,0,0,0.35)", paddingBottom: 4 }}>
+          <span className="cursor-pointer transition-colors" style={{ color: "var(--text-tertiary)", paddingBottom: 4 }}>
             {t("documents")}
           </span>
         </nav>
@@ -74,20 +74,20 @@ export default async function DashboardPage() {
         className="card-base elev-1"
         style={{
           padding: "16px 22px",
-          background: "linear-gradient(135deg, #ffffff 0%, #f8fffe 100%)",
-          border: "1px solid rgba(13,148,136,0.12)",
+          background: "linear-gradient(135deg, var(--surface-card) 0%, rgba(13,148,136,0.06) 100%)",
+          border: "1px solid rgba(13,148,136,0.15)",
         }}
       >
         <div className="flex items-center gap-3">
           <div
             className="flex items-center justify-center shrink-0"
-            style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(196,149,74,0.1)" }}
+            style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(196,149,74,0.15)" }}
           >
             <Sparkles style={{ width: 14, height: 14, color: "var(--gold)" }} />
           </div>
           <div className="flex items-center gap-2">
             <span style={{ fontSize: 12, fontWeight: 600, color: "var(--gold)" }}>Shefa</span>
-            <p style={{ fontSize: 13, color: "rgba(0,0,0,0.45)", lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.5 }}>
               {t("shefaPlaceholder")}
             </p>
           </div>
@@ -140,7 +140,7 @@ export default async function DashboardPage() {
         <div className="card-base elev-1" style={{ padding: "22px" }}>
           <h3
             className="flex items-center gap-2"
-            style={{ fontSize: 16, fontWeight: 700, color: "#111", marginBottom: 20 }}
+            style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", marginBottom: 20 }}
           >
             {t("recentActivity")}
           </h3>
@@ -148,10 +148,10 @@ export default async function DashboardPage() {
             {recentActivity.map((activity, i) => {
               const iconBg =
                 activity.type === "income"
-                  ? "rgba(13,148,136,0.1)"
+                  ? "rgba(13,148,136,0.12)"
                   : activity.type === "expense"
-                    ? "rgba(239,68,68,0.08)"
-                    : "rgba(100,116,139,0.08)";
+                    ? "rgba(239,68,68,0.12)"
+                    : "rgba(100,116,139,0.12)";
               const iconColor =
                 activity.type === "income"
                   ? "#0d9488"
@@ -173,10 +173,10 @@ export default async function DashboardPage() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="truncate" style={{ fontSize: 13, fontWeight: 600, color: "#111" }}>
+                    <p className="truncate" style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)" }}>
                       {activity.description}
                     </p>
-                    <p style={{ fontSize: 11, color: "rgba(0,0,0,0.35)", marginTop: 2 }}>
+                    <p style={{ fontSize: 11, color: "var(--text-tertiary)", marginTop: 2 }}>
                       {activity.entity} · {activity.date}
                     </p>
                   </div>
@@ -191,9 +191,10 @@ export default async function DashboardPage() {
               padding: "8px 0",
               fontSize: 13,
               fontWeight: 600,
-              color: "rgba(0,0,0,0.4)",
-              border: "1px solid rgba(0,0,0,0.08)",
+              color: "var(--text-secondary)",
+              border: "1px solid rgba(255,255,255,0.1)",
               borderRadius: 8,
+              background: "transparent",
             }}
           >
             {t("viewFullHistory")}

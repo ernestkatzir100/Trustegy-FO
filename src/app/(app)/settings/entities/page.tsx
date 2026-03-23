@@ -13,7 +13,7 @@ export default async function EntitiesPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-[24px] font-bold text-text-primary">{t("title")}</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>{t("title")}</h1>
       <EntityList
         initialEntities={result.data ?? []}
         error={result.error?.message}

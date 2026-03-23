@@ -11,9 +11,9 @@ export default async function AppLayout({
   const t = await getTranslations("viewport");
 
   return (
-    <div className="flex min-h-screen bg-cream">
+    <div className="flex min-h-screen" style={{ background: "var(--bg)" }}>
       {/* Viewport warning for screens below 1280px */}
-      <div className="hidden max-[1279px]:flex fixed inset-0 z-[200] bg-cream items-center justify-center p-10">
+      <div className="hidden max-[1279px]:flex fixed inset-0 z-[200] items-center justify-center p-10" style={{ background: "var(--bg)" }}>
         <p className="text-text-secondary text-center text-[15px]">
           {t("warning")}
         </p>

@@ -46,9 +46,14 @@ export function EntityCard({ entity }: { entity: Entity }) {
     }
   }
 
+  const cardStyle = {
+    background: "var(--surface-card)",
+    border: "1px solid rgba(255,255,255,0.08)",
+  };
+
   if (editing) {
     return (
-      <div className="rounded-2xl border border-gold/30 bg-white p-5 shadow-sm">
+      <div className="rounded-2xl p-5" style={{ ...cardStyle, borderColor: "rgba(13,148,136,0.3)" }}>
         <EntityForm
           defaultValues={{
             name: entity.name,
@@ -64,42 +69,44 @@ export function EntityCard({ entity }: { entity: Entity }) {
   }
 
   return (
-    <div className="rounded-2xl border border-cream-darker bg-white p-5 shadow-sm flex flex-col gap-3 group">
+    <div className="rounded-2xl p-5 flex flex-col gap-3 group" style={cardStyle}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <h3 className="text-[14px] font-medium text-text-primary truncate">
+          <h3 className="truncate" style={{ fontSize: 14, fontWeight: 600, color: "var(--text-primary)" }}>
             {entity.name}
           </h3>
           {entity.description && (
-            <p className="text-[12px] text-text-secondary mt-0.5 line-clamp-2">
+            <p className="line-clamp-2" style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
               {entity.description}
             </p>
           )}
         </div>
         {entity.isPreSeeded && (
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold/8 text-gold-dark border border-gold/15 whitespace-nowrap">
+          <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 20, background: "rgba(196,149,74,0.12)", color: "#D4AD6E", border: "1px solid rgba(196,149,74,0.15)", whiteSpace: "nowrap" }}>
             {t("preSeeded")}
           </span>
         )}
       </div>
 
-      {error && <p className="text-status-red text-[11px]">{error}</p>}
+      {error && <p style={{ fontSize: 11, color: "#ef4444" }}>{error}</p>}
 
       <div className="flex gap-1.5 mt-auto opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           onClick={() => setEditing(true)}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] text-text-secondary border border-cream-darker hover:bg-cream-dark transition-colors"
+          className="flex items-center gap-1.5 transition-colors"
+          style={{ padding: "4px 10px", borderRadius: 8, fontSize: 11, color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.1)", background: "transparent" }}
         >
-          <Pencil className="w-3 h-3" />
+          <Pencil style={{ width: 12, height: 12 }} />
           {t("edit")}
         </button>
         {!entity.isPreSeeded && (
           <button
             onClick={handleDelete}
             disabled={deleting}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] text-status-red border border-status-red/20 hover:bg-status-red/5 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 transition-colors disabled:opacity-50"
+            style={{ padding: "4px 10px", borderRadius: 8, fontSize: 11, color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", background: "transparent" }}
           >
-            <Trash2 className="w-3 h-3" />
+            <Trash2 style={{ width: 12, height: 12 }} />
             {deleting ? t("deleting") : t("delete")}
           </button>
         )}

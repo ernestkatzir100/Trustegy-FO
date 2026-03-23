@@ -13,6 +13,17 @@ interface EntityFormProps {
   submitting: boolean;
 }
 
+const inputStyle = {
+  height: 36,
+  padding: "0 12px",
+  borderRadius: 8,
+  background: "rgba(255,255,255,0.06)",
+  border: "1px solid rgba(255,255,255,0.08)",
+  fontSize: 13,
+  color: "var(--text-primary)",
+  outline: "none",
+} as const;
+
 export function EntityForm({
   defaultValues,
   onSubmit,
@@ -33,47 +44,49 @@ export function EntityForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
-        <label htmlFor="name" className="text-[12px] font-medium text-text-secondary">
+        <label htmlFor="name" style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>
           {t("name")}
         </label>
         <input
           id="name"
           {...register("name")}
-          className="h-9 px-3 rounded-lg border border-cream-darker bg-cream text-[13px] text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+          style={inputStyle}
           placeholder={t("namePlaceholder")}
           autoFocus
         />
         {errors.name && (
-          <p className="text-status-red text-[11px]">{errors.name.message}</p>
+          <p style={{ fontSize: 11, color: "#ef4444" }}>{errors.name.message}</p>
         )}
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="description" className="text-[12px] font-medium text-text-secondary">
+        <label htmlFor="description" style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>
           {t("description")}
         </label>
         <input
           id="description"
           {...register("description")}
-          className="h-9 px-3 rounded-lg border border-cream-darker bg-cream text-[13px] text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+          style={inputStyle}
           placeholder={t("descriptionPlaceholder")}
         />
       </div>
 
-      {error && <p className="text-status-red text-[12px]">{error}</p>}
+      {error && <p style={{ fontSize: 12, color: "#ef4444" }}>{error}</p>}
 
       <div className="flex gap-2 mt-1">
         <button
           type="submit"
           disabled={submitting}
-          className="px-3 py-1.5 rounded-lg text-[12px] font-medium bg-gold text-white hover:bg-gold-dark transition-colors disabled:opacity-50"
+          className="transition-colors disabled:opacity-50"
+          style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600, background: "var(--accent-teal)", color: "#fff", border: "none" }}
         >
           {submitting ? t("saving") : t("save")}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1.5 rounded-lg text-[12px] text-text-secondary border border-cream-darker hover:bg-cream-dark transition-colors"
+          className="transition-colors"
+          style={{ padding: "6px 12px", borderRadius: 8, fontSize: 12, color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.1)", background: "transparent" }}
         >
           {t("cancel")}
         </button>

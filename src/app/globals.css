@@ -4,62 +4,74 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Shefa Living Room Palette */
-  --cream: #FAF8F5;
-  --cream-dark: #F2EDE7;
-  --cream-darker: #E8E0D6;
+  /* ── Dark Design System ──────────────────────── */
+  --bg: #0F1117;
+  --bg-secondary: #0D1117;
+  --surface-card: #1A2035;
+  --surface-elevated: #1E2538;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  /* Text */
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #64748B;
+
+  /* Accent — teal */
+  --accent-teal: #0d9488;
+  --accent-teal-hover: #0f766e;
+  --accent-teal-subtle: rgba(13, 148, 136, 0.12);
+
+  /* Brand — gold (kept for sidebar logo, badges) */
   --gold: #C4954A;
   --gold-light: #D4AD6E;
   --gold-dark: #A67B35;
-  --gold-subtle: #F5EDD8;
-  --text-primary: #2C2520;
-  --text-secondary: #8A7E72;
-  --text-tertiary: #B5A99B;
+  --gold-subtle: rgba(196, 149, 74, 0.15);
 
-  /* Status Colors */
-  --status-green: #4A8C6F;
-  --status-green-bg: #EDF5F0;
-  --status-amber: #C48B2C;
-  --status-amber-bg: #FDF3E0;
-  --status-red: #B5544A;
-  --status-red-bg: #FAEDEB;
+  /* Legacy aliases → dark equivalents */
+  --cream: #0F1117;
+  --cream-dark: #1A2035;
+  --cream-darker: rgba(255, 255, 255, 0.08);
+
+  /* Status Colors — dark mode */
+  --status-green: #22c55e;
+  --status-green-bg: rgba(34, 197, 94, 0.15);
+  --status-amber: #f59e0b;
+  --status-amber-bg: rgba(245, 158, 11, 0.15);
+  --status-red: #ef4444;
+  --status-red-bg: rgba(239, 68, 68, 0.15);
 
   /* shadcn/ui semantic mappings */
-  --background: #FAF8F5;
-  --foreground: #2C2520;
-  --card: #F2EDE7;
-  --card-foreground: #2C2520;
-  --popover: #F2EDE7;
-  --popover-foreground: #2C2520;
-  --primary: #C4954A;
-  --primary-foreground: #FAF8F5;
-  --secondary: #F2EDE7;
-  --secondary-foreground: #2C2520;
-  --muted: #F2EDE7;
-  --muted-foreground: #8A7E72;
-  --accent: #F2EDE7;
-  --accent-foreground: #2C2520;
-  --destructive: #B5544A;
-  --destructive-foreground: #FAF8F5;
-  --border: #E8E0D6;
-  --input: #E8E0D6;
-  --ring: #C4954A;
+  --background: #0F1117;
+  --foreground: #F1F5F9;
+  --card: #1A2035;
+  --card-foreground: #F1F5F9;
+  --popover: #1A2035;
+  --popover-foreground: #F1F5F9;
+  --primary: #0d9488;
+  --primary-foreground: #ffffff;
+  --secondary: #1E2538;
+  --secondary-foreground: #F1F5F9;
+  --muted: #1E2538;
+  --muted-foreground: #94A3B8;
+  --accent: #1E2538;
+  --accent-foreground: #F1F5F9;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #0d9488;
   --radius: 0.75rem;
 
-  /* Dashboard design tokens */
-  --bg: #F7F5F0;
-  --surface-card: #ffffff;
-  --sidebar-bg: #1C1C1E;
-  --accent-teal: #0d9488;
-
-  /* Sidebar (Story 1.2) */
-  --sidebar-background: #1C1C1E;
-  --sidebar-foreground: #FAF8F5;
+  /* Sidebar */
+  --sidebar-bg: #161B27;
+  --sidebar-background: #161B27;
+  --sidebar-foreground: #F1F5F9;
   --sidebar-primary: #0d9488;
-  --sidebar-primary-foreground: #FAF8F5;
+  --sidebar-primary-foreground: #F1F5F9;
   --sidebar-accent: rgba(255, 255, 255, 0.08);
-  --sidebar-accent-foreground: #FAF8F5;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-accent-foreground: #F1F5F9;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
   --sidebar-ring: #0d9488;
 }
 
@@ -112,10 +124,10 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Shadow tokens (warm-toned) */
-  --shadow-sm: 0 1px 2px 0 rgba(44, 37, 32, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(44, 37, 32, 0.07), 0 2px 4px -2px rgba(44, 37, 32, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(44, 37, 32, 0.08), 0 4px 6px -4px rgba(44, 37, 32, 0.04);
+  /* Shadow tokens (dark) */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
 
   /* Radius tokens */
   --radius-sm: calc(var(--radius) - 4px);
@@ -184,30 +196,31 @@ body {
 
 /* ── Elevation System ────────────────────────── */
 .elev-0 { box-shadow: none; }
-.elev-1 { box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.06); }
-.elev-2 { box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05); }
-.elev-3 { box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04); }
+.elev-1 { box-shadow: none; border: 1px solid rgba(255,255,255,0.08); }
+.elev-2 { box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); }
+.elev-3 { box-shadow: 0 8px 24px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); }
 
 /* ── Card Base ───────────────────────────────── */
 .card-base {
-  background: #ffffff;
+  background: var(--surface-card);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 16px;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .card-base:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   transform: translateY(-1px);
 }
 
 /* Legacy alias */
 .dashboard-card {
-  background: #ffffff;
+  background: var(--surface-card);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 16px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.06);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .dashboard-card:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   transform: translateY(-1px);
 }
 
@@ -223,29 +236,29 @@ body {
 
 /* ── Premium Card ───────────────────────────── */
 .card-premium {
-  background: #ffffff;
+  background: var(--surface-card);
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: none;
+  border: 1px solid rgba(255,255,255,0.08);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .card-premium:hover {
-  box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   transform: translateY(-1px);
 }
 
 /* ── Status Badges ──────────────────────────── */
 .badge-ok {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: rgba(34,197,94,0.15);
+  color: #22c55e;
   font-size: 11px;
   font-weight: 600;
   padding: 3px 9px;
   border-radius: 20px;
 }
 .badge-warning {
-  background: #fffbeb;
-  color: #b45309;
+  background: rgba(245,158,11,0.15);
+  color: #f59e0b;
   font-size: 11px;
   font-weight: 600;
   padding: 3px 9px;

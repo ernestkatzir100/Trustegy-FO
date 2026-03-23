@@ -29,10 +29,10 @@ export function PortfolioHero({
       {/* Total Portfolio Value — spans 2 columns */}
       <div className="md:col-span-2 card-base elev-1 relative overflow-hidden group" style={{ padding: "28px 28px 24px" }}>
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-          style={{ background: "linear-gradient(90deg, transparent 0%, rgba(13,150,139,0.04) 50%, transparent 100%)" }} />
+          style={{ background: "linear-gradient(90deg, transparent 0%, rgba(13,150,139,0.06) 50%, transparent 100%)" }} />
         <div className="flex justify-between items-start">
           <div>
-            <p style={{ fontSize: 13, fontWeight: 500, color: "rgba(0,0,0,0.45)", marginBottom: 6 }}>
+            <p style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)", marginBottom: 6 }}>
               סה&quot;כ שווי התיק
             </p>
             <h2
@@ -41,7 +41,7 @@ export function PortfolioHero({
               style={{
                 fontSize: 38,
                 fontWeight: 800,
-                color: "#111",
+                color: "var(--text-primary)",
                 letterSpacing: "-0.04em",
                 lineHeight: 1,
               }}
@@ -52,7 +52,7 @@ export function PortfolioHero({
           <div
             className="flex items-center gap-1.5"
             style={{
-              background: "rgba(13,148,136,0.1)",
+              background: "rgba(13,148,136,0.15)",
               color: "#0d9488",
               padding: "5px 12px",
               borderRadius: 20,
@@ -66,18 +66,18 @@ export function PortfolioHero({
         </div>
         <div className="mt-7 flex gap-8">
           <div>
-            <p style={{ fontSize: 11, color: "rgba(0,0,0,0.35)", fontWeight: 600, letterSpacing: "0.5px", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, color: "var(--text-tertiary)", fontWeight: 600, letterSpacing: "0.5px", marginBottom: 4 }}>
               מזומן פנוי
             </p>
-            <p className="num" dir="ltr" style={{ fontSize: 17, fontWeight: 700, color: "#333" }}>
+            <p className="num" dir="ltr" style={{ fontSize: 17, fontWeight: 700, color: "var(--text-primary)" }}>
               {formatILS(freeCash)}
             </p>
           </div>
           <div>
-            <p style={{ fontSize: 11, color: "rgba(0,0,0,0.35)", fontWeight: 600, letterSpacing: "0.5px", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, color: "var(--text-tertiary)", fontWeight: 600, letterSpacing: "0.5px", marginBottom: 4 }}>
               תשואה מצטברת
             </p>
-            <p className="num" dir="ltr" style={{ fontSize: 17, fontWeight: 700, color: "#333" }}>
+            <p className="num" dir="ltr" style={{ fontSize: 17, fontWeight: 700, color: "var(--text-primary)" }}>
               {formatILS(cumulativeReturn)}
             </p>
           </div>
@@ -88,17 +88,17 @@ export function PortfolioHero({
       <div className="card-base elev-1 flex flex-col justify-between" style={{ padding: "24px" }}>
         <div className="flex items-start justify-between">
           <div>
-            <p style={{ fontSize: 13, fontWeight: 500, color: "rgba(0,0,0,0.45)", marginBottom: 4 }}>
+            <p style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)", marginBottom: 4 }}>
               רמת סיכון
             </p>
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111" }}>{riskLevel}</h3>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: "var(--text-primary)" }}>{riskLevel}</h3>
           </div>
           <div
             style={{
               width: 34,
               height: 34,
               borderRadius: 10,
-              background: "rgba(13,148,136,0.1)",
+              background: "rgba(13,148,136,0.12)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -108,10 +108,10 @@ export function PortfolioHero({
           </div>
         </div>
         <div>
-          <div style={{ width: "100%", height: 6, background: "#f1f5f9", borderRadius: 20, marginTop: 16, overflow: "hidden" }}>
+          <div style={{ width: "100%", height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 20, marginTop: 16, overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${riskPercent}%`, background: "#0d9488", borderRadius: 20 }} />
           </div>
-          <p style={{ fontSize: 12, color: "rgba(0,0,0,0.35)", marginTop: 8 }}>{riskNote}</p>
+          <p style={{ fontSize: 12, color: "var(--text-tertiary)", marginTop: 8 }}>{riskNote}</p>
         </div>
       </div>
 
@@ -119,10 +119,10 @@ export function PortfolioHero({
       <div className="card-base elev-1 flex flex-col justify-between" style={{ padding: "24px" }}>
         <div className="flex items-start justify-between">
           <div>
-            <p style={{ fontSize: 13, fontWeight: 500, color: "rgba(0,0,0,0.45)", marginBottom: 4 }}>
+            <p style={{ fontSize: 13, fontWeight: 500, color: "var(--text-secondary)", marginBottom: 4 }}>
               הכנסה חודשית צפויה
             </p>
-            <h3 className="num" dir="ltr" style={{ fontSize: 20, fontWeight: 700, color: "#111" }}>
+            <h3 className="num" dir="ltr" style={{ fontSize: 20, fontWeight: 700, color: "var(--text-primary)" }}>
               {formatILS(monthlyIncome)}
             </h3>
           </div>
@@ -131,7 +131,7 @@ export function PortfolioHero({
               width: 34,
               height: 34,
               borderRadius: 10,
-              background: "rgba(13,148,136,0.1)",
+              background: "rgba(13,148,136,0.12)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

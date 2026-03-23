@@ -37,14 +37,17 @@ export default function TwoFactorPage() {
   return (
     <div className="flex flex-col items-center gap-8 w-full max-w-[360px]">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center">
-          <ShieldCheck className="w-6 h-6 text-gold" />
+        <div
+          className="flex items-center justify-center"
+          style={{ width: 48, height: 48, borderRadius: 16, background: "rgba(13,148,136,0.15)" }}
+        >
+          <ShieldCheck style={{ width: 24, height: 24, color: "#0d9488" }} />
         </div>
         <div className="flex flex-col items-center gap-1">
-          <h1 className="text-[22px] font-semibold text-text-primary tracking-tight">
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
             {t("title")}
           </h1>
-          <p className="text-text-secondary text-[13px] text-center leading-relaxed">
+          <p className="text-center leading-relaxed" style={{ fontSize: 13, color: "var(--text-secondary)" }}>
             {t("description")}
           </p>
         </div>
@@ -59,20 +62,41 @@ export default function TwoFactorPage() {
           value={code}
           onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
           placeholder={t("placeholder")}
-          className="w-full h-14 text-center text-[24px] font-mono tracking-[0.5em] rounded-xl bg-white border border-cream-darker text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent shadow-sm"
+          className="w-full font-mono"
+          style={{
+            height: 56,
+            textAlign: "center",
+            fontSize: 24,
+            letterSpacing: "0.5em",
+            borderRadius: 12,
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            color: "var(--text-primary)",
+            outline: "none",
+          }}
           autoFocus
           autoComplete="one-time-code"
           disabled={loading}
         />
 
         {error && (
-          <p className="text-status-red text-[13px] text-center">{error}</p>
+          <p className="text-center" style={{ fontSize: 13, color: "#ef4444" }}>{error}</p>
         )}
 
         <button
           type="submit"
           disabled={code.length !== 6 || loading}
-          className="w-full h-11 rounded-xl bg-gold text-white font-medium text-[14px] hover:bg-gold-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+          className="w-full disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          style={{
+            height: 44,
+            borderRadius: 12,
+            background: "#0d9488",
+            color: "#fff",
+            fontWeight: 600,
+            fontSize: 14,
+            border: "none",
+            cursor: "pointer",
+          }}
         >
           {loading ? t("verifying") : t("verify")}
         </button>
@@ -81,7 +105,8 @@ export default function TwoFactorPage() {
       <form action={logout}>
         <button
           type="submit"
-          className="text-text-tertiary text-[13px] hover:text-text-secondary transition-colors"
+          className="transition-colors"
+          style={{ color: "var(--text-tertiary)", fontSize: 13, background: "none", border: "none", cursor: "pointer" }}
         >
           {t("signOutInstead")}
         </button>

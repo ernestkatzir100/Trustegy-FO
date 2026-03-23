@@ -5,14 +5,20 @@ export default async function MarketplacePage() {
   const t = await getTranslations("modules");
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-[24px] font-semibold text-text-primary tracking-tight">
+      <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
         {t("marketplace")}
       </h1>
-      <div className="flex flex-col items-center justify-center py-20 rounded-2xl border border-cream-darker bg-white shadow-sm">
-        <div className="w-12 h-12 rounded-2xl bg-cream-dark flex items-center justify-center mb-4">
-          <Store className="w-6 h-6 text-text-tertiary" />
+      <div
+        className="flex flex-col items-center justify-center py-20 rounded-2xl"
+        style={{ background: "var(--surface-card)", border: "1px solid rgba(255,255,255,0.08)" }}
+      >
+        <div
+          className="flex items-center justify-center mb-4"
+          style={{ width: 48, height: 48, borderRadius: 16, background: "rgba(255,255,255,0.06)" }}
+        >
+          <Store className="w-6 h-6" style={{ color: "var(--text-tertiary)" }} />
         </div>
-        <p className="text-[14px] text-text-secondary">{t("comingSoon")}</p>
+        <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("comingSoon")}</p>
       </div>
     </div>
   );

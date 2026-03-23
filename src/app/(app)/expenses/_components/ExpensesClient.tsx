@@ -37,6 +37,15 @@ interface Props {
 
 type Tab = "list" | "analysis" | "recurring";
 
+const inputStyle = {
+  background: "rgba(255,255,255,0.06)",
+  border: "1px solid rgba(255,255,255,0.08)",
+  borderRadius: 8,
+  color: "var(--text-primary)",
+  fontSize: 13,
+  outline: "none",
+} as const;
+
 export function ExpensesClient({ entities }: Props) {
   const t = useTranslations("expenses");
 
@@ -59,9 +68,7 @@ export function ExpensesClient({ entities }: Props) {
 
   // Modals
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingExpense, setEditingExpense] = useState<ExpenseWithEntity | null>(
-    null
-  );
+  const [editingExpense, setEditingExpense] = useState<ExpenseWithEntity | null>(null);
   const [showImport, setShowImport] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
@@ -137,16 +144,22 @@ export function ExpensesClient({ entities }: Props) {
   return (
     <div className="flex flex-col gap-6">
       {/* Tabs */}
-      <div className="flex gap-1 bg-cream-dark rounded-xl p-1 self-start">
+      <div className="flex gap-1 rounded-xl p-1 self-start" style={{ background: "rgba(255,255,255,0.04)" }}>
         {tabs.map((tb) => (
           <button
             key={tb.key}
             onClick={() => setTab(tb.key)}
-            className={`px-4 py-1.5 rounded-lg text-[13px] font-medium transition-colors ${
-              tab === tb.key
-                ? "bg-white text-text-primary shadow-sm"
-                : "text-text-secondary hover:text-text-primary"
-            }`}
+            className="transition-colors"
+            style={{
+              padding: "6px 16px",
+              borderRadius: 8,
+              fontSize: 13,
+              fontWeight: 600,
+              background: tab === tb.key ? "rgba(13,148,136,0.12)" : "transparent",
+              color: tab === tb.key ? "#0d9488" : "var(--text-secondary)",
+              border: "none",
+              cursor: "pointer",
+            }}
           >
             {tb.label}
           </button>
@@ -159,26 +172,10 @@ export function ExpensesClient({ entities }: Props) {
         <>
           {/* KPI Cards */}
           <div className="grid grid-cols-4 gap-4">
-            <KpiCard
-              label={t("totalThisMonth")}
-              value={formatILS(summary.thisMonth)}
-              icon={Receipt}
-            />
-            <KpiCard
-              label={t("totalThisYear")}
-              value={formatILS(summary.totalYear)}
-              icon={TrendingUp}
-            />
-            <KpiCard
-              label={t("recurringMonthly")}
-              value={formatILS(summary.recurringMonthly)}
-              icon={RefreshCw}
-            />
-            <KpiCard
-              label={t("topCategory")}
-              value={topCategoryLabel}
-              icon={Award}
-            />
+            <KpiCard label={t("totalThisMonth")} value={formatILS(summary.thisMonth)} icon={Receipt} />
+            <KpiCard label={t("totalThisYear")} value={formatILS(summary.totalYear)} icon={TrendingUp} />
+            <KpiCard label={t("recurringMonthly")} value={formatILS(summary.recurringMonthly)} icon={RefreshCw} />
+            <KpiCard label={t("topCategory")} value={topCategoryLabel} icon={Award} />
           </div>
 
           {/* Filter bar */}
@@ -186,37 +183,28 @@ export function ExpensesClient({ entities }: Props) {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="h-9 px-3 rounded-lg border border-cream-darker bg-white text-[13px] text-text-primary focus:outline-none focus:ring-2 focus:ring-gold"
+              style={{ ...inputStyle, height: 36, padding: "0 12px" }}
             >
               <option value="">{t("allCategories")}</option>
-              {(
-                Object.entries(EXPENSE_CATEGORIES) as [
-                  ExpenseCategory,
-                  { label: string },
-                ][]
-              ).map(([key, { label }]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
+              {(Object.entries(EXPENSE_CATEGORIES) as [ExpenseCategory, { label: string }][]).map(([key, { label }]) => (
+                <option key={key} value={key}>{label}</option>
               ))}
             </select>
 
             <select
               value={yearFilter}
               onChange={(e) => setYearFilter(Number(e.target.value))}
-              className="h-9 px-3 rounded-lg border border-cream-darker bg-white text-[13px] text-text-primary focus:outline-none focus:ring-2 focus:ring-gold"
+              style={{ ...inputStyle, height: 36, padding: "0 12px" }}
             >
               {years.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
+                <option key={y} value={y}>{y}</option>
               ))}
             </select>
 
             <select
               value={monthFilter}
               onChange={(e) => setMonthFilter(Number(e.target.value))}
-              className="h-9 px-3 rounded-lg border border-cream-darker bg-white text-[13px] text-text-primary focus:outline-none focus:ring-2 focus:ring-gold"
+              style={{ ...inputStyle, height: 36, padding: "0 12px" }}
             >
               <option value={0}>{t("allMonths")}</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
@@ -227,31 +215,30 @@ export function ExpensesClient({ entities }: Props) {
             </select>
 
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute inset-inline-start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+              <Search className="absolute inset-inline-start-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--text-tertiary)" }} />
               <input
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
                 placeholder={t("description")}
-                className="w-full h-9 ps-9 pe-3 rounded-lg border border-cream-darker bg-white text-[13px] text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-gold"
+                style={{ ...inputStyle, width: "100%", height: 36, paddingInlineStart: 36, paddingInlineEnd: 12 }}
               />
             </div>
 
             <div className="flex gap-2 ms-auto">
               <button
                 onClick={() => setShowImport(true)}
-                className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-[13px] text-text-secondary border border-cream-darker hover:bg-cream-dark transition-colors"
+                className="flex items-center gap-1.5 transition-colors"
+                style={{ height: 36, padding: "0 12px", borderRadius: 8, fontSize: 13, color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.1)", background: "transparent", cursor: "pointer" }}
               >
-                <Upload className="w-4 h-4" />
+                <Upload style={{ width: 16, height: 16 }} />
                 {t("importFile")}
               </button>
               <button
-                onClick={() => {
-                  setFormError(null);
-                  setShowAddForm(true);
-                }}
-                className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-[13px] font-medium bg-gold text-white hover:bg-gold-dark transition-colors"
+                onClick={() => { setFormError(null); setShowAddForm(true); }}
+                className="flex items-center gap-1.5 transition-colors"
+                style={{ height: 36, padding: "0 12px", borderRadius: 8, fontSize: 13, fontWeight: 600, background: "var(--accent-teal)", color: "#fff", border: "none", cursor: "pointer" }}
               >
-                <Plus className="w-4 h-4" />
+                <Plus style={{ width: 16, height: 16 }} />
                 {t("addExpense")}
               </button>
             </div>
@@ -259,8 +246,8 @@ export function ExpensesClient({ entities }: Props) {
 
           {/* Add form */}
           {showAddForm && (
-            <div className="rounded-2xl border border-gold/30 bg-white p-5 shadow-sm max-w-lg">
-              <h3 className="text-[14px] font-semibold text-text-primary mb-3">
+            <div className="rounded-2xl p-5 max-w-lg" style={{ background: "var(--surface-card)", border: "1px solid rgba(13,148,136,0.3)" }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)", marginBottom: 12 }}>
                 {t("addExpense")}
               </h3>
               <ExpenseForm
@@ -275,8 +262,8 @@ export function ExpensesClient({ entities }: Props) {
 
           {/* Edit form */}
           {editingExpense && (
-            <div className="rounded-2xl border border-gold/30 bg-white p-5 shadow-sm max-w-lg">
-              <h3 className="text-[14px] font-semibold text-text-primary mb-3">
+            <div className="rounded-2xl p-5 max-w-lg" style={{ background: "var(--surface-card)", border: "1px solid rgba(13,148,136,0.3)" }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)", marginBottom: 12 }}>
                 {t("editExpense")}
               </h3>
               <ExpenseForm
@@ -285,16 +272,13 @@ export function ExpensesClient({ entities }: Props) {
                   category: editingExpense.category as ExpenseCategory,
                   description: editingExpense.description ?? undefined,
                   vendorName: editingExpense.vendorName ?? undefined,
-                  amount: editingExpense.amount / 100, // agorot → ILS
+                  amount: editingExpense.amount / 100,
                   date: editingExpense.date,
                   entityId: editingExpense.entityId ?? undefined,
                   isRecurring: editingExpense.isRecurring,
                 }}
                 onSubmit={handleUpdate}
-                onCancel={() => {
-                  setEditingExpense(null);
-                  setFormError(null);
-                }}
+                onCancel={() => { setEditingExpense(null); setFormError(null); }}
                 error={formError}
                 submitting={submitting}
               />
@@ -304,112 +288,71 @@ export function ExpensesClient({ entities }: Props) {
           {/* Table */}
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <span className="text-[13px] text-text-tertiary animate-pulse">
+              <span className="animate-pulse" style={{ fontSize: 13, color: "var(--text-tertiary)" }}>
                 {t("saving")}
               </span>
             </div>
           ) : expenses.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 rounded-2xl border border-cream-darker bg-white shadow-sm">
-              <div className="w-12 h-12 rounded-2xl bg-cream-dark flex items-center justify-center mb-4">
-                <Receipt className="w-6 h-6 text-text-tertiary" />
+            <div
+              className="flex flex-col items-center justify-center py-20 rounded-2xl"
+              style={{ background: "var(--surface-card)", border: "1px solid rgba(255,255,255,0.08)" }}
+            >
+              <div className="flex items-center justify-center mb-4" style={{ width: 48, height: 48, borderRadius: 16, background: "rgba(255,255,255,0.06)" }}>
+                <Receipt style={{ width: 24, height: 24, color: "var(--text-tertiary)" }} />
               </div>
-              <p className="text-[14px] text-text-secondary">
-                {t("noExpenses")}
-              </p>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>{t("noExpenses")}</p>
             </div>
           ) : (
-            <div className="rounded-2xl border border-cream-darker bg-white shadow-sm overflow-hidden">
-              <table className="w-full text-[13px]">
+            <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface-card)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <table className="w-full" style={{ fontSize: 13 }}>
                 <thead>
-                  <tr className="bg-cream-dark text-text-secondary">
-                    <th className="text-start p-3 font-medium">{t("date")}</th>
-                    <th className="text-start p-3 font-medium">
-                      {t("description")}
-                    </th>
-                    <th className="text-start p-3 font-medium">
-                      {t("vendor")}
-                    </th>
-                    <th className="text-start p-3 font-medium">
-                      {t("category")}
-                    </th>
-                    <th className="text-start p-3 font-medium">
-                      {t("entity")}
-                    </th>
-                    <th className="text-start p-3 font-medium">
-                      {t("amount")}
-                    </th>
-                    <th className="text-start p-3 font-medium">
-                      {t("recurring")}
-                    </th>
-                    <th className="text-start p-3 font-medium">
-                      {t("source")}
-                    </th>
-                    <th className="text-start p-3 font-medium">
-                      {t("actions")}
-                    </th>
+                  <tr style={{ background: "rgba(255,255,255,0.03)" }}>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("date")}</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("description")}</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("vendor")}</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("category")}</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("entity")}</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("amount")}</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("recurring")}</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("source")}</th>
+                    <th className="text-start p-3" style={{ fontWeight: 600, color: "var(--text-tertiary)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("actions")}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {expenses.map((expense) => (
                     <tr
                       key={expense.id}
-                      className="border-t border-cream-darker hover:bg-cream/50 group"
+                      className="group transition-colors"
+                      style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                     >
-                      <td className="p-3 font-mono text-[12px]" dir="ltr">
-                        {expense.date}
-                      </td>
-                      <td className="p-3 max-w-[200px] truncate">
-                        {expense.description}
-                      </td>
-                      <td className="p-3 max-w-[120px] truncate text-text-secondary">
-                        {expense.vendorName}
-                      </td>
-                      <td className="p-3">
-                        <CategoryBadge
-                          category={expense.category as ExpenseCategory}
-                        />
-                      </td>
-                      <td className="p-3 text-text-secondary text-[12px]">
-                        {expense.entityName ?? "—"}
-                      </td>
-                      <td
-                        className="p-3 font-mono font-medium text-text-primary"
-                        dir="ltr"
-                      >
-                        {formatILS(expense.amount)}
-                      </td>
-                      <td className="p-3 text-[12px] text-text-secondary">
-                        {expense.isRecurring ? t("yes") : t("no")}
-                      </td>
-                      <td className="p-3 text-[11px] text-text-tertiary">
-                        {expense.importSource === "MANUAL"
-                          ? t("manual")
-                          : expense.importSource}
-                      </td>
+                      <td className="p-3 font-mono" dir="ltr" style={{ fontSize: 12, color: "var(--text-primary)" }}>{expense.date}</td>
+                      <td className="p-3 max-w-[200px] truncate" style={{ color: "var(--text-primary)" }}>{expense.description}</td>
+                      <td className="p-3 max-w-[120px] truncate" style={{ color: "var(--text-secondary)" }}>{expense.vendorName}</td>
+                      <td className="p-3"><CategoryBadge category={expense.category as ExpenseCategory} /></td>
+                      <td className="p-3" style={{ color: "var(--text-secondary)", fontSize: 12 }}>{expense.entityName ?? "—"}</td>
+                      <td className="p-3 font-mono" dir="ltr" style={{ fontWeight: 600, color: "var(--text-primary)" }}>{formatILS(expense.amount)}</td>
+                      <td className="p-3" style={{ fontSize: 12, color: "var(--text-secondary)" }}>{expense.isRecurring ? t("yes") : t("no")}</td>
+                      <td className="p-3" style={{ fontSize: 11, color: "var(--text-tertiary)" }}>{expense.importSource === "MANUAL" ? t("manual") : expense.importSource}</td>
                       <td className="p-3">
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
-                            onClick={() => {
-                              setFormError(null);
-                              setEditingExpense(expense);
-                              setShowAddForm(false);
-                            }}
-                            className="w-7 h-7 rounded-lg flex items-center justify-center text-text-secondary hover:bg-cream-dark transition-colors"
+                            onClick={() => { setFormError(null); setEditingExpense(expense); setShowAddForm(false); }}
+                            className="flex items-center justify-center transition-colors"
+                            style={{ width: 28, height: 28, borderRadius: 8, color: "var(--text-secondary)", background: "transparent", border: "none", cursor: "pointer" }}
                             title={t("editExpense")}
                           >
-                            <Pencil className="w-3.5 h-3.5" />
+                            <Pencil style={{ width: 14, height: 14 }} />
                           </button>
                           <button
-                            onClick={() => {
-                              if (confirm(t("deleteConfirm"))) {
-                                handleDelete(expense.id);
-                              }
-                            }}
+                            onClick={() => { if (confirm(t("deleteConfirm"))) handleDelete(expense.id); }}
                             disabled={deletingId === expense.id}
-                            className="w-7 h-7 rounded-lg flex items-center justify-center text-status-red hover:bg-status-red-bg transition-colors disabled:opacity-50"
+                            className="flex items-center justify-center transition-colors disabled:opacity-50"
+                            style={{ width: 28, height: 28, borderRadius: 8, color: "#ef4444", background: "transparent", border: "none", cursor: "pointer" }}
                             title={t("deleteConfirm")}
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 style={{ width: 14, height: 14 }} />
                           </button>
                         </div>
                       </td>
@@ -422,12 +365,7 @@ export function ExpensesClient({ entities }: Props) {
 
           {/* Import Modal */}
           {showImport && (
-            <ImportModal
-              onClose={() => {
-                setShowImport(false);
-                loadData();
-              }}
-            />
+            <ImportModal onClose={() => { setShowImport(false); loadData(); }} />
           )}
         </>
       )}

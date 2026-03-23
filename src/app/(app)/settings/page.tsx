@@ -13,30 +13,34 @@ export default async function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-[24px] font-semibold text-text-primary tracking-tight">
+      <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
         {t("title")}
       </h1>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-[13px] font-medium text-text-secondary uppercase tracking-wider">
+        <h2 style={{ fontSize: 13, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
           {t("entities")}
         </h2>
         <Link
           href="/settings/entities"
-          className="rounded-2xl border border-cream-darker bg-white p-4 hover:border-gold/30 transition-colors flex items-center gap-3 shadow-sm group"
+          className="rounded-2xl p-4 transition-colors flex items-center gap-3 group"
+          style={{ background: "var(--surface-card)", border: "1px solid rgba(255,255,255,0.08)" }}
         >
-          <div className="w-9 h-9 rounded-xl bg-cream-dark flex items-center justify-center group-hover:bg-gold/10 transition-colors">
-            <Building2 className="w-[18px] h-[18px] text-text-secondary group-hover:text-gold transition-colors" />
+          <div
+            className="flex items-center justify-center group-hover:opacity-80 transition-opacity"
+            style={{ width: 36, height: 36, borderRadius: 12, background: "rgba(255,255,255,0.06)" }}
+          >
+            <Building2 style={{ width: 18, height: 18, color: "var(--text-secondary)" }} />
           </div>
-          <span className="text-[14px] text-text-primary flex-1">{t("entities")}</span>
-          <ChevronLeft className="w-4 h-4 text-text-tertiary" />
+          <span style={{ fontSize: 14, color: "var(--text-primary)", flex: 1 }}>{t("entities")}</span>
+          <ChevronLeft style={{ width: 16, height: 16, color: "var(--text-tertiary)" }} />
         </Link>
       </section>
 
       <section className="flex flex-col gap-3">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-text-secondary" />
-          <h2 className="text-[13px] font-medium text-text-secondary uppercase tracking-wider">
+          <ShieldCheck style={{ width: 16, height: 16, color: "var(--text-secondary)" }} />
+          <h2 style={{ fontSize: 13, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             {t("security")}
           </h2>
         </div>

@@ -70,7 +70,7 @@ export function Sidebar() {
       className="fixed inset-block-0 inset-inline-start-0 z-[100] flex flex-col transition-[width] duration-200 ease-out motion-reduce:transition-none"
       style={{
         width: isExpanded ? 220 : 56,
-        background: "var(--sidebar-bg, #1C1C1E)",
+        background: "var(--sidebar-bg, #161B27)",
       }}
     >
       {/* Logo + toggle */}
