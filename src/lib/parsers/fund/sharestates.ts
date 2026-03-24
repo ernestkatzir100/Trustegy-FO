@@ -22,7 +22,7 @@ function dollarsToCents(val: unknown): number | null {
 function tooBp(val: unknown): number | null {
   if (val == null || val === "") return null;
   // APR may be stored as "12%" or 0.12 or 12.0
-  let s = String(val).replace(/%/g, "").trim();
+  const s = String(val).replace(/%/g, "").trim();
   let n = Number(s);
   if (isNaN(n)) return null;
   // If value > 1, treat as a percentage (e.g. 12.5 → 12.5%)
