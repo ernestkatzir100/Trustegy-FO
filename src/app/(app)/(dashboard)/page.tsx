@@ -42,14 +42,14 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="flex flex-col gap-12">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.03em" }}>
+          <h1 style={{ fontSize: 36, fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.03em" }}>
             {t("portfolioOverview")}
           </h1>
-          <p style={{ fontSize: 13, color: "var(--text-tertiary)", marginTop: 2 }}>
+          <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 4 }}>
             {t("title")}
           </p>
         </div>

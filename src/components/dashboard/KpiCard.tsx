@@ -67,7 +67,7 @@ export function KpiCard({
         <div
           style={{
             padding: 12,
-            borderRadius: "var(--radius-md)",
+            borderRadius: "var(--radius-xl)",
             background: "var(--accent-subtle)",
             color: "var(--accent)",
           }}

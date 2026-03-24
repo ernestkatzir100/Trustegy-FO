@@ -7,7 +7,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <header
         className="sticky top-0 z-40 flex items-center justify-end"
         style={{
-          padding: "16px 48px",
+          padding: "24px 48px",
           background: "rgba(255, 255, 255, 0.90)",
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",

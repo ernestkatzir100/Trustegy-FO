@@ -78,20 +78,20 @@
   --status-red:      var(--danger);
   --status-red-bg:   var(--danger-subtle);
 
-  /* Sidebar — dark "anchor" style from Stitch */
-  --sidebar-bg:      #1C1C1E;
-  --sidebar-border:  rgba(255, 255, 255, 0.08);
-  --sidebar-text:    #94A3B8;
-  --sidebar-muted:   #64748B;
-  --sidebar-hover:   rgba(255, 255, 255, 0.06);
-  --sidebar-active-bg: rgba(255, 255, 255, 0.10);
+  /* Sidebar — glass/white from Stitch Lucid Modern */
+  --sidebar-bg:      rgba(255, 255, 255, 0.80);
+  --sidebar-border:  transparent;
+  --sidebar-text:    #3d4947;
+  --sidebar-muted:   #6d7a77;
+  --sidebar-hover:   rgba(0, 104, 95, 0.04);
+  --sidebar-active-bg: transparent;
   --sidebar-active-text: #00685f;
-  --sidebar-background: #1C1C1E;
-  --sidebar-foreground: #F1F5F9;
+  --sidebar-background: rgba(255, 255, 255, 0.80);
+  --sidebar-foreground: #171d1c;
   --sidebar-primary: #00685f;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent:  rgba(255, 255, 255, 0.06);
-  --sidebar-accent-foreground: #F1F5F9;
+  --sidebar-accent:  rgba(0, 104, 95, 0.04);
+  --sidebar-accent-foreground: #171d1c;
   --sidebar-ring:    #00685f;
 
   /* Shadows — Stitch "ambient" style */
@@ -303,10 +303,10 @@ body {
 
 /* ═══ TYPOGRAPHY UTILITIES ════════════════════════════════ */
 .page-title {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 36px;
+  font-weight: 900;
   letter-spacing: -0.03em;
-  line-height: 1.2;
+  line-height: 1.1;
   color: var(--text-primary);
 }
 .section-title {
@@ -338,31 +338,29 @@ body {
   letter-spacing: 0.1px;
 }
 
-/* ═══ CARD SYSTEM — Stitch "ambient shadow" ══════════════ */
+/* ═══ CARD SYSTEM — Stitch Lucid Modern "ambient shadow" ═ */
 .card-base {
   background: #ffffff;
   border-radius: 24px;
-  border: 1px solid rgba(23, 29, 28, 0.08);
-  box-shadow: 0 2px 12px rgba(23, 29, 28, 0.06), 0 0 0 1px rgba(23,29,28,0.03);
-  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  border: none;
+  box-shadow: 0 20px 40px rgba(23, 29, 28, 0.06);
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
 }
 .card-base:hover {
-  box-shadow: 0 12px 32px rgba(23, 29, 28, 0.10), 0 0 0 1px rgba(23,29,28,0.04);
-  border-color: rgba(0, 104, 95, 0.18);
-  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(23, 29, 28, 0.10);
+  transform: translateY(-4px);
 }
 
 .dashboard-card {
   background: #ffffff;
   border-radius: 24px;
-  border: 1px solid rgba(23, 29, 28, 0.08);
-  box-shadow: 0 2px 12px rgba(23, 29, 28, 0.06), 0 0 0 1px rgba(23,29,28,0.03);
-  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  border: none;
+  box-shadow: 0 20px 40px rgba(23, 29, 28, 0.06);
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
 }
 .dashboard-card:hover {
-  box-shadow: 0 12px 32px rgba(23, 29, 28, 0.10), 0 0 0 1px rgba(23,29,28,0.04);
-  border-color: rgba(0, 104, 95, 0.18);
-  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(23, 29, 28, 0.10);
+  transform: translateY(-4px);
 }
 
 /* ═══ ELEVATION ═══════════════════════════════════════════ */
@@ -385,7 +383,7 @@ body {
   background: #00685f;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 24px;
   padding: 9px 18px;
   font-size: 13px;
   font-weight: 600;
