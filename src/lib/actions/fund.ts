@@ -9,8 +9,10 @@ import { actionError, actionSuccess } from "@/lib/actions";
 import { withAudit } from "@/lib/audit";
 import {
   updateHoldingSchema,
+  insertHoldingSchema,
   listHoldingsSchema,
   type UpdateHolding,
+  type InsertHolding,
   type ListHoldingsFilter,
 } from "@/lib/validations/fund";
 import type { ActionResult } from "@/types";
@@ -173,4 +175,117 @@ export async function getFundSummary(): Promise<
     byPlatform,
     byStatus,
   });
+}
+
+export type ImportResult = {
+  inserted: number;
+  updated: number;
+  skipped: number;
+};
+
+/**
+ * Upsert parsed holdings from an Excel/CSV import.
+ * Matches on (platform, offeringId):
+ *  - New positions are inserted.
+ *  - Existing positions have financial/status fields updated; manual
+ *    estimates and notes are preserved unless explicitly overridden.
+ */
+export async function importFundHoldings(
+  holdings: InsertHolding[]
+): Promise<ActionResult<ImportResult>> {
+  const { userId, error } = await requireAuth();
+  if (error) return actionError(error.code, error.message);
+
+  if (!holdings || holdings.length === 0) {
+    return actionError("VALIDATION", "No holdings to import");
+  }
+
+  let inserted = 0;
+  let updated = 0;
+  let skipped = 0;
+
+  for (const raw of holdings) {
+    const parsed = insertHoldingSchema.safeParse(raw);
+    if (!parsed.success) {
+      skipped++;
+      continue;
+    }
+
+    const data = parsed.data;
+
+    // Check for existing holding by (platform, offeringId)
+    const [existing] = await db
+      .select()
+      .from(fundHoldings)
+      .where(
+        and(
+          eq(fundHoldings.platform, data.platform),
+          eq(fundHoldings.offeringId, data.offeringId)
+        )
+      )
+      .limit(1);
+
+    if (!existing) {
+      // Insert new holding
+      await withAudit(
+        { userId, action: "create", tableName: "fund_holdings" },
+        async () => {
+          const [result] = await db
+            .insert(fundHoldings)
+            .values({ ...data, lastUpdateSource: "excel_upload" })
+            .returning();
+          return { result, recordId: result.id, previousValue: null, newValue: result };
+        }
+      );
+      inserted++;
+    } else {
+      // Update only the fields sourced from the Excel report.
+      // Preserve manually-set recovery estimates and notes unless they're
+      // explicitly included in the parsed data (which they won't be from
+      // platform parsers).
+      const updatePayload: Partial<typeof fundHoldings.$inferInsert> = {
+        status: data.status,
+        subStatus: data.subStatus,
+        currentPrincipal: data.currentPrincipal,
+        apr: data.apr ?? existing.apr,
+        maturityDate: data.maturityDate ?? existing.maturityDate,
+        lastUpdateDate: data.lastUpdateDate,
+        lastUpdateSource: "excel_upload",
+        lastUpdateText: data.lastUpdateText ?? existing.lastUpdateText,
+        updatedAt: new Date(),
+      };
+
+      // Only update address if not already set manually
+      if (!existing.propertyAddress && data.propertyAddress) {
+        updatePayload.propertyAddress = data.propertyAddress;
+      }
+      if (!existing.city && data.city) updatePayload.city = data.city;
+      if (!existing.state && data.state) updatePayload.state = data.state;
+      if (!existing.arv && data.arv) updatePayload.arv = data.arv;
+      if (!existing.loanToArv && data.loanToArv) updatePayload.loanToArv = data.loanToArv;
+
+      await withAudit(
+        { userId, action: "update", tableName: "fund_holdings" },
+        async () => {
+          const [result] = await db
+            .update(fundHoldings)
+            .set(updatePayload)
+            .where(eq(fundHoldings.id, existing.id))
+            .returning();
+          return {
+            result,
+            recordId: existing.id,
+            previousValue: existing,
+            newValue: result,
+          };
+        }
+      );
+      updated++;
+    }
+  }
+
+  revalidatePath("/fund");
+  revalidatePath("/fund/portfolio");
+
+  return actionSuccess({ inserted, updated, skipped });
 }
