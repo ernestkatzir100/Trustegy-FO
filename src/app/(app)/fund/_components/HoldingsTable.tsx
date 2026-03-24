@@ -64,24 +64,26 @@ function SummaryBar({ holdings }: { holdings: FundHolding[] }) {
   const totalHigh = holdings.reduce((s, h) => s + (h.liquidationEstimateHigh ?? 0), 0);
   const staleCount = holdings.filter((h) => isStale(h.lastUpdateDate)).length;
 
+  const cards = [
+    { label: "Cost Basis (Apex)", value: usd(totalCostBasis), sub: "Total invested" },
+    { label: "Positions", value: String(holdings.length), sub: "Active + resolved" },
+    { label: "Recovery Est. Low", value: usd(totalLow), sub: "Conservative" },
+    { label: "Recovery Est. High", value: usd(totalHigh), sub: "Optimistic" },
+    ...(staleCount > 0
+      ? [{ label: "Stale (>90 days)", value: String(staleCount), sub: "No recent update", warn: true }]
+      : []),
+  ];
+
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-        gap: 12,
-        marginBottom: 20,
+        gridTemplateColumns: `repeat(${cards.length}, 1fr)`,
+        gap: 16,
+        marginBottom: 24,
       }}
     >
-      {[
-        { label: "Cost Basis (Apex)", value: usd(totalCostBasis), sub: "Total invested" },
-        { label: "Positions", value: String(holdings.length), sub: "Active + resolved" },
-        { label: "Recovery Est. Low", value: usd(totalLow), sub: "Conservative" },
-        { label: "Recovery Est. High", value: usd(totalHigh), sub: "Optimistic" },
-        ...(staleCount > 0
-          ? [{ label: "Stale (>90 days)", value: String(staleCount), sub: "No recent update", warn: true }]
-          : []),
-      ].map((card) => (
+      {cards.map((card) => (
         <div
           key={card.label}
           className="dashboard-card"
@@ -100,12 +102,14 @@ function SummaryBar({ holdings }: { holdings: FundHolding[] }) {
             {card.label}
           </div>
           <div
+            className="num"
             style={{
-              fontSize: 20,
+              fontSize: 22,
               fontWeight: 800,
               letterSpacing: "-0.03em",
               color: (card as { warn?: boolean }).warn ? "var(--warning)" : "var(--text-primary)",
               lineHeight: 1,
+              fontFamily: "var(--font-heebo, var(--font-sans))",
             }}
           >
             {card.value}
@@ -234,7 +238,7 @@ export function HoldingsTable({ initialHoldings }: Props) {
             <option key={g.value} value={g.value}>{g.label}</option>
           ))}
         </select>
-        <span style={{ fontSize: 12, color: "var(--text-muted)", marginLeft: 4 }}>
+        <span style={{ fontSize: 12, color: "var(--text-muted)", marginInlineStart: 4 }}>
           {filtered.length} of {holdings.length} positions
         </span>
       </div>
@@ -399,10 +403,11 @@ export function HoldingsTable({ initialHoldings }: Props) {
                         )}
                       </td>
                       <td
+                        className="num"
                         style={{
                           padding: "12px 14px",
-                          fontFamily: "var(--font-mono, monospace)",
-                          fontSize: 12,
+                          fontSize: 13,
+                          fontWeight: 600,
                           color: "var(--text-primary)",
                           whiteSpace: "nowrap",
                         }}
@@ -410,10 +415,10 @@ export function HoldingsTable({ initialHoldings }: Props) {
                         {usd(holding.originalInvestment)}
                       </td>
                       <td
+                        className="num"
                         style={{
                           padding: "12px 14px",
-                          fontFamily: "var(--font-mono, monospace)",
-                          fontSize: 12,
+                          fontSize: 13,
                           color: "var(--text-secondary)",
                           whiteSpace: "nowrap",
                         }}
@@ -425,9 +430,9 @@ export function HoldingsTable({ initialHoldings }: Props) {
                         holding.liquidationEstimateHigh != null ? (
                           <div>
                             <span
+                              className="num"
                               style={{
-                                fontSize: 12,
-                                fontFamily: "var(--font-mono, monospace)",
+                                fontSize: 13,
                                 color: "var(--text-secondary)",
                               }}
                             >
