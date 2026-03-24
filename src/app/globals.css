@@ -78,20 +78,20 @@
   --status-red:      var(--danger);
   --status-red-bg:   var(--danger-subtle);
 
-  /* Sidebar — glass/white style from Stitch */
-  --sidebar-bg:      rgba(255, 255, 255, 0.80);
-  --sidebar-border:  rgba(23, 29, 28, 0.06);
-  --sidebar-text:    #3d4947;
-  --sidebar-muted:   #6d7a77;
-  --sidebar-hover:   rgba(0, 104, 95, 0.04);
-  --sidebar-active-bg: transparent;
+  /* Sidebar — dark "anchor" style from Stitch */
+  --sidebar-bg:      #1C1C1E;
+  --sidebar-border:  rgba(255, 255, 255, 0.08);
+  --sidebar-text:    #94A3B8;
+  --sidebar-muted:   #64748B;
+  --sidebar-hover:   rgba(255, 255, 255, 0.06);
+  --sidebar-active-bg: rgba(255, 255, 255, 0.10);
   --sidebar-active-text: #00685f;
-  --sidebar-background: rgba(255, 255, 255, 0.80);
-  --sidebar-foreground: #171d1c;
+  --sidebar-background: #1C1C1E;
+  --sidebar-foreground: #F1F5F9;
   --sidebar-primary: #00685f;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent:  rgba(0, 104, 95, 0.04);
-  --sidebar-accent-foreground: #171d1c;
+  --sidebar-accent:  rgba(255, 255, 255, 0.06);
+  --sidebar-accent-foreground: #F1F5F9;
   --sidebar-ring:    #00685f;
 
   /* Shadows — Stitch "ambient" style */
@@ -341,25 +341,27 @@ body {
 /* ═══ CARD SYSTEM — Stitch "ambient shadow" ══════════════ */
 .card-base {
   background: #ffffff;
-  border-radius: 20px;
-  border: 1px solid rgba(0, 100, 80, 0.08);
-  box-shadow: 0 2px 8px rgba(23, 29, 28, 0.06), 0 0 0 1px rgba(23,29,28,0.03);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border-radius: 24px;
+  border: 1px solid rgba(23, 29, 28, 0.08);
+  box-shadow: 0 2px 12px rgba(23, 29, 28, 0.06), 0 0 0 1px rgba(23,29,28,0.03);
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
 }
 .card-base:hover {
-  box-shadow: 0 8px 24px rgba(23, 29, 28, 0.10), 0 0 0 1px rgba(23,29,28,0.04);
+  box-shadow: 0 12px 32px rgba(23, 29, 28, 0.10), 0 0 0 1px rgba(23,29,28,0.04);
+  border-color: rgba(0, 104, 95, 0.18);
   transform: translateY(-2px);
 }
 
 .dashboard-card {
   background: #ffffff;
-  border-radius: 20px;
-  border: 1px solid rgba(0, 100, 80, 0.08);
-  box-shadow: 0 2px 8px rgba(23, 29, 28, 0.06), 0 0 0 1px rgba(23,29,28,0.03);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border-radius: 24px;
+  border: 1px solid rgba(23, 29, 28, 0.08);
+  box-shadow: 0 2px 12px rgba(23, 29, 28, 0.06), 0 0 0 1px rgba(23,29,28,0.03);
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
 }
 .dashboard-card:hover {
-  box-shadow: 0 8px 24px rgba(23, 29, 28, 0.10), 0 0 0 1px rgba(23,29,28,0.04);
+  box-shadow: 0 12px 32px rgba(23, 29, 28, 0.10), 0 0 0 1px rgba(23,29,28,0.04);
+  border-color: rgba(0, 104, 95, 0.18);
   transform: translateY(-2px);
 }
 

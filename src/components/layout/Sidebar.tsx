@@ -73,9 +73,7 @@ export function Sidebar() {
       style={{
         width: isExpanded ? 256 : 64,
         background: "var(--sidebar-bg)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        boxShadow: "var(--shadow-lg)",
+        borderInlineEnd: "1px solid var(--sidebar-border)",
         transition: "width 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
       }}
     >
@@ -103,13 +101,13 @@ export function Sidebar() {
                   fontSize: 20,
                   fontWeight: 900,
                   letterSpacing: "-0.04em",
-                  color: "var(--accent)",
+                  color: "#ffffff",
                   lineHeight: 1,
                 }}
               >
                 TRUSTEGY
               </h1>
-              <p className="text-label" style={{ color: "var(--text-muted)", marginTop: 2 }}>
+              <p className="text-label" style={{ color: "var(--sidebar-muted)", marginTop: 2 }}>
                 ניהול פיננסי
               </p>
             </div>
@@ -124,10 +122,10 @@ export function Sidebar() {
                 <div
                   className="text-label"
                   style={{
-                    color: "var(--text-muted)",
+                    color: "var(--sidebar-muted)",
                     padding: "0 16px",
                     marginBottom: 4,
-                    opacity: 0.6,
+                    opacity: 0.7,
                   }}
                 >
                   {group.label}
@@ -152,19 +150,21 @@ export function Sidebar() {
                       padding: "10px 16px",
                       borderRadius: "var(--radius-sm)",
                       fontSize: 14,
-                      fontWeight: isActive ? 700 : 400,
-                      color: isActive ? "var(--accent)" : "var(--sidebar-text)",
-                      borderInlineEnd: isActive ? "4px solid var(--accent)" : "4px solid transparent",
-                      background: isActive ? "var(--sidebar-hover)" : "transparent",
+                      fontWeight: isActive ? 700 : 500,
+                      color: isActive ? "var(--accent-light)" : "var(--sidebar-text)",
+                      borderInlineEnd: isActive ? "4px solid var(--accent-light)" : "4px solid transparent",
+                      background: isActive ? "var(--sidebar-active-bg)" : "transparent",
                     }}
                     onMouseEnter={(e) => {
                       if (!isActive) {
                         e.currentTarget.style.background = "var(--sidebar-hover)";
+                        e.currentTarget.style.color = "#ffffff";
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!isActive) {
                         e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.color = "var(--sidebar-text)";
                       }
                     }}
                   >
@@ -206,7 +206,7 @@ export function Sidebar() {
       </div>
 
       {/* Bottom section */}
-      <div className="mt-auto" style={{ padding: "16px 32px 32px" }}>
+      <div className="mt-auto" style={{ padding: "16px 32px 32px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
         <Link
           href="#"
           className="flex items-center gap-3 tonal-shift"
@@ -216,8 +216,8 @@ export function Sidebar() {
             fontSize: 14,
             color: "var(--sidebar-muted)",
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--sidebar-hover)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "var(--sidebar-hover)"; e.currentTarget.style.color = "#ffffff"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--sidebar-muted)"; }}
         >
           <HelpCircle style={{ width: 20, height: 20 }} strokeWidth={1.8} />
           {isExpanded && <span>עזרה</span>}
@@ -236,8 +236,8 @@ export function Sidebar() {
               border: "none",
               cursor: "pointer",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--sidebar-hover)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--sidebar-hover)"; e.currentTarget.style.color = "#ffffff"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--sidebar-muted)"; }}
           >
             <LogOut style={{ width: 20, height: 20 }} strokeWidth={1.8} />
             {isExpanded && <span>יציאה</span>}

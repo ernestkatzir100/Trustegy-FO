@@ -26,7 +26,7 @@ function fmtILS(val: number): string {
 /* ── KPI definitions ─────────────────────────────────────── */
 const KPI_CARDS = [
   { label: "שווי תיק", value: fmtILS(8500000), icon: Wallet, color: "#6366f1", bg: "rgba(99,102,241,0.12)", trend: null },
-  { label: "תשואה שנתית", value: "+12.4%", icon: TrendingUp, color: "#0d9488", bg: "rgba(13,148,136,0.12)", trend: "+2.1%" },
+  { label: "תשואה שנתית", value: "+12.4%", icon: TrendingUp, color: "#00685f", bg: "rgba(0,104,95,0.12)", trend: "+2.1%" },
   { label: "הכנסה חודשית", value: fmtILS(35000), icon: Banknote, color: "#eab308", bg: "rgba(234,179,8,0.12)", trend: null },
   { label: "מספר נכסים", value: "12", icon: Building2, color: "#3b82f6", bg: "rgba(59,130,246,0.12)", trend: null },
 ];
@@ -104,8 +104,8 @@ export default function InvestmentsPage() {
                     style={{
                       fontSize: 12,
                       fontWeight: 600,
-                      color: "#0d9488",
-                      background: "rgba(13,148,136,0.1)",
+                      color: "var(--accent)",
+                      background: "var(--accent-subtle)",
                       padding: "2px 8px",
                       borderRadius: "var(--radius-full)",
                     }}
@@ -195,8 +195,8 @@ export default function InvestmentsPage() {
                     style={{
                       fontSize: 12,
                       fontWeight: 600,
-                      color: "#0d9488",
-                      background: "rgba(13,148,136,0.1)",
+                      color: "var(--accent)",
+                      background: "var(--accent-subtle)",
                       padding: "2px 8px",
                       borderRadius: "var(--radius-full)",
                     }}
@@ -285,7 +285,7 @@ export default function InvestmentsPage() {
                             width: `${asset.allocation}%`,
                             height: "100%",
                             borderRadius: 3,
-                            background: "var(--accent, #0d9488)",
+                            background: "var(--accent)",
                           }}
                         />
                       </div>

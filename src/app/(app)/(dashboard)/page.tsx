@@ -75,7 +75,7 @@ export default async function DashboardPage() {
         className="card-base elev-1"
         style={{
           padding: "16px 22px",
-          background: "linear-gradient(135deg, var(--surface-card) 0%, rgba(13,148,136,0.06) 100%)",
+          background: "linear-gradient(135deg, var(--surface-card) 0%, rgba(0,104,95,0.06) 100%)",
           border: "1px solid var(--accent-teal-subtle)",
         }}
       >

@@ -54,9 +54,14 @@ export function KpiCard({
 
   return (
     <div
-      className="card-base"
+      className="card-base relative overflow-hidden group"
       style={{ padding: "var(--space-card)" }}
     >
+      {/* Sparkline hover gradient — Stitch style */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+        style={{ background: "linear-gradient(90deg, transparent 0%, rgba(0,104,95,0.08) 50%, transparent 100%)" }}
+      />
       {/* Top: icon + trend badge */}
       <div className="flex justify-between items-start" style={{ marginBottom: 16 }}>
         <div

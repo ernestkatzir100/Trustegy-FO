@@ -52,8 +52,8 @@ export function PortfolioHero({
           <div
             className="flex items-center gap-1.5"
             style={{
-              background: "rgba(13,148,136,0.15)",
-              color: "#0d9488",
+              background: "var(--accent-subtle)",
+              color: "var(--accent)",
               padding: "5px 12px",
               borderRadius: 20,
               fontSize: 13,
@@ -104,12 +104,12 @@ export function PortfolioHero({
               justifyContent: "center",
             }}
           >
-            <ShieldCheck size={16} style={{ color: "#0d9488" }} />
+            <ShieldCheck size={16} style={{ color: "var(--accent)" }} />
           </div>
         </div>
         <div>
           <div style={{ width: "100%", height: 6, background: "var(--bg-tint)", borderRadius: 20, marginTop: 16, overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${riskPercent}%`, background: "#0d9488", borderRadius: 20 }} />
+            <div style={{ height: "100%", width: `${riskPercent}%`, background: "var(--accent)", borderRadius: 20 }} />
           </div>
           <p style={{ fontSize: 12, color: "var(--text-tertiary)", marginTop: 8 }}>{riskNote}</p>
         </div>
@@ -137,10 +137,10 @@ export function PortfolioHero({
               justifyContent: "center",
             }}
           >
-            <Banknote size={16} style={{ color: "#0d9488" }} />
+            <Banknote size={16} style={{ color: "var(--accent)" }} />
           </div>
         </div>
-        <div className="flex items-center gap-2 mt-4" style={{ color: "#0d9488" }}>
+        <div className="flex items-center gap-2 mt-4" style={{ color: "var(--accent)" }}>
           <p style={{ fontSize: 12, fontWeight: 500 }}>{monthlyIncomeNote}</p>
         </div>
       </div>

@@ -166,7 +166,7 @@ export function ExpenseForm({
         <input
           type="checkbox"
           {...register("isRecurring")}
-          style={{ width: 16, height: 16, borderRadius: 4, accentColor: "#0d9488" }}
+          style={{ width: 16, height: 16, borderRadius: 4, accentColor: "#00685f" }}
         />
         <span style={{ fontSize: 13, color: "var(--text-primary)" }}>{t("recurring")}</span>
       </label>

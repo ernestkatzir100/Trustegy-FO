@@ -53,7 +53,7 @@ export function EntityCard({ entity }: { entity: Entity }) {
 
   if (editing) {
     return (
-      <div className="rounded-2xl p-5" style={{ ...cardStyle, borderColor: "rgba(13,148,136,0.3)" }}>
+      <div className="rounded-2xl p-5" style={{ ...cardStyle, borderColor: "rgba(0,104,95,0.3)" }}>
         <EntityForm
           defaultValues={{
             name: entity.name,

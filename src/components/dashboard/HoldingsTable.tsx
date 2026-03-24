@@ -15,7 +15,7 @@ interface HoldingsTableProps {
 }
 
 const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
-  active: { label: "פעיל", bg: "var(--accent-teal-subtle)", color: "#0d9488" },
+  active: { label: "פעיל", bg: "var(--accent-teal-subtle)", color: "var(--accent)" },
   pending: { label: "בהמתנה", bg: "var(--status-amber-bg)", color: "#f59e0b" },
   watching: { label: "במעקב", bg: "var(--bg-muted)", color: "#94a3b8" },
 };
@@ -33,7 +33,7 @@ export function HoldingsTable({ holdings }: HoldingsTableProps) {
         <button
           type="button"
           className="flex items-center gap-1 transition-colors"
-          style={{ color: "#0d9488", fontSize: 13, fontWeight: 700 }}
+          style={{ color: "var(--accent)", fontSize: 13, fontWeight: 700 }}
         >
           צפה בכל הנכסים ←
         </button>
@@ -85,7 +85,7 @@ export function HoldingsTable({ holdings }: HoldingsTableProps) {
                     style={{
                       fontWeight: 700,
                       fontSize: 13,
-                      color: holding.returnPercent >= 5 ? "#0d9488" : holding.returnPercent >= 0 ? "#94a3b8" : "#ef4444",
+                      color: holding.returnPercent >= 5 ? "var(--accent)" : holding.returnPercent >= 0 ? "#94a3b8" : "#ef4444",
                     }}
                   >
                     {holding.returnPercent >= 0 ? "+" : ""}{holding.returnPercent}%

@@ -34,7 +34,7 @@ export function PerformanceChart() {
                 fontSize: 12,
                 fontWeight: 700,
                 borderRadius: 6,
-                color: activeRange === range.key ? "#0d9488" : "var(--text-tertiary)",
+                color: activeRange === range.key ? "var(--accent)" : "var(--text-tertiary)",
                 background: activeRange === range.key ? "var(--accent-teal-subtle)" : "transparent",
                 boxShadow: "none",
               }}
@@ -59,7 +59,7 @@ export function PerformanceChart() {
           <path
             d="M0 85 C 30 82, 60 78, 80 75 C 100 72, 120 68, 150 62 C 180 55, 210 48, 240 42 C 270 35, 300 28, 340 22 C 360 18, 380 15, 400 12"
             fill="none"
-            stroke="#0d9488"
+            stroke="var(--accent)"
             strokeWidth="2.5"
             strokeLinecap="round"
           />
@@ -79,8 +79,8 @@ export function PerformanceChart() {
           />
           <defs>
             <linearGradient id="tealGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#0d9488" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#0d9488" stopOpacity="0" />
+              <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
             </linearGradient>
           </defs>
         </svg>
@@ -102,7 +102,7 @@ export function PerformanceChart() {
       {/* Legend */}
       <div className="mt-10 flex gap-6">
         <div className="flex items-center gap-2">
-          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#0d9488" }} />
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "var(--accent)" }} />
           <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>תיק נוכחי</span>
         </div>
         <div className="flex items-center gap-2">

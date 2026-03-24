@@ -39,9 +39,9 @@ export default function TwoFactorPage() {
       <div className="flex flex-col items-center gap-3">
         <div
           className="flex items-center justify-center"
-          style={{ width: 48, height: 48, borderRadius: 16, background: "rgba(13,148,136,0.15)" }}
+          style={{ width: 48, height: 48, borderRadius: 16, background: "var(--accent-subtle)" }}
         >
-          <ShieldCheck style={{ width: 24, height: 24, color: "#0d9488" }} />
+          <ShieldCheck style={{ width: 24, height: 24, color: "var(--accent)" }} />
         </div>
         <div className="flex flex-col items-center gap-1">
           <h1 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
@@ -90,7 +90,7 @@ export default function TwoFactorPage() {
           style={{
             height: 44,
             borderRadius: 12,
-            background: "#0d9488",
+            background: "var(--accent)",
             color: "#fff",
             fontWeight: 600,
             fontSize: 14,

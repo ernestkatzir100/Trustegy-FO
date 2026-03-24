@@ -164,7 +164,7 @@ export function getDemoAssetAllocation(): { slices: AssetSlice[]; totalAssets: n
   return {
     totalAssets: 12,
     slices: [
-      { label: "מניות", percent: 45, value: toAgorot(5602900), color: "#0d9488" },
+      { label: "מניות", percent: 45, value: toAgorot(5602900), color: "#00685f" },
       { label: 'נדל"ן', percent: 25, value: toAgorot(3112700), color: "#0f172a" },
       { label: 'אג"ח ונכסים חלופיים', percent: 30, value: toAgorot(3735290), color: "#94A3B8" },
     ],

@@ -25,7 +25,7 @@ export default async function SignInPage() {
       <div className="flex flex-col items-center gap-3">
         <div
           className="flex items-center justify-center"
-          style={{ width: 48, height: 48, borderRadius: 16, background: "#0d9488", boxShadow: "0 4px 20px rgba(13,148,136,0.3)" }}
+          style={{ width: 48, height: 48, borderRadius: 16, background: "var(--accent)", boxShadow: "0 4px 20px rgba(0,104,95,0.3)" }}
         >
           <span style={{ fontSize: 20, fontWeight: 700, color: "#fff", lineHeight: 1 }}>ש</span>
         </div>
@@ -63,7 +63,7 @@ export default async function SignInPage() {
               width: "100%",
               height: 44,
               borderRadius: 12,
-              background: "#0d9488",
+              background: "var(--accent)",
               color: "#fff",
               fontSize: 14,
               fontWeight: 600,

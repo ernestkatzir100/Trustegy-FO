@@ -136,9 +136,9 @@ export function ImportModal({ onClose }: ImportModalProps) {
                         padding: "8px 16px",
                         borderRadius: 8,
                         fontSize: 13,
-                        border: source === opt.value ? "1px solid rgba(13,148,136,0.4)" : "1px solid var(--border-subtle)",
-                        background: source === opt.value ? "rgba(13,148,136,0.12)" : "transparent",
-                        color: source === opt.value ? "#0d9488" : "var(--text-secondary)",
+                        border: source === opt.value ? "1px solid rgba(0,104,95,0.4)" : "1px solid var(--border-subtle)",
+                        background: source === opt.value ? "var(--accent-subtle)" : "transparent",
+                        color: source === opt.value ? "var(--accent)" : "var(--text-secondary)",
                         fontWeight: source === opt.value ? 600 : 400,
                         cursor: "pointer",
                       }}
@@ -164,7 +164,7 @@ export function ImportModal({ onClose }: ImportModalProps) {
                     {t("import_acceptFormats")}
                   </span>
                   {loading && (
-                    <span className="animate-pulse" style={{ fontSize: 12, color: "#0d9488" }}>
+                    <span className="animate-pulse" style={{ fontSize: 12, color: "var(--accent)" }}>
                       {t("saving")}
                     </span>
                   )}
@@ -235,7 +235,7 @@ export function ImportModal({ onClose }: ImportModalProps) {
                             type="checkbox"
                             checked={row.included}
                             onChange={() => toggleRow(i)}
-                            style={{ width: 14, height: 14, accentColor: "#0d9488" }}
+                            style={{ width: 14, height: 14, accentColor: "#00685f" }}
                           />
                         </td>
                         <td className="p-2 font-mono" dir="ltr" style={{ color: "var(--text-primary)" }}>{row.date}</td>
