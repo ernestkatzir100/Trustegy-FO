@@ -18,6 +18,7 @@ import {
   LogOut,
   HelpCircle,
   Plus,
+  Briefcase,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logout } from "@/lib/auth/actions";
@@ -52,6 +53,12 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/banks", icon: Building2, label: "בנקים" },
       { href: "/financing", icon: Landmark, label: "מימון" },
       { href: "/investments", icon: PieChart, label: "השקעות" },
+    ],
+  },
+  {
+    label: "קרן פיינאפל",
+    items: [
+      { href: "/fund", icon: Briefcase, label: "Fund Management" },
     ],
   },
   {
