@@ -98,11 +98,27 @@ export async function POST(req: NextRequest) {
         distributorId: inv.distributorId ? distIdMap.get(inv.distributorId) ?? null : null,
       }));
 
-      const inserted = await db
-        .insert(investors)
-        .values(toInsert)
-        .onConflictDoNothing()
-        .returning();
+      const inserted: typeof investors.$inferSelect[] = [];
+      for (let i = 0; i < toInsert.length; i += 50) {
+        const batch = toInsert.slice(i, i + 50);
+        try {
+          const rows = await db.insert(investors).values(batch).onConflictDoNothing().returning();
+          inserted.push(...rows);
+        } catch (batchErr) {
+          const batchMsg = batchErr instanceof Error ? batchErr.message : String(batchErr);
+          console.error(`Investor batch ${i}-${i + 50} failed:`, batchMsg.split("Failed query:")[0].trim());
+          // Try rows individually to skip bad ones
+          for (const row of batch) {
+            try {
+              const r = await db.insert(investors).values([row]).onConflictDoNothing().returning();
+              inserted.push(...r);
+            } catch (rowErr) {
+              const rowMsg = rowErr instanceof Error ? rowErr.message : String(rowErr);
+              console.error(`Skipping investor "${row.displayName}":`, rowMsg.split("Failed query:")[0].trim().slice(0, 200));
+            }
+          }
+        }
+      }
       invCount = inserted.length;
 
       inserted.forEach((inv) => {
@@ -182,9 +198,12 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("parse-import error:", msg);
-    // Return first 500 chars of the Postgres error so the UI shows something actionable
+    // Extract the postgres error: it appears before " Failed query:" in Drizzle errors
+    const pgMsg = msg.includes("Failed query:")
+      ? msg.split("Failed query:")[0].trim().slice(-300)
+      : msg.slice(0, 300);
     return NextResponse.json(
-      { error: msg.slice(0, 500) },
+      { error: pgMsg || msg.slice(0, 300) },
       { status: 500 }
     );
   }
