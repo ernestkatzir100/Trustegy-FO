@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 const FUND_NAV = [
   { href: "/fund/portfolio", label: "Portfolio", live: true },
   { href: "/fund/import", label: "Data Import", live: true },
-  { href: "/fund/analytics", label: "Analytics", live: false },
+  { href: "/fund/analytics", label: "Analytics", live: true },
   { href: "/fund/investors", label: "Investors", live: false },
   { href: "/fund/apex", label: "Apex Reports", live: false },
 ] as const;
