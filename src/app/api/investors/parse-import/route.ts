@@ -37,27 +37,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Investor register file is required" }, { status: 400 });
     }
 
-    // ── Parse all files server-side ────────────────────────────────────────────
-    const invBuf = Buffer.from(await investorsFile.arrayBuffer());
-    const rawInvestors = parseInvestorsSheet(invBuf).map((p) => p.row);
+    // ── Parse all files server-side (ExcelJS — streaming, no string limit) ──────
+    const rawInvestors = (await parseInvestorsSheet(await investorsFile.arrayBuffer())).map((p) => p.row);
     const { merged, needsReview } = dedupeInvestors(rawInvestors);
 
-    let parsedDist: ReturnType<typeof parseDistributorsSheet> = [];
+    let parsedDist: Awaited<ReturnType<typeof parseDistributorsSheet>> = [];
     if (distributorsFile) {
-      const buf = Buffer.from(await distributorsFile.arrayBuffer());
-      parsedDist = parseDistributorsSheet(buf);
+      parsedDist = await parseDistributorsSheet(await distributorsFile.arrayBuffer());
     }
 
-    let parsedPositions: ReturnType<typeof parseTransactionsSheet> = [];
+    let parsedPositions: Awaited<ReturnType<typeof parseTransactionsSheet>> = [];
     if (transactionsFile) {
-      const buf = Buffer.from(await transactionsFile.arrayBuffer());
-      parsedPositions = parseTransactionsSheet(buf);
+      parsedPositions = await parseTransactionsSheet(await transactionsFile.arrayBuffer());
     }
 
-    let parsedRedemptions: ReturnType<typeof parseDistributionsSheet> = [];
+    let parsedRedemptions: Awaited<ReturnType<typeof parseDistributionsSheet>> = [];
     if (distributionsFile) {
-      const buf = Buffer.from(await distributionsFile.arrayBuffer());
-      parsedRedemptions = parseDistributionsSheet(buf);
+      parsedRedemptions = await parseDistributionsSheet(await distributionsFile.arrayBuffer());
     }
 
     // ── 1. Distributors ────────────────────────────────────────────────────────

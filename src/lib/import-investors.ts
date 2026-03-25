@@ -1,13 +1,14 @@
 /**
  * Monday.com Excel export parser for investor data migration.
  * Handles all 4 boards: investors, distributors, distributions, transactions.
+ * Uses ExcelJS for memory-efficient SAX-based parsing (avoids V8 string limit).
  *
  * Dedup strategy:
  *   1. Partner ID (External PartnerId "8910-01-XXX") — primary key
  *   2. Email — fallback
  *   3. Remainder → dedupStatus = "review_needed"
  */
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import type {
   InsertInvestor,
   InsertDistributor,
@@ -46,12 +47,11 @@ function toBps(v: unknown): number | null {
 
 function parseDate(v: unknown): string | null {
   if (v == null || v === "") return null;
-  // Excel serial number
-  if (typeof v === "number") {
-    const d = XLSX.SSF.parse_date_code(v);
-    if (d) {
-      return `${d.y}-${String(d.m).padStart(2, "0")}-${String(d.d).padStart(2, "0")}`;
-    }
+  if (v instanceof Date) {
+    const y = v.getFullYear();
+    const m = String(v.getMonth() + 1).padStart(2, "0");
+    const d = String(v.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   }
   const s = str(v);
   // DD/MM/YYYY
@@ -62,26 +62,78 @@ function parseDate(v: unknown): string | null {
   return null;
 }
 
-/** Find the header row index (first row with ≥5 non-empty cells) */
-function findHeaderRow(sheet: XLSX.WorkSheet): number {
-  const range = XLSX.utils.decode_range(sheet["!ref"] ?? "A1:A1");
-  for (let r = range.s.r; r <= Math.min(range.e.r, 5); r++) {
-    let filled = 0;
-    for (let c = range.s.c; c <= range.e.c; c++) {
-      const cell = sheet[XLSX.utils.encode_cell({ r, c })];
-      if (cell && cell.v != null && str(cell.v) !== "") filled++;
+/** Extract a scalar value from an ExcelJS cell */
+function cellValue(cell: ExcelJS.Cell): unknown {
+  const v = cell.value;
+  if (v == null) return null;
+  if (typeof v === "object") {
+    // RichText
+    if ("richText" in v) {
+      return (v as ExcelJS.CellRichTextValue).richText
+        .map((r: { text: string }) => r.text)
+        .join("");
     }
-    if (filled >= 5) return r;
+    // Formula result
+    if ("result" in v) {
+      const res = (v as ExcelJS.CellFormulaValue).result;
+      return res instanceof Error ? null : res;
+    }
+    // Hyperlink
+    if ("text" in v && "hyperlink" in v) {
+      return (v as ExcelJS.CellHyperlinkValue).text;
+    }
+    // SharedString
+    if ("sharedFormula" in v) return null;
+    // Date passthrough
+    if (v instanceof Date) return v;
   }
-  return 0;
+  return v;
 }
 
-function sheetToRows(sheet: XLSX.WorkSheet): RawRow[] {
-  const headerRow = findHeaderRow(sheet);
-  const range = XLSX.utils.decode_range(sheet["!ref"] ?? "A1:A1");
-  range.s.r = headerRow;
-  sheet["!ref"] = XLSX.utils.encode_range(range);
-  return XLSX.utils.sheet_to_json<RawRow>(sheet, { defval: null });
+/** Parse a workbook buffer into an array of RawRow objects using ExcelJS */
+async function parseWorkbookRows(buffer: ArrayBuffer): Promise<RawRow[]> {
+  const workbook = new ExcelJS.Workbook();
+  // ExcelJS expects a plain Buffer; convert from ArrayBuffer
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (workbook.xlsx as any).load(Buffer.from(buffer) as unknown);
+  const sheet = workbook.worksheets[0];
+  if (!sheet) return [];
+
+  // Collect all rows as arrays of values
+  const allRows: unknown[][] = [];
+  sheet.eachRow({ includeEmpty: false }, (row) => {
+    const cells: unknown[] = [];
+    row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+      cells[colNumber - 1] = cellValue(cell);
+    });
+    allRows.push(cells);
+  });
+
+  if (allRows.length === 0) return [];
+
+  // Find header row: first row with ≥5 non-empty cells
+  let headerIdx = 0;
+  for (let i = 0; i < Math.min(allRows.length, 10); i++) {
+    const nonEmpty = allRows[i].filter(
+      (c) => c != null && str(c) !== ""
+    ).length;
+    if (nonEmpty >= 5) {
+      headerIdx = i;
+      break;
+    }
+  }
+
+  const headers = allRows[headerIdx].map((c) =>
+    c == null ? "" : str(c)
+  );
+
+  return allRows.slice(headerIdx + 1).map((cells) => {
+    const row: RawRow = {};
+    headers.forEach((h, i) => {
+      if (h) row[h] = cells[i] ?? null;
+    });
+    return row;
+  });
 }
 
 // ─── Column name normalizer ───────────────────────────────────────────────────
@@ -104,10 +156,8 @@ export interface ParsedDistributor {
   mondayId?: string;
 }
 
-export function parseDistributorsSheet(buffer: Buffer): ParsedDistributor[] {
-  const wb = XLSX.read(buffer, { type: "buffer", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
-  const sheet = wb.Sheets[wb.SheetNames[0]];
-  const rows = sheetToRows(sheet);
+export async function parseDistributorsSheet(buffer: ArrayBuffer): Promise<ParsedDistributor[]> {
+  const rows = await parseWorkbookRows(buffer);
 
   return rows
     .filter((r) => str(col(r, "name", "שם")).length > 0)
@@ -138,10 +188,8 @@ export interface ParsedInvestor {
   row: InsertInvestor;
 }
 
-export function parseInvestorsSheet(buffer: Buffer): ParsedInvestor[] {
-  const wb = XLSX.read(buffer, { type: "buffer", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
-  const sheet = wb.Sheets[wb.SheetNames[0]];
-  const rows = sheetToRows(sheet);
+export async function parseInvestorsSheet(buffer: ArrayBuffer): Promise<ParsedInvestor[]> {
+  const rows = await parseWorkbookRows(buffer);
 
   return rows
     .filter((r) => str(col(r, "name", "שם")).length > 0)
@@ -201,10 +249,8 @@ export interface ParsedPosition {
   partnerId: string | null;
 }
 
-export function parseTransactionsSheet(buffer: Buffer): ParsedPosition[] {
-  const wb = XLSX.read(buffer, { type: "buffer", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
-  const sheet = wb.Sheets[wb.SheetNames[0]];
-  const rows = sheetToRows(sheet);
+export async function parseTransactionsSheet(buffer: ArrayBuffer): Promise<ParsedPosition[]> {
+  const rows = await parseWorkbookRows(buffer);
 
   return rows
     .filter((r) => str(col(r, "name", "שם", "ישות משקיעה")).length > 0)
@@ -269,13 +315,11 @@ export interface ParsedRedemption {
   sourceBoardName: string;
 }
 
-export function parseDistributionsSheet(
-  buffer: Buffer,
+export async function parseDistributionsSheet(
+  buffer: ArrayBuffer,
   boardName = "חלוקות"
-): ParsedRedemption[] {
-  const wb = XLSX.read(buffer, { type: "buffer", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
-  const sheet = wb.Sheets[wb.SheetNames[0]];
-  const rows = sheetToRows(sheet);
+): Promise<ParsedRedemption[]> {
+  const rows = await parseWorkbookRows(buffer);
 
   return rows
     .filter((r) => str(col(r, "name", "שם")).length > 0)
