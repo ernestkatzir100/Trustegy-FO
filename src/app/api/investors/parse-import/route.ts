@@ -38,25 +38,25 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Parse all files server-side ────────────────────────────────────────────
-    const invBuf = await investorsFile.arrayBuffer();
+    const invBuf = Buffer.from(await investorsFile.arrayBuffer());
     const rawInvestors = parseInvestorsSheet(invBuf).map((p) => p.row);
     const { merged, needsReview } = dedupeInvestors(rawInvestors);
 
     let parsedDist: ReturnType<typeof parseDistributorsSheet> = [];
     if (distributorsFile) {
-      const buf = await distributorsFile.arrayBuffer();
+      const buf = Buffer.from(await distributorsFile.arrayBuffer());
       parsedDist = parseDistributorsSheet(buf);
     }
 
     let parsedPositions: ReturnType<typeof parseTransactionsSheet> = [];
     if (transactionsFile) {
-      const buf = await transactionsFile.arrayBuffer();
+      const buf = Buffer.from(await transactionsFile.arrayBuffer());
       parsedPositions = parseTransactionsSheet(buf);
     }
 
     let parsedRedemptions: ReturnType<typeof parseDistributionsSheet> = [];
     if (distributionsFile) {
-      const buf = await distributionsFile.arrayBuffer();
+      const buf = Buffer.from(await distributionsFile.arrayBuffer());
       parsedRedemptions = parseDistributionsSheet(buf);
     }
 

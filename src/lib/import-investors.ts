@@ -104,8 +104,8 @@ export interface ParsedDistributor {
   mondayId?: string;
 }
 
-export function parseDistributorsSheet(buffer: ArrayBuffer): ParsedDistributor[] {
-  const wb = XLSX.read(buffer, { type: "array", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
+export function parseDistributorsSheet(buffer: Buffer): ParsedDistributor[] {
+  const wb = XLSX.read(buffer, { type: "buffer", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
   const sheet = wb.Sheets[wb.SheetNames[0]];
   const rows = sheetToRows(sheet);
 
@@ -138,8 +138,8 @@ export interface ParsedInvestor {
   row: InsertInvestor;
 }
 
-export function parseInvestorsSheet(buffer: ArrayBuffer): ParsedInvestor[] {
-  const wb = XLSX.read(buffer, { type: "array", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
+export function parseInvestorsSheet(buffer: Buffer): ParsedInvestor[] {
+  const wb = XLSX.read(buffer, { type: "buffer", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
   const sheet = wb.Sheets[wb.SheetNames[0]];
   const rows = sheetToRows(sheet);
 
@@ -201,8 +201,8 @@ export interface ParsedPosition {
   partnerId: string | null;
 }
 
-export function parseTransactionsSheet(buffer: ArrayBuffer): ParsedPosition[] {
-  const wb = XLSX.read(buffer, { type: "array", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
+export function parseTransactionsSheet(buffer: Buffer): ParsedPosition[] {
+  const wb = XLSX.read(buffer, { type: "buffer", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
   const sheet = wb.Sheets[wb.SheetNames[0]];
   const rows = sheetToRows(sheet);
 
@@ -270,10 +270,10 @@ export interface ParsedRedemption {
 }
 
 export function parseDistributionsSheet(
-  buffer: ArrayBuffer,
+  buffer: Buffer,
   boardName = "חלוקות"
 ): ParsedRedemption[] {
-  const wb = XLSX.read(buffer, { type: "array", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
+  const wb = XLSX.read(buffer, { type: "buffer", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
   const sheet = wb.Sheets[wb.SheetNames[0]];
   const rows = sheetToRows(sheet);
 
