@@ -111,7 +111,7 @@ function EmailComposeInner() {
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
-  const [attachments, setAttachments] = useState<Array<{ name: string; url: string }>>([]);
+  const [attachments, setAttachments] = useState<Array<{ name: string; content: string }>>([]);
   const [sendResult, setSendResult] = useState<SendEmailResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -526,10 +526,13 @@ function EmailComposeInner() {
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
-                    // In production, upload to blob storage and get URL
-                    // For now, store filename only — URL populated on upload
-                    const url = URL.createObjectURL(file);
-                    setAttachments((prev) => [...prev, { name: file.name, url }]);
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      // Strip the data URL prefix to get raw base64
+                      const base64 = (reader.result as string).split(",")[1];
+                      setAttachments((prev) => [...prev, { name: file.name, content: base64 }]);
+                    };
+                    reader.readAsDataURL(file);
                   }}
                 />
               </label>
