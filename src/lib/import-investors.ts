@@ -105,7 +105,7 @@ export interface ParsedDistributor {
 }
 
 export function parseDistributorsSheet(buffer: ArrayBuffer): ParsedDistributor[] {
-  const wb = XLSX.read(buffer, { type: "array" });
+  const wb = XLSX.read(buffer, { type: "array", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
   const sheet = wb.Sheets[wb.SheetNames[0]];
   const rows = sheetToRows(sheet);
 
@@ -139,7 +139,7 @@ export interface ParsedInvestor {
 }
 
 export function parseInvestorsSheet(buffer: ArrayBuffer): ParsedInvestor[] {
-  const wb = XLSX.read(buffer, { type: "array" });
+  const wb = XLSX.read(buffer, { type: "array", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
   const sheet = wb.Sheets[wb.SheetNames[0]];
   const rows = sheetToRows(sheet);
 
@@ -202,7 +202,7 @@ export interface ParsedPosition {
 }
 
 export function parseTransactionsSheet(buffer: ArrayBuffer): ParsedPosition[] {
-  const wb = XLSX.read(buffer, { type: "array" });
+  const wb = XLSX.read(buffer, { type: "array", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
   const sheet = wb.Sheets[wb.SheetNames[0]];
   const rows = sheetToRows(sheet);
 
@@ -273,7 +273,7 @@ export function parseDistributionsSheet(
   buffer: ArrayBuffer,
   boardName = "חלוקות"
 ): ParsedRedemption[] {
-  const wb = XLSX.read(buffer, { type: "array" });
+  const wb = XLSX.read(buffer, { type: "array", cellFormula: false, cellHTML: false, cellNF: false, cellStyles: false, cellDates: true });
   const sheet = wb.Sheets[wb.SheetNames[0]];
   const rows = sheetToRows(sheet);
 
