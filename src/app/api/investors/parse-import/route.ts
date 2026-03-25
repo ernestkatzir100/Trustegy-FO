@@ -180,9 +180,11 @@ export async function POST(req: NextRequest) {
       reviewNeededCount: needsReview.length,
     });
   } catch (err) {
-    console.error("parse-import error:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("parse-import error:", msg);
+    // Return first 500 chars of the Postgres error so the UI shows something actionable
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Import failed" },
+      { error: msg.slice(0, 500) },
       { status: 500 }
     );
   }
