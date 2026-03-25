@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Pencil, AlertTriangle, Info } from "lucide-react";
+import { Pencil, AlertTriangle } from "lucide-react";
 import { StatusBadge, PlatformBadge } from "./StatusBadge";
 import { HoldingEditModal } from "./HoldingEditModal";
 import type { FundHolding, Platform, HoldingStatus } from "@/db/schema/fund";
-import { PLATFORM_LABELS, STATUS_LABELS } from "@/db/schema/fund";
+import { STATUS_LABELS } from "@/db/schema/fund";
 
 // ─── Formatting ───────────────────────────────────────────────────────────────
 const usd = (cents: number | null | undefined) => {
