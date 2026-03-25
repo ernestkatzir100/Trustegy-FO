@@ -205,6 +205,24 @@ export async function bulkImportInvestors(
         if (inv.email) investorIdMap.set(`em:${inv.email.toLowerCase()}`, inv.id);
         investorIdMap.set(`name:${inv.displayName}`, inv.id);
       });
+
+      // Also fetch existing investors that were skipped by onConflictDoNothing
+      // so positions/redemptions for already-imported investors are not dropped
+      const partnerIds = toInsert.map((i) => i.partnerId).filter(Boolean) as string[];
+      const emails = toInsert.map((i) => i.email).filter(Boolean) as string[];
+      if (partnerIds.length > 0 || emails.length > 0) {
+        const existing = await db
+          .select({ id: investors.id, partnerId: investors.partnerId, email: investors.email, displayName: investors.displayName })
+          .from(investors);
+        existing.forEach((inv) => {
+          if (inv.partnerId && !investorIdMap.has(`pid:${inv.partnerId}`))
+            investorIdMap.set(`pid:${inv.partnerId}`, inv.id);
+          if (inv.email && !investorIdMap.has(`em:${inv.email.toLowerCase()}`))
+            investorIdMap.set(`em:${inv.email.toLowerCase()}`, inv.id);
+          if (!investorIdMap.has(`name:${inv.displayName}`))
+            investorIdMap.set(`name:${inv.displayName}`, inv.id);
+        });
+      }
     }
 
     // Helper: resolve investor ID from position/redemption lookup keys
@@ -329,7 +347,7 @@ export interface SendEmailPayload {
   subject: string;
   body: string;
   templateId?: string;
-  attachments?: Array<{ name: string; url: string }>;
+  attachments?: Array<{ name: string; content: string }>; // base64-encoded file content
 }
 
 export interface SendEmailResult {
@@ -365,24 +383,34 @@ export async function sendInvestorEmail(
       }
 
       try {
+        // Interpolate per-recipient placeholders
+        const today = new Date().toLocaleDateString("he-IL");
+        const interpolate = (text: string) =>
+          text
+            .replace(/\{\{name\}\}/g, target.displayName)
+            .replace(/\{\{date\}\}/g, today);
+
+        const resolvedSubject = interpolate(payload.subject);
+        const resolvedBody = interpolate(payload.body);
+
         const attachmentList = payload.attachments?.map((a) => ({
           filename: a.name,
-          path: a.url,
+          content: a.content, // base64 — Resend accepts this directly
         }));
 
         const result = await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL ?? "Pineapple Fund <noreply@pineapplefund.co.il>",
           to: target.email,
-          subject: payload.subject,
-          html: payload.body.replace(/\n/g, "<br>"),
+          subject: resolvedSubject,
+          html: resolvedBody.replace(/\n/g, "<br>"),
           attachments: attachmentList,
         });
 
         const log: InsertEmailLog = {
           investorId: target.id,
           templateId: payload.templateId ?? null,
-          subject: payload.subject,
-          body: payload.body,
+          subject: resolvedSubject,
+          body: resolvedBody,
           attachments: payload.attachments ? JSON.stringify(payload.attachments) : null,
           sentBy: userId,
           sentAt: new Date(),
