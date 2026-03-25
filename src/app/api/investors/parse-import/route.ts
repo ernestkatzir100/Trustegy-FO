@@ -60,9 +60,16 @@ export async function POST(req: NextRequest) {
     let distCount = 0;
     const distIdMap = new Map<string, string>();
     if (parsedDist.length > 0) {
+      // Deduplicate within-batch by name (PostgreSQL ON CONFLICT can't handle same-batch dupes)
+      const seenDistNames = new Set<string>();
+      const uniqueDist = parsedDist.filter((d) => {
+        if (seenDistNames.has(d.row.name)) return false;
+        seenDistNames.add(d.row.name);
+        return true;
+      });
       const inserted = await db
         .insert(distributors)
-        .values(parsedDist.map((d) => d.row))
+        .values(uniqueDist.map((d) => d.row))
         .onConflictDoNothing()
         .returning();
       distCount = inserted.length;
@@ -74,7 +81,19 @@ export async function POST(req: NextRequest) {
     const investorIdMap = new Map<string, string>();
 
     if (merged.length > 0) {
-      const toInsert = merged.map((inv) => ({
+      // Deduplicate within-batch by partnerId → email → displayName
+      const seenInvKeys = new Set<string>();
+      const uniqueMerged = merged.filter((inv) => {
+        const key = inv.partnerId
+          ? `pid:${inv.partnerId}`
+          : inv.email
+          ? `em:${inv.email.toLowerCase()}`
+          : `name:${inv.displayName}`;
+        if (seenInvKeys.has(key)) return false;
+        seenInvKeys.add(key);
+        return true;
+      });
+      const toInsert = uniqueMerged.map((inv) => ({
         ...inv,
         distributorId: inv.distributorId ? distIdMap.get(inv.distributorId) ?? null : null,
       }));
