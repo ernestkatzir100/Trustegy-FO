@@ -37,9 +37,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Investor register file is required" }, { status: 400 });
     }
 
+    const dryRun = req.nextUrl.searchParams.get("dry_run") === "1";
+
     // ── Parse all files server-side (ExcelJS — streaming, no string limit) ──────
     const rawInvestors = (await parseInvestorsSheet(await investorsFile.arrayBuffer())).map((p) => p.row);
     const { merged, needsReview } = dedupeInvestors(rawInvestors);
+
+    // Dry-run: return parsed data without touching the DB
+    if (dryRun) {
+      return NextResponse.json({
+        investorCount: merged.length,
+        sampleInvestors: merged.slice(0, 5),
+        reviewNeededCount: needsReview.length,
+      });
+    }
 
     let parsedDist: Awaited<ReturnType<typeof parseDistributorsSheet>> = [];
     if (distributorsFile) {
