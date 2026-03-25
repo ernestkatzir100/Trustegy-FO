@@ -1,6 +1,6 @@
 "use server";
 
-import { eq, and, asc } from "drizzle-orm";
+import { eq, and, asc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { fundHoldings } from "@/db/schema/fund";
@@ -181,6 +181,7 @@ export type ImportResult = {
   inserted: number;
   updated: number;
   skipped: number;
+  affectedIds: string[];
 };
 
 /**
@@ -203,6 +204,7 @@ export async function importFundHoldings(
   let inserted = 0;
   let updated = 0;
   let skipped = 0;
+  const affectedIds: string[] = [];
 
   for (const raw of holdings) {
     const parsed = insertHoldingSchema.safeParse(raw);
@@ -227,7 +229,7 @@ export async function importFundHoldings(
 
     if (!existing) {
       // Insert new holding
-      await withAudit(
+      const newRecord = await withAudit(
         { userId, action: "create", tableName: "fund_holdings" },
         async () => {
           const [result] = await db
@@ -237,6 +239,7 @@ export async function importFundHoldings(
           return { result, recordId: result.id, previousValue: null, newValue: result };
         }
       );
+      affectedIds.push(newRecord.id);
       inserted++;
     } else {
       // Update only the fields sourced from the Excel report.
@@ -280,6 +283,7 @@ export async function importFundHoldings(
           };
         }
       );
+      affectedIds.push(existing.id);
       updated++;
     }
   }
@@ -287,5 +291,108 @@ export async function importFundHoldings(
   revalidatePath("/fund");
   revalidatePath("/fund/portfolio");
 
-  return actionSuccess({ inserted, updated, skipped });
+  return actionSuccess({ inserted, updated, skipped, affectedIds });
+}
+
+// ─── AI Analysis ─────────────────────────────────────────────────────────────
+
+export type AiAnalysisResult = {
+  holdingId: string;
+  status: string;
+  confidence: string;
+  reasoning: string;
+  nextAction: string;
+  recoveryNotes?: string;
+  statusChanged: boolean;
+};
+
+/** Classify a single holding using Claude AI. */
+export async function analyzeHolding(
+  holdingId: string
+): Promise<ActionResult<AiAnalysisResult>> {
+  const { error } = await requireAuth();
+  if (error) return actionError(error.code, error.message);
+
+  const [holding] = await db
+    .select()
+    .from(fundHoldings)
+    .where(eq(fundHoldings.id, holdingId))
+    .limit(1);
+
+  if (!holding) return actionError("NOT_FOUND", "Holding not found");
+
+  try {
+    const { classifyHolding } = await import("@/lib/ai/classify-holding");
+    const result = await classifyHolding(holding);
+    return actionSuccess({
+      holdingId,
+      status: result.status,
+      confidence: result.confidence,
+      reasoning: result.reasoning,
+      nextAction: result.nextAction,
+      recoveryNotes: result.recoveryNotes,
+      statusChanged: result.status !== holding.status,
+    });
+  } catch (err) {
+    return actionError(
+      "AI_ERROR",
+      err instanceof Error ? err.message : "AI classification failed"
+    );
+  }
+}
+
+/** Classify all active (non-resolved) holdings in batch. */
+export async function analyzeBatchHoldings(
+  holdingIds: string[]
+): Promise<ActionResult<AiAnalysisResult[]>> {
+  const { error } = await requireAuth();
+  if (error) return actionError(error.code, error.message);
+
+  if (!holdingIds.length) return actionSuccess([]);
+
+  const filtered = await db
+    .select()
+    .from(fundHoldings)
+    .where(inArray(fundHoldings.id, holdingIds));
+
+  if (!filtered.length) return actionSuccess([]);
+
+  try {
+    const { classifyBatch } = await import("@/lib/ai/classify-holding");
+    const resultMap = await classifyBatch(filtered);
+
+    const results: AiAnalysisResult[] = [];
+    for (const holding of filtered) {
+      const r = resultMap.get(holding.id);
+      if (!r) continue;
+      if ("error" in r) {
+        // Include error stub so caller knows which ones failed
+        results.push({
+          holdingId: holding.id,
+          status: holding.status,
+          confidence: "low",
+          reasoning: `Analysis failed: ${r.error}`,
+          nextAction: "Retry or classify manually",
+          statusChanged: false,
+        });
+      } else {
+        results.push({
+          holdingId: holding.id,
+          status: r.status,
+          confidence: r.confidence,
+          reasoning: r.reasoning,
+          nextAction: r.nextAction,
+          recoveryNotes: r.recoveryNotes,
+          statusChanged: r.status !== holding.status,
+        });
+      }
+    }
+
+    return actionSuccess(results);
+  } catch (err) {
+    return actionError(
+      "AI_ERROR",
+      err instanceof Error ? err.message : "Batch analysis failed"
+    );
+  }
 }

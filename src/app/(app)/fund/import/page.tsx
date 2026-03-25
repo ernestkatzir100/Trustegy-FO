@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState, useTransition, useCallback } from "react";
-import { Upload, FileSpreadsheet, CheckCircle2, AlertCircle, ArrowRight, X, RotateCcw } from "lucide-react";
-import { importFundHoldings } from "@/lib/actions/fund";
+import { Upload, FileSpreadsheet, CheckCircle2, AlertCircle, ArrowRight, X, RotateCcw, Sparkles, Loader2 } from "lucide-react";
+import { importFundHoldings, analyzeBatchHoldings } from "@/lib/actions/fund";
+import type { ImportResult, AiAnalysisResult } from "@/lib/actions/fund";
 import type { ImportPreviewResult } from "@/app/api/fund/import/route";
 import type { Platform } from "@/db/schema/fund";
 
@@ -60,7 +61,7 @@ export default function FundImportPage() {
   const [preview, setPreview] = useState<ImportPreviewResult | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [importResult, setImportResult] = useState<{ inserted: number; updated: number; skipped: number } | null>(null);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const reset = () => {
@@ -465,62 +466,189 @@ function DoneCard({
   result,
   onReset,
 }: {
-  result: { inserted: number; updated: number; skipped: number };
+  result: ImportResult;
   onReset: () => void;
 }) {
+  const [aiResults, setAiResults] = useState<AiAnalysisResult[] | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [, startAi] = useTransition();
+
+  const totalAffected = result.affectedIds.length;
+
+  function runAiAnalysis() {
+    if (!totalAffected) return;
+    setAiLoading(true);
+    setAiError(null);
+    startAi(async () => {
+      const res = await analyzeBatchHoldings(result.affectedIds);
+      setAiLoading(false);
+      if (res.error) {
+        setAiError(res.error.message);
+      } else {
+        setAiResults(res.data);
+      }
+    });
+  }
+
+  const statusChanges = aiResults?.filter((r) => r.statusChanged) ?? [];
+
   return (
-    <div style={{
-      background: "var(--surface-card)",
-      borderRadius: "var(--radius-lg)",
-      border: "1px solid var(--border)",
-      padding: 48,
-      textAlign: "center",
-    }}>
-      <CheckCircle2 style={{ width: 48, height: 48, color: "#22c55e", margin: "0 auto 16px" }} />
-      <h2 style={{ fontSize: 22, fontWeight: 900, letterSpacing: "-0.04em", color: "var(--text-primary)", marginBottom: 8 }}>
-        Import complete
-      </h2>
-      <div style={{ display: "flex", justifyContent: "center", gap: 32, marginBottom: 32 }}>
-        <Stat label="Inserted" value={result.inserted} color="#22c55e" />
-        <Stat label="Updated" value={result.updated} color="var(--accent)" />
-        {result.skipped > 0 && <Stat label="Skipped" value={result.skipped} color="var(--text-muted)" />}
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <div style={{
+        background: "var(--surface-card)",
+        borderRadius: "var(--radius-lg)",
+        border: "1px solid var(--border)",
+        padding: 48,
+        textAlign: "center",
+      }}>
+        <CheckCircle2 style={{ width: 48, height: 48, color: "#22c55e", margin: "0 auto 16px" }} />
+        <h2 style={{ fontSize: 22, fontWeight: 900, letterSpacing: "-0.04em", color: "var(--text-primary)", marginBottom: 8 }}>
+          Import complete
+        </h2>
+        <div style={{ display: "flex", justifyContent: "center", gap: 32, marginBottom: 32 }}>
+          <Stat label="Inserted" value={result.inserted} color="#22c55e" />
+          <Stat label="Updated" value={result.updated} color="var(--accent)" />
+          {result.skipped > 0 && <Stat label="Skipped" value={result.skipped} color="var(--text-muted)" />}
+        </div>
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          {totalAffected > 0 && !aiResults && (
+            <button
+              type="button"
+              onClick={runAiAnalysis}
+              disabled={aiLoading}
+              style={{
+                padding: "10px 24px",
+                borderRadius: "var(--radius-md)",
+                background: aiLoading ? "var(--surface-elevated)" : "rgba(139,92,246,0.15)",
+                color: aiLoading ? "var(--text-muted)" : "#a78bfa",
+                fontWeight: 700,
+                fontSize: 14,
+                border: "1px solid rgba(139,92,246,0.3)",
+                cursor: aiLoading ? "not-allowed" : "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              {aiLoading ? (
+                <Loader2 style={{ width: 16, height: 16, animation: "spin 1s linear infinite" }} />
+              ) : (
+                <Sparkles style={{ width: 16, height: 16 }} />
+              )}
+              {aiLoading ? `Analyzing ${totalAffected} positions…` : `Analyze ${totalAffected} positions with AI`}
+            </button>
+          )}
+          <a
+            href="/fund/portfolio"
+            style={{
+              padding: "10px 24px",
+              borderRadius: "var(--radius-md)",
+              background: "linear-gradient(135deg, var(--accent), var(--accent-container))",
+              color: "#fff",
+              fontWeight: 700,
+              fontSize: 14,
+              textDecoration: "none",
+            }}
+          >
+            View Portfolio
+          </a>
+          <button
+            type="button"
+            onClick={onReset}
+            style={{
+              padding: "10px 24px",
+              borderRadius: "var(--radius-md)",
+              background: "var(--surface-elevated)",
+              color: "var(--text-primary)",
+              fontWeight: 600,
+              fontSize: 14,
+              border: "1px solid var(--border-strong)",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <RotateCcw style={{ width: 14, height: 14 }} />
+            Import another
+          </button>
+        </div>
+        {aiError && (
+          <p style={{ marginTop: 16, fontSize: 12, color: "#f87171" }}>{aiError}</p>
+        )}
       </div>
-      <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-        <a
-          href="/fund/portfolio"
-          style={{
-            padding: "10px 24px",
-            borderRadius: "var(--radius-md)",
-            background: "linear-gradient(135deg, var(--accent), var(--accent-container))",
-            color: "#fff",
-            fontWeight: 700,
-            fontSize: 14,
-            textDecoration: "none",
-          }}
-        >
-          View Portfolio
-        </a>
-        <button
-          type="button"
-          onClick={onReset}
-          style={{
-            padding: "10px 24px",
-            borderRadius: "var(--radius-md)",
-            background: "var(--surface-elevated)",
-            color: "var(--text-primary)",
-            fontWeight: 600,
-            fontSize: 14,
-            border: "1px solid var(--border-strong)",
-            cursor: "pointer",
+
+      {/* AI batch results */}
+      {aiResults && aiResults.length > 0 && (
+        <div style={{
+          background: "var(--surface-card)",
+          borderRadius: "var(--radius-lg)",
+          border: "1px solid rgba(139,92,246,0.3)",
+          overflow: "hidden",
+        }}>
+          <div style={{
+            padding: "14px 20px",
+            borderBottom: "1px solid rgba(139,92,246,0.15)",
+            background: "rgba(139,92,246,0.07)",
             display: "flex",
             alignItems: "center",
             gap: 8,
-          }}
-        >
-          <RotateCcw style={{ width: 14, height: 14 }} />
-          Import another
-        </button>
-      </div>
+          }}>
+            <Sparkles style={{ width: 14, height: 14, color: "#a78bfa" }} />
+            <span style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", color: "#a78bfa" }}>
+              AI Analysis Results
+            </span>
+            {statusChanges.length > 0 && (
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#fb923c", marginInlineStart: "auto" }}>
+                {statusChanges.length} status change{statusChanges.length > 1 ? "s" : ""} suggested — review in portfolio
+              </span>
+            )}
+          </div>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                  {["Holding ID", "Suggested Status", "Confidence", "Next Action"].map((h) => (
+                    <th key={h} style={{ padding: "8px 16px", textAlign: "start", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {aiResults.map((r) => (
+                  <tr key={r.holdingId} style={{ borderBottom: "1px solid var(--border)", background: r.statusChanged ? "rgba(251,146,60,0.04)" : "transparent" }}>
+                    <td style={{ padding: "8px 16px", fontFamily: "monospace", color: "var(--text-muted)", fontSize: 11 }}>
+                      {r.holdingId.slice(-8)}
+                    </td>
+                    <td style={{ padding: "8px 16px" }}>
+                      <span style={{ fontWeight: 700, color: r.statusChanged ? "#fb923c" : "var(--text-primary)" }}>
+                        {r.status}
+                      </span>
+                    </td>
+                    <td style={{ padding: "8px 16px" }}>
+                      <span style={{
+                        fontSize: 10,
+                        fontWeight: 700,
+                        padding: "2px 7px",
+                        borderRadius: 100,
+                        background: r.confidence === "high" ? "rgba(34,197,94,0.12)" : r.confidence === "medium" ? "rgba(245,158,11,0.12)" : "rgba(239,68,68,0.12)",
+                        color: r.confidence === "high" ? "#22c55e" : r.confidence === "medium" ? "#f59e0b" : "#ef4444",
+                      }}>
+                        {r.confidence}
+                      </span>
+                    </td>
+                    <td style={{ padding: "8px 16px", color: "var(--text-secondary)", maxWidth: 320 }}>
+                      {r.nextAction}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

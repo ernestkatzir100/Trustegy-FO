@@ -1,0 +1,10 @@
+[     469ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/auth/session:0
+[     470ms] [ERROR] ClientFetchError: There was a problem with the server configuration. Check the server logs for more information.. Read more at https://errors.authjs.dev#autherror
+    at fetchData (http://localhost:3000/_next/static/chunks/node_modules__pnpm_6f710df4._.js:15488:22)
+    at async getSession (http://localhost:3000/_next/static/chunks/node_modules__pnpm_6f710df4._.js:15657:21)
+    at async SessionProvider.useEffect [as _getSession] (http://localhost:3000/_next/static/chunks/node_modules__pnpm_6f710df4._.js:15808:51) @ http://localhost:3000/_next/static/chunks/3a2ea_next_dist_f5df9d18._.js:2359
+[     696ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/auth/session:0
+[     696ms] [ERROR] ClientFetchError: There was a problem with the server configuration. Check the server logs for more information.. Read more at https://errors.authjs.dev#autherror
+    at fetchData (http://localhost:3000/_next/static/chunks/node_modules__pnpm_6f710df4._.js:15488:22)
+    at async getSession (http://localhost:3000/_next/static/chunks/node_modules__pnpm_6f710df4._.js:15657:21)
+    at async SessionProvider.useEffect [as _getSession] (http://localhost:3000/_next/static/chunks/node_modules__pnpm_6f710df4._.js:15808:51) @ http://localhost:3000/_next/static/chunks/3a2ea_next_dist_f5df9d18._.js:2359

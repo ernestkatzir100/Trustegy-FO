@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { X, Save, Loader2 } from "lucide-react";
-import { updateFundHolding } from "@/lib/actions/fund";
+import { X, Save, Loader2, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
+import { updateFundHolding, analyzeHolding } from "@/lib/actions/fund";
+import type { AiAnalysisResult } from "@/lib/actions/fund";
 import { StatusBadge } from "./StatusBadge";
 import {
   HOLDING_STATUSES,
@@ -105,6 +106,30 @@ function Section({ title }: { title: string }) {
   );
 }
 
+// ─── Confidence badge ─────────────────────────────────────────────────────────
+function ConfidenceBadge({ confidence }: { confidence: string }) {
+  const map: Record<string, { color: string; bg: string }> = {
+    high: { color: "#22c55e", bg: "rgba(34,197,94,0.12)" },
+    medium: { color: "#f59e0b", bg: "rgba(245,158,11,0.12)" },
+    low: { color: "#ef4444", bg: "rgba(239,68,68,0.12)" },
+  };
+  const style = map[confidence] ?? map.low;
+  return (
+    <span style={{
+      fontSize: 9,
+      fontWeight: 800,
+      letterSpacing: "0.07em",
+      textTransform: "uppercase",
+      color: style.color,
+      background: style.bg,
+      borderRadius: 100,
+      padding: "2px 7px",
+    }}>
+      {confidence} confidence
+    </span>
+  );
+}
+
 // ─── Main modal ───────────────────────────────────────────────────────────────
 interface Props {
   holding: FundHolding;
@@ -115,6 +140,9 @@ interface Props {
 export function HoldingEditModal({ holding, onClose, onSaved }: Props) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [aiResult, setAiResult] = useState<AiAnalysisResult | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   // Form state — dollar display values (string)
   const [status, setStatus] = useState<HoldingStatus>(holding.status);
@@ -135,6 +163,33 @@ export function HoldingEditModal({ holding, onClose, onSaved }: Props) {
   const [lastPaymentAmount, setLastPaymentAmount] = useState(centsToDisplay(holding.lastPaymentAmount));
   const [hurricaneDamage, setHurricaneDamage] = useState(holding.hurricaneDamage);
   const [partialPayoff, setPartialPayoff] = useState(centsToDisplay(holding.partialPayoffReceived));
+
+  function handleAnalyze() {
+    setAiLoading(true);
+    setAiError(null);
+    setAiResult(null);
+    startTransition(async () => {
+      const result = await analyzeHolding(holding.id);
+      setAiLoading(false);
+      if (result.error) {
+        setAiError(result.error.message);
+      } else {
+        setAiResult(result.data);
+      }
+    });
+  }
+
+  function applyAiSuggestion() {
+    if (!aiResult) return;
+    setStatus(aiResult.status as HoldingStatus);
+    if (aiResult.reasoning) {
+      setResolutionNotes((prev) =>
+        prev
+          ? `${prev}\n\n[AI ${new Date().toISOString().split("T")[0]}] ${aiResult.reasoning}`
+          : `[AI ${new Date().toISOString().split("T")[0]}] ${aiResult.reasoning}`
+      );
+    }
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -246,7 +301,153 @@ export function HoldingEditModal({ holding, onClose, onSaved }: Props) {
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
-            <Section title="Status" />
+            {/* AI Analysis section */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <Section title="Status" />
+              <button
+                type="button"
+                onClick={handleAnalyze}
+                disabled={aiLoading || isPending}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "5px 12px",
+                  borderRadius: "var(--radius-sm)",
+                  border: "1px solid rgba(139,92,246,0.4)",
+                  background: "rgba(139,92,246,0.08)",
+                  color: aiLoading ? "var(--text-muted)" : "#a78bfa",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  cursor: aiLoading || isPending ? "not-allowed" : "pointer",
+                  letterSpacing: "0.04em",
+                }}
+              >
+                {aiLoading ? (
+                  <Loader2 style={{ width: 12, height: 12, animation: "spin 1s linear infinite" }} />
+                ) : (
+                  <Sparkles style={{ width: 12, height: 12 }} />
+                )}
+                {aiLoading ? "Analyzing…" : "Analyze with AI"}
+              </button>
+            </div>
+
+            {/* AI result panel */}
+            {aiError && (
+              <div style={{
+                display: "flex",
+                gap: 8,
+                padding: "10px 14px",
+                borderRadius: "var(--radius-sm)",
+                background: "rgba(239,68,68,0.07)",
+                border: "1px solid rgba(239,68,68,0.25)",
+                fontSize: 12,
+                color: "#f87171",
+              }}>
+                <AlertTriangle style={{ width: 14, height: 14, flexShrink: 0, marginTop: 1 }} />
+                {aiError}
+              </div>
+            )}
+
+            {aiResult && (
+              <div style={{
+                borderRadius: "var(--radius-md)",
+                border: "1px solid rgba(139,92,246,0.3)",
+                background: "rgba(139,92,246,0.05)",
+                overflow: "hidden",
+              }}>
+                {/* AI result header */}
+                <div style={{
+                  padding: "10px 14px",
+                  borderBottom: "1px solid rgba(139,92,246,0.15)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  background: "rgba(139,92,246,0.08)",
+                }}>
+                  <Sparkles style={{ width: 12, height: 12, color: "#a78bfa" }} />
+                  <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", color: "#a78bfa" }}>
+                    AI Analysis
+                  </span>
+                  <ConfidenceBadge confidence={aiResult.confidence} />
+                  {aiResult.statusChanged && (
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#fb923c", marginInlineStart: "auto", letterSpacing: "0.04em" }}>
+                      STATUS CHANGE SUGGESTED
+                    </span>
+                  )}
+                </div>
+
+                {/* AI result body */}
+                <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", gap: 10 }}>
+                  {/* Suggested status */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 600, minWidth: 80 }}>Suggested</span>
+                    <span style={{
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: aiResult.statusChanged ? "#fb923c" : "#22c55e",
+                      padding: "2px 10px",
+                      background: aiResult.statusChanged ? "rgba(251,146,60,0.1)" : "rgba(34,197,94,0.1)",
+                      borderRadius: 100,
+                    }}>
+                      {STATUS_LABELS[aiResult.status as HoldingStatus] ?? aiResult.status}
+                    </span>
+                    {aiResult.statusChanged && (
+                      <button
+                        type="button"
+                        onClick={applyAiSuggestion}
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 700,
+                          color: "#fff",
+                          background: "#7c3aed",
+                          border: "none",
+                          borderRadius: "var(--radius-sm)",
+                          padding: "3px 10px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 4,
+                        }}
+                      >
+                        <CheckCircle2 style={{ width: 11, height: 11 }} />
+                        Apply
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Reasoning */}
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>
+                      Reasoning
+                    </div>
+                    <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: 0, lineHeight: 1.6 }}>
+                      {aiResult.reasoning}
+                    </p>
+                  </div>
+
+                  {/* Next action */}
+                  <div style={{
+                    padding: "8px 12px",
+                    background: "rgba(139,92,246,0.08)",
+                    borderRadius: "var(--radius-sm)",
+                    borderInlineStart: "3px solid #7c3aed",
+                  }}>
+                    <span style={{ fontSize: 10, fontWeight: 800, color: "#a78bfa", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                      Next action:{" "}
+                    </span>
+                    <span style={{ fontSize: 12, color: "var(--text-primary)" }}>{aiResult.nextAction}</span>
+                  </div>
+
+                  {/* Recovery notes (optional) */}
+                  {aiResult.recoveryNotes && (
+                    <p style={{ fontSize: 11, color: "var(--text-muted)", margin: 0, fontStyle: "italic" }}>
+                      {aiResult.recoveryNotes}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
 
             <Field label="Status">
               <select
