@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       const result = await triggerUprightScrape();
 
       if (result.error) {
-        return NextResponse.json({ error: result.error }, { status: 500 });
+        return NextResponse.json({ error: result.error.message }, { status: 500 });
       }
 
       return NextResponse.json(result.data);
