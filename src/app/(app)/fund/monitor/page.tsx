@@ -210,6 +210,11 @@ export default async function MonitorPage() {
                 {platformHoldings.length} active loans
                 {run?.completedAt && ` · last run ${staleDays}d ago`}
               </div>
+              {run?.status === "failed" && run.errorMessage && (
+                <div style={{ fontSize: 11, color: "#ef4444", lineHeight: 1.5, marginTop: 4, borderTop: "1px solid var(--border)", paddingTop: 8, fontFamily: "monospace", wordBreak: "break-all" }}>
+                  {run.errorMessage.slice(0, 200)}
+                </div>
+              )}
               {run?.aiSummary && (
                 <div style={{ fontSize: 11, color: "var(--text-muted)", lineHeight: 1.5, marginTop: 4, borderTop: "1px solid var(--border)", paddingTop: 8 }}>
                   {run.aiSummary.slice(0, 160)}…
@@ -488,10 +493,12 @@ export default async function MonitorPage() {
                 >
                   {run.status}
                 </span>
-                <span style={{ color: "var(--text-muted)" }}>
-                  {run.meta
+                <span style={{ color: run.errorMessage ? "#ef4444" : "var(--text-muted)", fontFamily: run.errorMessage ? "monospace" : undefined, fontSize: run.errorMessage ? 11 : 12 }}>
+                  {run.errorMessage
+                    ? run.errorMessage.slice(0, 200)
+                    : run.meta
                     ? `${run.meta.holdingsFound} found · ${run.meta.inserted} new · ${run.meta.updated} updated`
-                    : run.errorMessage ?? "—"}
+                    : "—"}
                 </span>
                 <span style={{ color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                   {run.startedAt.slice(0, 16).replace("T", " ")}

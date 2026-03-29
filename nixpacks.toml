@@ -1,10 +1,11 @@
-# Railway build config — uses nix-installed Chromium for Playwright.
-# Playwright's pre-compiled binaries are built for Ubuntu/glibc and don't
-# work on NixOS. Instead we install the nix 'chromium' package and point
-# Playwright to it via executablePath at runtime.
+# Railway build config for Playwright.
+# Installs system libs via nix, then downloads Playwright's own Chromium
+# to /app/.playwright-browsers (persists in container image).
+# Railway env var PLAYWRIGHT_BROWSERS_PATH=/app/.playwright-browsers
+# tells Playwright where to find the browser at runtime.
+
 [phases.setup]
 nixPkgs = [
-  "chromium",
   "nss",
   "nspr",
   "alsa-lib",
@@ -28,17 +29,16 @@ nixPkgs = [
   "expat",
   "at-spi2-atk",
   "at-spi2-core",
+  "xorg.libXcursor",
+  "xorg.libXi",
+  "xorg.libXtst",
 ]
 
 [phases.install]
-dependsOn = ["setup"]
-# PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 must be set at the phase level so it
-# applies to pnpm install (which runs Playwright's postinstall script).
-# Setting it only on a command prefix (CMD=1 echo ...) does NOT affect pnpm.
-cmds = ["npm i -g pnpm && pnpm install"]
-
-[phases.install.env]
-PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
+cmds = [
+  "npm i -g pnpm && PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 pnpm install",
+  "PLAYWRIGHT_BROWSERS_PATH=/app/.playwright-browsers pnpm exec playwright install chromium || echo '[nixpacks] Playwright chromium install failed — scraper will not work'",
+]
 
 [start]
 cmd = "pnpm start"
