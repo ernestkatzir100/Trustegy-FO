@@ -153,8 +153,10 @@ export async function scrapeUpright(): Promise<UprightScrapeResult> {
   // CHROMIUM_EXECUTABLE_PATH overrides to an absolute binary path if needed.
   // Fallback: set PLAYWRIGHT_BROWSERS_PATH to the known Railway install path so
   // new services without the env var still work.
-  if (!process.env.PLAYWRIGHT_BROWSERS_PATH && !process.env.CHROMIUM_EXECUTABLE_PATH && process.env.RAILWAY_ENVIRONMENT) {
-    process.env.PLAYWRIGHT_BROWSERS_PATH = "/app/.playwright-browsers";
+  // On Railway: default to google-chrome-stable (installed via Dockerfile apt-get).
+  // Override with CHROMIUM_EXECUTABLE_PATH env var if needed.
+  if (!process.env.CHROMIUM_EXECUTABLE_PATH && process.env.RAILWAY_ENVIRONMENT) {
+    process.env.CHROMIUM_EXECUTABLE_PATH = "/usr/bin/google-chrome-stable";
   }
   const executablePath = process.env.CHROMIUM_EXECUTABLE_PATH || undefined;
   console.log(`[upright scraper] executablePath=${executablePath ?? "playwright default"}, PLAYWRIGHT_BROWSERS_PATH=${process.env.PLAYWRIGHT_BROWSERS_PATH ?? "not set"}`);
