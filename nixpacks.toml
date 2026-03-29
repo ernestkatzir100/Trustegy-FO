@@ -1,15 +1,8 @@
 # Railway build config for Playwright.
-#
-# Strategy:
-# 1. Install system libraries via nix (for Playwright's Chromium to link against)
-# 2. Run pnpm install with PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 (skip postinstall download)
-# 3. Manually install Playwright's own Chromium to /app/.playwright-browsers
-#    (a path that persists in the container image and is accessible at runtime)
-# 4. Railway env var PLAYWRIGHT_BROWSERS_PATH=/app/.playwright-browsers tells
-#    Playwright where to find the browser at runtime.
-#
-# We do NOT use the nix 'chromium' package — its wrapper script interferes
-# with Playwright's DevTools Protocol subprocess management.
+# Installs system libs via nix, then downloads Playwright's own Chromium
+# to /app/.playwright-browsers (persists in container image).
+# Railway env var PLAYWRIGHT_BROWSERS_PATH=/app/.playwright-browsers
+# tells Playwright where to find the browser at runtime.
 
 [phases.setup]
 nixPkgs = [
@@ -42,10 +35,9 @@ nixPkgs = [
 ]
 
 [phases.install]
-dependsOn = ["setup"]
 cmds = [
   "npm i -g pnpm && PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 pnpm install",
-  "PLAYWRIGHT_BROWSERS_PATH=/app/.playwright-browsers pnpm exec playwright install chromium",
+  "PLAYWRIGHT_BROWSERS_PATH=/app/.playwright-browsers pnpm exec playwright install chromium || echo '[nixpacks] Playwright chromium install failed — scraper will not work'",
 ]
 
 [start]
