@@ -55,9 +55,7 @@ export async function getLastScrapeByPlatform(): Promise<
 export async function triggerUprightScrape(): Promise<
   ActionResult<{ runId: string; inserted: number; updated: number; aiSummary: string | null }>
 > {
-  const { error } = await requireAuth();
-  if (error) return actionError(error.code, error.message);
-
+  // Auth is handled by the caller (API route checks session or CRON_SECRET)
   const startedAt = new Date().toISOString();
 
   // Create a "running" record so we can see it in the UI immediately
