@@ -8,9 +8,10 @@ export default auth((req) => {
   const isOnSignIn = req.nextUrl.pathname.startsWith("/sign-in");
   const isOnAuthApi = req.nextUrl.pathname.startsWith("/api/auth");
   const isOnHealthApi = req.nextUrl.pathname.startsWith("/api/health");
+  const isOnSetupApi = req.nextUrl.pathname.startsWith("/api/setup-db");
   const isOnTwoFactor = req.nextUrl.pathname.startsWith("/two-factor");
 
-  if (isOnAuthApi || isOnHealthApi) return;
+  if (isOnAuthApi || isOnHealthApi || isOnSetupApi) return;
 
   if (!isLoggedIn && !isOnSignIn) {
     return Response.redirect(new URL("/sign-in", req.nextUrl));
