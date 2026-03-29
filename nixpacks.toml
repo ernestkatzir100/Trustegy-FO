@@ -31,10 +31,14 @@ nixPkgs = [
 ]
 
 [phases.install]
-cmds = [
-  "npm i -g pnpm && pnpm install",
-  "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 echo 'Skipping Playwright browser download — using system chromium'",
-]
+dependsOn = ["setup"]
+# PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 must be set at the phase level so it
+# applies to pnpm install (which runs Playwright's postinstall script).
+# Setting it only on a command prefix (CMD=1 echo ...) does NOT affect pnpm.
+cmds = ["npm i -g pnpm && pnpm install"]
+
+[phases.install.env]
+PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
 
 [start]
 cmd = "pnpm start"
