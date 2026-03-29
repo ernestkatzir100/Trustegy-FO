@@ -62,6 +62,8 @@ interface ImportResult {
   positionCount: number;
   redemptionCount: number;
   reviewNeededCount: number;
+  investorErrors?: string[];
+  distributorErrors?: string[];
 }
 
 export default function InvestorImportPage() {
@@ -161,6 +163,28 @@ export default function InvestorImportPage() {
                 </div>
               ))}
           </div>
+          {((result.investorErrors?.length ?? 0) > 0 || (result.distributorErrors?.length ?? 0) > 0) && (
+            <details style={{ marginTop: 8 }}>
+              <summary style={{ fontSize: 12, color: "#f59e0b", cursor: "pointer", fontWeight: 700 }}>
+                ⚠ {(result.investorErrors?.length ?? 0) + (result.distributorErrors?.length ?? 0)} row(s) skipped — click to see errors
+              </summary>
+              <pre style={{
+                fontSize: 11,
+                color: "#f87171",
+                background: "rgba(239,68,68,0.06)",
+                border: "1px solid rgba(239,68,68,0.2)",
+                borderRadius: 6,
+                padding: "10px 12px",
+                marginTop: 8,
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-all",
+                maxHeight: 240,
+                overflowY: "auto",
+              }}>
+                {[...(result.distributorErrors ?? []), ...(result.investorErrors ?? [])].join("\n")}
+              </pre>
+            </details>
+          )}
           <button
             onClick={() => router.push("/fund/investors")}
             style={{
