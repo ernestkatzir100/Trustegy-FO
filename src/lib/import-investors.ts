@@ -160,7 +160,10 @@ export async function parseDistributorsSheet(buffer: ArrayBuffer): Promise<Parse
   const rows = await parseWorkbookRows(buffer);
 
   return rows
-    .filter((r) => str(col(r, "name", "שם")).length > 0)
+    .filter((r) => {
+      const name = str(col(r, "name", "שם")).toLowerCase().trim();
+      return name.length > 0 && !MONDAY_SKIP_NAMES.has(name);
+    })
     .map((r, i) => {
       const name = str(col(r, "name", "שם"));
       return {
@@ -188,11 +191,18 @@ export interface ParsedInvestor {
   row: InsertInvestor;
 }
 
+/** Monday.com board exports include artifact rows we should skip */
+const MONDAY_SKIP_NAMES = new Set(["subitems", "name", "שם", "ישות משקיעה", ""]);
+
 export async function parseInvestorsSheet(buffer: ArrayBuffer): Promise<ParsedInvestor[]> {
   const rows = await parseWorkbookRows(buffer);
 
   return rows
-    .filter((r) => str(col(r, "name", "שם")).length > 0)
+    .filter((r) => {
+      const name = str(col(r, "name", "שם", "ישות משקיעה")).toLowerCase().trim();
+      // Skip blank rows, Monday "Subitems" separator rows, and header-like rows
+      return name.length > 0 && !MONDAY_SKIP_NAMES.has(name);
+    })
     .map((r) => {
       const rawName = str(col(r, "name", "שם", "ישות משקיעה"));
       // Detect Hebrew by Unicode range
@@ -253,7 +263,10 @@ export async function parseTransactionsSheet(buffer: ArrayBuffer): Promise<Parse
   const rows = await parseWorkbookRows(buffer);
 
   return rows
-    .filter((r) => str(col(r, "name", "שם", "ישות משקיעה")).length > 0)
+    .filter((r) => {
+      const name = (str(col(r, "ישות משקיעה")) || str(col(r, "name", "שם"))).toLowerCase().trim();
+      return name.length > 0 && !MONDAY_SKIP_NAMES.has(name);
+    })
     .map((r) => {
       const investorName =
         str(col(r, "ישות משקיעה")) || str(col(r, "name", "שם"));
@@ -322,7 +335,10 @@ export async function parseDistributionsSheet(
   const rows = await parseWorkbookRows(buffer);
 
   return rows
-    .filter((r) => str(col(r, "name", "שם")).length > 0)
+    .filter((r) => {
+      const name = str(col(r, "name", "שם")).toLowerCase().trim();
+      return name.length > 0 && !MONDAY_SKIP_NAMES.has(name);
+    })
     .map((r) => {
       const investorName = str(col(r, "name", "שם"));
       const investorEmail = str(col(r, "email")) || null;

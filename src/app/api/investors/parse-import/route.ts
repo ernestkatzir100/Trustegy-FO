@@ -21,11 +21,33 @@ import { requireAuth } from "@/lib/auth/guard";
 
 export const maxDuration = 300; // 5 min for large files
 
-/** Extract the real PostgreSQL error from a Drizzle error string. */
+/** Extract the real PostgreSQL error from a Drizzle error.
+ *  Drizzle 0.38+ stores the pg.DatabaseError in err.cause, NOT in err.message.
+ */
 function pgError(err: unknown): string {
+  // Drizzle wraps the pg error in err.cause
+  const cause = (err as { cause?: unknown })?.cause;
+  if (cause && typeof cause === "object") {
+    const pg = cause as {
+      message?: string;
+      code?: string;
+      column?: string;
+      constraint?: string;
+      detail?: string;
+    };
+    const parts: string[] = [];
+    if (pg.message) parts.push(pg.message);
+    if (pg.code) parts.push(`[PG${pg.code}]`);
+    if (pg.column) parts.push(`column: ${pg.column}`);
+    if (pg.constraint) parts.push(`constraint: ${pg.constraint}`);
+    if (pg.detail) parts.push(pg.detail);
+    if (parts.length > 0) return parts.join(" ").slice(0, 400);
+  }
+  // Fallback: older Drizzle format embeds PG error before "Failed query:"
   const msg = err instanceof Error ? err.message : String(err);
   if (msg.includes("Failed query:")) {
-    return msg.split("Failed query:")[0].trim().slice(0, 300) || msg.slice(0, 300);
+    const pgPart = msg.split("Failed query:")[0].trim();
+    return pgPart.slice(0, 300) || msg.slice(0, 300);
   }
   return msg.slice(0, 300);
 }
