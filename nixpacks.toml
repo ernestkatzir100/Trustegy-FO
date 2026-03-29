@@ -1,0 +1,30 @@
+# Railway build config — installs Chromium system dependencies for Playwright
+[phases.setup]
+nixPkgs = [
+  "chromium",
+  "nss",
+  "nspr",
+  "alsa-lib",
+  "atk",
+  "cups",
+  "libdrm",
+  "mesa",
+  "pango",
+  "cairo",
+  "xorg.libX11",
+  "xorg.libXcomposite",
+  "xorg.libXdamage",
+  "xorg.libXext",
+  "xorg.libXfixes",
+  "xorg.libXrandr",
+  "xorg.libxcb",
+  "libxkbcommon",
+  "gtk3",
+  "dbus",
+]
+
+[phases.install]
+cmds = ["npm i -g pnpm && pnpm install", "npx playwright install chromium --with-deps || true"]
+
+[start]
+cmd = "pnpm start"
