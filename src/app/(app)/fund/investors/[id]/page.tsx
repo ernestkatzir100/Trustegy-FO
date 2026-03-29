@@ -248,6 +248,11 @@ export default async function InvestorDetailPage({ params }: Props) {
   const currentNavNis = latestAgg?.navNis ?? 0;
   const currentNavUsd = latestAgg?.navUsd ?? 0;
   const originalInvNis = earliestAgg?.origNis ?? 0;
+  // Exchange rate is stored as rate × 10000 (e.g. 3.7512 → 37512). Fallback: 3.7 → 37000
+  const earliestPosition = positions.find((p) => p.dataDate === earliestDate);
+  const exchangeRate = (earliestPosition?.exchangeRate ?? 0) > 0 ? earliestPosition!.exchangeRate! : 37000;
+  // Convert originalInvNis (agorot) to USD cents: agorot / (rate/10000) = agorot * 10000 / rate
+  const originalInvUsd = originalInvNis ? Math.round((originalInvNis * 10000) / exchangeRate) : null;
   const totalDistNis = inv.allRedemptions.reduce((s, r) => s + (r.amountNis ?? 0), 0);
   const totalDistUsd = inv.allRedemptions.reduce((s, r) => s + (r.amountUsd ?? 0), 0);
 
@@ -357,7 +362,7 @@ export default async function InvestorDetailPage({ params }: Props) {
         <DashboardKpi
           label="Original Investment"
           labelHe="סכום השקעה מקורי"
-          primaryValue={currency === "USD" ? fmtMoney(originalInvNis ? null : currentNavUsd, "USD") : fmtMoney(originalInvNis, "ILS")}
+          primaryValue={currency === "USD" ? fmtMoney(originalInvUsd, "USD") : fmtMoney(originalInvNis, "ILS")}
           secondaryValue={currency === "ILS" && currentNavUsd > 0 ? fmtMoney(currentNavUsd, "USD") : undefined}
         />
         <DashboardKpi

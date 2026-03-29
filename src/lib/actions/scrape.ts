@@ -1,6 +1,6 @@
 "use server";
 
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { scrapeRuns } from "@/db/schema/scrape-runs";
@@ -88,6 +88,17 @@ export async function triggerUprightScrape(): Promise<
 
     // Upsert into fund_holdings (reuses existing import logic)
     const importResult = await importFundHoldings(holdings);
+
+    if (importResult.error) {
+      await db.update(scrapeRuns).set({
+        status: "failed",
+        completedAt: new Date().toISOString(),
+        errorMessage: importResult.error.message.slice(0, 500),
+        meta: { holdingsFound: holdings.length, inserted: 0, updated: 0, skipped: 0, errors, durationMs: Date.now() - new Date(startedAt).getTime() },
+      }).where(eq(scrapeRuns.id, runRecord.id));
+      return actionError(importResult.error.code, importResult.error.message);
+    }
+
     const importData = importResult.data ?? { inserted: 0, updated: 0, skipped: 0, affectedIds: [] };
 
     // Run AI analysis on changed loans to generate insights
@@ -169,7 +180,7 @@ async function generateScrapeNarrative(
     .where(
       changedIds.length > 0
         ? // only look at changed loans
-          eq(fundHoldings.platform, "upright")
+          inArray(fundHoldings.offeringId, changedIds)
         : eq(fundHoldings.platform, "upright")
     )
     .limit(50);
