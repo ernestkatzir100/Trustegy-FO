@@ -210,7 +210,7 @@ export async function parseInvestorsSheet(buffer: ArrayBuffer): Promise<ParsedIn
 
       const partnerId = str(col(r, "partner id", "partnerid", "#partner")) || null;
       const email = str(col(r, "email")) || null;
-      const status = str(col(r, "סטאטוס", "status")) || "active";
+      const status = "active"; // always active on import — status managed in-app
       const currencyRaw = str(col(r, "קלאס מטבע", "currency class", "מטבע"));
       const currencyClass = currencyRaw.toUpperCase().includes("USD") ? "USD" : "ILS";
 
@@ -234,7 +234,7 @@ export async function parseInvestorsSheet(buffer: ArrayBuffer): Promise<ParsedIn
           address: str(col(r, "כתובת", "address")) || null,
           currencyClass,
           managementFeeClass: str(col(r, "קלאס דמי ניהול", "management fee class")) || null,
-          status: status || "active",
+          status,
           fundManagerApproved: /אישור|approved/i.test(str(col(r, "אישור מנהל"))),
           joinDate: parseDate(col(r, "חודש הצטרפות", "join")),
           interestAccrualDate: parseDate(col(r, "צובר ריבית", "accrual")),
