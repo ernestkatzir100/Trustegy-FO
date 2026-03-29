@@ -180,7 +180,7 @@ async function generateScrapeNarrative(
     .where(
       changedIds.length > 0
         ? // only look at changed loans
-          inArray(fundHoldings.offeringId, changedIds)
+          inArray(fundHoldings.id, changedIds)
         : eq(fundHoldings.platform, "upright")
     )
     .limit(50);
