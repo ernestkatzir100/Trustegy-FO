@@ -196,8 +196,9 @@ export async function scrapeUpright(): Promise<UprightScrapeResult> {
     await screenshot("01-login");
 
     // ── 2. Fill credentials ─────────────────────────────────────────────────
-    const emailInput = page.locator(SELECTORS.emailInput).first();
-    await emailInput.waitFor({ state: "visible", timeout: 10_000 });
+    // Cognito renders a hidden input before JS runs — wait for the visible one
+    const emailInput = page.locator(SELECTORS.emailInput).filter({ visible: true }).first();
+    await emailInput.waitFor({ state: "visible", timeout: 30_000 });
     await emailInput.fill(username);
 
     await page.locator(SELECTORS.passwordInput).first().fill(password);
