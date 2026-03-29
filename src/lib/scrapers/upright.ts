@@ -148,27 +148,23 @@ export async function scrapeUpright(): Promise<UprightScrapeResult> {
   // Lazy-load Playwright so it only loads in Node.js runtime (not browser bundles)
   const { chromium } = await import("playwright");
 
-  // On Railway (NixOS), Playwright's pre-compiled Chromium is built for Ubuntu/glibc
-  // and won't run. We use the nix-installed system chromium instead.
-  // Override with CHROMIUM_EXECUTABLE_PATH Railway env var if needed.
-  const executablePath =
-    process.env.CHROMIUM_EXECUTABLE_PATH ||
-    (() => {
-      const { execFileSync } = require("child_process") as typeof import("child_process");
-      for (const bin of ["chromium", "chromium-browser", "google-chrome-stable"]) {
-        try {
-          const p = execFileSync("which", [bin]).toString().trim();
-          if (p) { console.log(`[upright scraper] system chromium: ${p}`); return p; }
-        } catch { /* try next */ }
-      }
-      console.log("[upright scraper] no system chromium found, using Playwright default");
-      return undefined;
-    })();
+  // PLAYWRIGHT_BROWSERS_PATH is set to /app/.playwright-browsers in Railway so
+  // Playwright finds its own Chromium binary (installed during build, not nix chromium).
+  // CHROMIUM_EXECUTABLE_PATH can override to an absolute path if needed.
+  const executablePath = process.env.CHROMIUM_EXECUTABLE_PATH || undefined;
+  console.log(`[upright scraper] executablePath=${executablePath ?? "playwright default"}, PLAYWRIGHT_BROWSERS_PATH=${process.env.PLAYWRIGHT_BROWSERS_PATH ?? "not set"}`);
 
   const browser = await chromium.launch({
     headless: true,
     executablePath,
-    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--no-zygote",
+      "--single-process",
+    ],
   });
 
   const context = await browser.newContext({
