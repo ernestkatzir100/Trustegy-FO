@@ -70,6 +70,7 @@ export async function POST(req: NextRequest) {
     // ── 1. Distributors ────────────────────────────────────────────────────────
     let distCount = 0;
     const distIdMap = new Map<string, string>();
+    const distErrors: string[] = [];
     if (parsedDist.length > 0) {
       // Deduplicate within-batch by name (PostgreSQL ON CONFLICT can't handle same-batch dupes)
       const seenDistNames = new Set<string>();
@@ -78,18 +79,38 @@ export async function POST(req: NextRequest) {
         seenDistNames.add(d.row.name);
         return true;
       });
-      const inserted = await db
-        .insert(distributors)
-        .values(uniqueDist.map((d) => d.row))
-        .onConflictDoNothing()
-        .returning();
-      distCount = inserted.length;
-      inserted.forEach((d) => distIdMap.set(d.name, d.id));
+      try {
+        const inserted = await db
+          .insert(distributors)
+          .values(uniqueDist.map((d) => d.row))
+          .onConflictDoNothing()
+          .returning();
+        distCount = inserted.length;
+        inserted.forEach((d) => distIdMap.set(d.name, d.id));
+      } catch (distErr) {
+        const msg = distErr instanceof Error ? distErr.message : String(distErr);
+        const pgMsg = msg.includes("Failed query:") ? msg.split("Failed query:")[0].trim() : msg;
+        distErrors.push(pgMsg.slice(0, 300));
+        console.error("Distributor insert failed:", pgMsg.slice(0, 300));
+        // Try row-by-row fallback
+        for (const d of uniqueDist) {
+          try {
+            const rows = await db.insert(distributors).values([d.row]).onConflictDoNothing().returning();
+            distCount += rows.length;
+            rows.forEach((r) => distIdMap.set(r.name, r.id));
+          } catch (rowErr) {
+            const rowMsg = rowErr instanceof Error ? rowErr.message : String(rowErr);
+            const rowPg = rowMsg.includes("Failed query:") ? rowMsg.split("Failed query:")[0].trim() : rowMsg;
+            distErrors.push(`"${d.row.name}": ${rowPg.slice(0, 200)}`);
+          }
+        }
+      }
     }
 
     // ── 2. Investors ───────────────────────────────────────────────────────────
     let invCount = 0;
     const investorIdMap = new Map<string, string>();
+    const invErrors: string[] = [];
 
     if (merged.length > 0) {
       // Deduplicate within-batch by partnerId → email → displayName
@@ -117,7 +138,8 @@ export async function POST(req: NextRequest) {
           inserted.push(...rows);
         } catch (batchErr) {
           const batchMsg = batchErr instanceof Error ? batchErr.message : String(batchErr);
-          console.error(`Investor batch ${i}-${i + 50} failed:`, batchMsg.split("Failed query:")[0].trim());
+          const batchPg = batchMsg.includes("Failed query:") ? batchMsg.split("Failed query:")[0].trim() : batchMsg;
+          console.error(`Investor batch ${i}-${i + 50} failed:`, batchPg.slice(0, 300));
           // Try rows individually to skip bad ones
           for (const row of batch) {
             try {
@@ -125,7 +147,10 @@ export async function POST(req: NextRequest) {
               inserted.push(...r);
             } catch (rowErr) {
               const rowMsg = rowErr instanceof Error ? rowErr.message : String(rowErr);
-              console.error(`Skipping investor "${row.displayName}":`, rowMsg.split("Failed query:")[0].trim().slice(0, 200));
+              const rowPg = rowMsg.includes("Failed query:") ? rowMsg.split("Failed query:")[0].trim() : rowMsg;
+              const errLine = `"${row.displayName}": ${rowPg.slice(0, 200)}`;
+              invErrors.push(errLine);
+              console.error("Skipping investor:", errLine);
             }
           }
         }
@@ -205,6 +230,9 @@ export async function POST(req: NextRequest) {
       positionCount: posCount,
       redemptionCount: redCount,
       reviewNeededCount: needsReview.length,
+      // Debug info — remove after successful import
+      ...(invErrors.length > 0 && { investorErrors: invErrors.slice(0, 20) }),
+      ...(distErrors.length > 0 && { distributorErrors: distErrors.slice(0, 10) }),
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
