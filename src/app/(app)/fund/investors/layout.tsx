@@ -8,6 +8,7 @@ const INVESTOR_NAV: Array<{ href: string; label: string; exact?: boolean }> = [
   { href: "/fund/investors/analytics", label: "Analytics" },
   { href: "/fund/investors/email", label: "Email" },
   { href: "/fund/investors/import", label: "Import" },
+  { href: "/fund/investors/qa", label: "🔍 QA" },
 ];
 
 export default function InvestorsLayout({ children }: { children: React.ReactNode }) {
