@@ -153,7 +153,7 @@ export async function scrapeUpright(): Promise<UprightScrapeResult> {
   // CHROMIUM_EXECUTABLE_PATH overrides to an absolute binary path if needed.
   // Fallback: set PLAYWRIGHT_BROWSERS_PATH to the known Railway install path so
   // new services without the env var still work.
-  if (!process.env.PLAYWRIGHT_BROWSERS_PATH && !process.env.CHROMIUM_EXECUTABLE_PATH) {
+  if (!process.env.PLAYWRIGHT_BROWSERS_PATH && !process.env.CHROMIUM_EXECUTABLE_PATH && process.env.RAILWAY_ENVIRONMENT) {
     process.env.PLAYWRIGHT_BROWSERS_PATH = "/app/.playwright-browsers";
   }
   const executablePath = process.env.CHROMIUM_EXECUTABLE_PATH || undefined;
