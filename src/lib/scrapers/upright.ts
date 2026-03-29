@@ -168,7 +168,6 @@ export async function scrapeUpright(): Promise<UprightScrapeResult> {
       "--disable-dev-shm-usage",
       "--disable-gpu",
       "--no-zygote",
-      "--single-process",
     ],
   });
 
