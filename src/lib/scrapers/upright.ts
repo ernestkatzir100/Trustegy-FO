@@ -148,9 +148,14 @@ export async function scrapeUpright(): Promise<UprightScrapeResult> {
   // Lazy-load Playwright so it only loads in Node.js runtime (not browser bundles)
   const { chromium } = await import("playwright");
 
-  // PLAYWRIGHT_BROWSERS_PATH is set to /app/.playwright-browsers in Railway so
-  // Playwright finds its own Chromium binary (installed during build, not nix chromium).
-  // CHROMIUM_EXECUTABLE_PATH can override to an absolute path if needed.
+  // PLAYWRIGHT_BROWSERS_PATH tells Playwright where to find its managed Chromium.
+  // In Railway it is set to /app/.playwright-browsers (installed during build).
+  // CHROMIUM_EXECUTABLE_PATH overrides to an absolute binary path if needed.
+  // Fallback: set PLAYWRIGHT_BROWSERS_PATH to the known Railway install path so
+  // new services without the env var still work.
+  if (!process.env.PLAYWRIGHT_BROWSERS_PATH && !process.env.CHROMIUM_EXECUTABLE_PATH) {
+    process.env.PLAYWRIGHT_BROWSERS_PATH = "/app/.playwright-browsers";
+  }
   const executablePath = process.env.CHROMIUM_EXECUTABLE_PATH || undefined;
   console.log(`[upright scraper] executablePath=${executablePath ?? "playwright default"}, PLAYWRIGHT_BROWSERS_PATH=${process.env.PLAYWRIGHT_BROWSERS_PATH ?? "not set"}`);
 

@@ -1,0 +1,12 @@
+[build]
+# Install dependencies (skip Playwright's postinstall download),
+# then explicitly install Playwright's Chromium to /app/.playwright-browsers
+# which persists in the container image.
+buildCommand = "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 pnpm install && pnpm run build && PLAYWRIGHT_BROWSERS_PATH=/app/.playwright-browsers pnpm exec playwright install chromium || echo '[railway] Playwright chromium install failed'"
+
+[deploy]
+startCommand = "pnpm start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
