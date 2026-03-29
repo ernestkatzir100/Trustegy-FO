@@ -201,7 +201,9 @@ export async function scrapeUpright(): Promise<UprightScrapeResult> {
     await emailInput.waitFor({ state: "visible", timeout: 30_000 });
     await emailInput.fill(username);
 
-    await page.locator(SELECTORS.passwordInput).first().fill(password);
+    const passwordInput = page.locator(SELECTORS.passwordInput).filter({ visible: true }).first();
+    await passwordInput.waitFor({ state: "visible", timeout: 30_000 });
+    await passwordInput.fill(password);
     await screenshot("02-filled");
 
     await page.locator(SELECTORS.submitButton).first().click();
