@@ -4,7 +4,7 @@
  * Reads credentials from environment variables:
  *   UPRIGHT_USERNAME   — your login email
  *   UPRIGHT_PASSWORD   — your login password
- *   UPRIGHT_PORTAL_URL — base URL (default: https://app.uprightplatform.com)
+ *   UPRIGHT_PORTAL_URL — base URL (default: https://app.upright.us)
  *   UPRIGHT_DEBUG=1    — saves screenshots to /tmp for selector debugging
  *
  * Returns InsertHolding[] — same shape as the Excel parser, so
@@ -27,29 +27,33 @@ import type { HoldingStatus } from "@/db/schema/fund";
 // ─── Config ──────────────────────────────────────────────────────────────────
 
 const PORTAL_URL =
-  process.env.UPRIGHT_PORTAL_URL ?? "https://app.uprightplatform.com";
+  process.env.UPRIGHT_PORTAL_URL ?? "https://app.upright.us";
 
 const DEBUG = process.env.UPRIGHT_DEBUG === "1";
 
 /**
  * CSS / locator selectors — update these if Upright changes their UI.
- * Use Playwright locator syntax: CSS selectors or :has-text() / :text().
+ *
+ * Auth: AWS Cognito hosted UI at auth.uam.upright.us
+ * Cognito uses name="username" for the email field (not type="email").
+ * The submit button is an <input type="Submit"> not a <button>.
  */
 const SELECTORS = {
-  emailInput:
-    'input[type="email"], input[name="email"], input[placeholder*="email" i]',
-  passwordInput: 'input[type="password"]',
-  submitButton:
-    'button[type="submit"], button:has-text("Sign in"), button:has-text("Log in"), button:has-text("Login")',
+  // Cognito hosted UI — these are stable across Cognito deployments
+  emailInput: 'input[name="username"]',
+  passwordInput: 'input[name="password"]',
+  submitButton: 'input[type="Submit"], input[type="submit"]',
+  // After OAuth redirect back to app.upright.us
   postLoginSignal:
-    'nav, [class*="dashboard"], [class*="portfolio"], [class*="holdings"], table',
+    'nav, [class*="dashboard"], [class*="portfolio"], [class*="holdings"], table, [class*="home"]',
   holdingsTable:
     'table, [class*="holdings-table"], [class*="portfolio-table"], [class*="loan-list"]',
   tableHeaderCells: 'thead th, thead td',
   tableBodyRows: 'tbody tr',
   tableBodyCells: 'td',
+  // app.upright.us navigation — try common labels
   portfolioNavLink:
-    'a:has-text("Portfolio"), a:has-text("Holdings"), a:has-text("My Investments"), nav a[href*="portfolio"], nav a[href*="holdings"]',
+    'a:has-text("Portfolio"), a:has-text("Holdings"), a:has-text("My Investments"), a:has-text("Investments"), nav a[href*="portfolio"], nav a[href*="holdings"], nav a[href*="investment"]',
   detailNotes:
     '[class*="note"], [class*="update"], [class*="comment"], [class*="status-text"], [class*="service"]',
 };
