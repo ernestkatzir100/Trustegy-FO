@@ -1,37 +1,17 @@
-# Railway deployment — Node.js + Playwright Chromium
-# Single-stage build so apt packages and Chromium binary live in the same image layer.
+# Railway deployment — Node.js + Google Chrome Stable
+# Uses google-chrome-stable (Google's official Debian package) instead of
+# Playwright's headless shell — avoids seccomp/syscall issues in Railway containers.
+# Set CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome-stable in Railway env vars.
 
 FROM node:22-bookworm-slim
 
-# Install Chrome system dependencies directly in the runtime image
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    fonts-liberation \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libcairo2 \
-    libcups2 \
-    libdbus-1-3 \
-    libdrm2 \
-    libexpat1 \
-    libfontconfig1 \
-    libgbm1 \
-    libglib2.0-0 \
-    libnspr4 \
-    libnss3 \
-    libpango-1.0-0 \
-    libx11-6 \
-    libx11-xcb1 \
-    libxcb1 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxkbcommon0 \
-    libxrandr2 \
-    libxshmfence1 \
-    wget \
+# Install Google Chrome Stable from Google's apt repo
+RUN apt-get update && apt-get install -y wget gnupg2 ca-certificates apt-transport-https \
+    && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub \
+       | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main" \
+       > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update && apt-get install -y google-chrome-stable \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
@@ -39,17 +19,13 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-# Install dependencies (skip Playwright's postinstall browser download)
+# Install Node dependencies (skip Playwright browser download — we use system Chrome)
 COPY package.json pnpm-lock.yaml ./
 RUN PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 pnpm install --frozen-lockfile
 
 # Build Next.js
 COPY . .
 RUN pnpm run build
-
-# Install Playwright's Chromium binary into the image
-ENV PLAYWRIGHT_BROWSERS_PATH=/app/.playwright-browsers
-RUN pnpm exec playwright install chromium
 
 EXPOSE 3000
 CMD ["pnpm", "start"]
