@@ -1,9 +1,10 @@
-# Railway build config — installs Chromium for Playwright
-# System libs are provided via nix; Playwright downloads its own Chromium binary.
-# Note: do NOT include "chromium" in nixPkgs — it conflicts with Playwright's managed binary.
-# Note: do NOT use --with-deps — it tries apt which doesn't work on NixOS.
+# Railway build config — uses nix-installed Chromium for Playwright.
+# Playwright's pre-compiled binaries are built for Ubuntu/glibc and don't
+# work on NixOS. Instead we install the nix 'chromium' package and point
+# Playwright to it via executablePath at runtime.
 [phases.setup]
 nixPkgs = [
+  "chromium",
   "nss",
   "nspr",
   "alsa-lib",
@@ -23,12 +24,8 @@ nixPkgs = [
   "libxkbcommon",
   "gtk3",
   "dbus",
-  "expat",
   "glib",
-  "glibc",
-  "xorg.libXcursor",
-  "xorg.libXi",
-  "xorg.libXtst",
+  "expat",
   "at-spi2-atk",
   "at-spi2-core",
 ]
@@ -36,7 +33,7 @@ nixPkgs = [
 [phases.install]
 cmds = [
   "npm i -g pnpm && pnpm install",
-  "pnpm exec playwright install chromium",
+  "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 echo 'Skipping Playwright browser download — using system chromium'",
 ]
 
 [start]
