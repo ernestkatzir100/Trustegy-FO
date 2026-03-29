@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     if (parsedDist.length > 0) {
       const inserted = await db
         .insert(distributors)
-        .values(parsedDist)
+        .values(parsedDist.map((d) => d.row))
         .onConflictDoNothing()
         .returning();
       distCount = inserted.length;

@@ -142,7 +142,7 @@ export default function InvestorImportPage() {
                 ? ["Needs manual review", result.reviewNeededCount]
                 : null,
             ]
-              .filter(Boolean)
+              .filter((x): x is [string, number] => x !== null)
               .map(([label, value]) => (
                 <div
                   key={label as string}
