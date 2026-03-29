@@ -440,157 +440,6 @@ export async function sendInvestorEmail(
   }
 }
 
-// ─── QA data ──────────────────────────────────────────────────────────────────
-
-export interface QAInvestorRow {
-  id: string;
-  displayName: string;
-  nameHe: string | null;
-  nameEn: string;
-  email: string | null;
-  partnerId: string | null;
-  distributorId: string | null;
-  distributorName: string | null;
-  joinDate: string | null;
-  currencyClass: string;
-  status: string;
-  positionCount: number;
-  latestPositionDate: string | null;
-  latestNavNis: number | null;
-  latestNavUsd: number | null;
-  redemptionCount: number;
-  redemptionTotalNis: number;
-  redemptionTotalUsd: number;
-}
-
-export interface QAMonthRow {
-  dataDate: string;
-  investorCount: number;
-  totalNavNis: number;
-  totalNavUsd: number;
-}
-
-export interface InvestorQAData {
-  investors: QAInvestorRow[];
-  positionsByMonth: QAMonthRow[];
-  summary: {
-    totalInvestors: number;
-    missingEnglishName: number;
-    missingEmail: number;
-    missingPartnerId: number;
-    missingDistributor: number;
-    noPositions: number;
-    noRedemptions: number;
-    reviewNeeded: number;
-  };
-}
-
-export async function getInvestorQAData(): Promise<ActionResult<InvestorQAData>> {
-  const { error } = await requireAuth();
-  if (error) return actionError(error.code, error.message);
-
-  try {
-    const [allInvestors, allDistributors, posCountRows, latestPosRows, redemptionRows, monthRows] =
-      await Promise.all([
-        db.select().from(investors).orderBy(asc(investors.displayName)),
-        db.select().from(distributors),
-        // position count per investor
-        db
-          .select({
-            investorId: investorPositions.investorId,
-            count: sql<number>`count(*)::int`,
-          })
-          .from(investorPositions)
-          .groupBy(investorPositions.investorId),
-        // latest position per investor
-        db
-          .selectDistinctOn([investorPositions.investorId], {
-            investorId: investorPositions.investorId,
-            dataDate: investorPositions.dataDate,
-            navNis: investorPositions.navNis,
-            navUsd: investorPositions.navUsd,
-          })
-          .from(investorPositions)
-          .orderBy(investorPositions.investorId, desc(investorPositions.dataDate)),
-        // redemption totals per investor
-        db
-          .select({
-            investorId: redemptions.investorId,
-            count: sql<number>`count(*)::int`,
-            totalNis: sql<number>`coalesce(sum(amount_nis), 0)::bigint`,
-            totalUsd: sql<number>`coalesce(sum(amount_usd), 0)::bigint`,
-          })
-          .from(redemptions)
-          .groupBy(redemptions.investorId),
-        // monthly NAV summary (latest 24 months)
-        db
-          .select({
-            dataDate: investorPositions.dataDate,
-            investorCount: sql<number>`count(distinct investor_id)::int`,
-            totalNavNis: sql<number>`coalesce(sum(nav_nis), 0)::bigint`,
-            totalNavUsd: sql<number>`coalesce(sum(nav_usd), 0)::bigint`,
-          })
-          .from(investorPositions)
-          .groupBy(investorPositions.dataDate)
-          .orderBy(desc(investorPositions.dataDate))
-          .limit(36),
-      ]);
-
-    const distMap = new Map(allDistributors.map((d) => [d.id, d]));
-    const posCountMap = new Map(posCountRows.map((r) => [r.investorId, r.count]));
-    const latestPosMap = new Map(latestPosRows.map((r) => [r.investorId, r]));
-    const redMap = new Map(redemptionRows.map((r) => [r.investorId, r]));
-
-    const qaInvestors: QAInvestorRow[] = allInvestors.map((inv) => {
-      const pos = latestPosMap.get(inv.id);
-      const red = redMap.get(inv.id);
-      const dist = inv.distributorId ? distMap.get(inv.distributorId) : undefined;
-      return {
-        id: inv.id,
-        displayName: inv.displayName,
-        nameHe: inv.nameHe ?? null,
-        nameEn: inv.nameEn,
-        email: inv.email ?? null,
-        partnerId: inv.partnerId ?? null,
-        distributorId: inv.distributorId ?? null,
-        distributorName: dist?.name ?? null,
-        joinDate: inv.joinDate ?? null,
-        currencyClass: inv.currencyClass,
-        status: inv.status,
-        positionCount: posCountMap.get(inv.id) ?? 0,
-        latestPositionDate: pos?.dataDate ?? null,
-        latestNavNis: pos?.navNis ?? null,
-        latestNavUsd: pos?.navUsd ?? null,
-        redemptionCount: red?.count ?? 0,
-        redemptionTotalNis: red?.totalNis ?? 0,
-        redemptionTotalUsd: red?.totalUsd ?? 0,
-      };
-    });
-
-    const summary = {
-      totalInvestors: qaInvestors.length,
-      missingEnglishName: qaInvestors.filter((i) => !i.nameEn || i.nameEn.trim() === "").length,
-      missingEmail: qaInvestors.filter((i) => !i.email).length,
-      missingPartnerId: qaInvestors.filter((i) => !i.partnerId).length,
-      missingDistributor: qaInvestors.filter((i) => !i.distributorId).length,
-      noPositions: qaInvestors.filter((i) => i.positionCount === 0).length,
-      noRedemptions: qaInvestors.filter((i) => i.redemptionCount === 0).length,
-      reviewNeeded: allInvestors.filter((i) => i.dedupStatus === "review_needed").length,
-    };
-
-    const positionsByMonth: QAMonthRow[] = monthRows.map((r) => ({
-      dataDate: r.dataDate,
-      investorCount: r.investorCount,
-      totalNavNis: r.totalNavNis,
-      totalNavUsd: r.totalNavUsd,
-    }));
-
-    return actionSuccess({ investors: qaInvestors, positionsByMonth, summary });
-  } catch (err) {
-    return actionError("DB_ERROR", err instanceof Error ? err.message : "QA data fetch failed");
-  }
-}
-
 // ─── Import count ─────────────────────────────────────────────────────────────
 
 export async function getInvestorImportStatus(): Promise<
@@ -614,5 +463,137 @@ export async function getInvestorImportStatus(): Promise<
     });
   } catch (err) {
     return actionError("DB_ERROR", err instanceof Error ? err.message : "Failed");
+  }
+}
+
+// ─── QA Data ──────────────────────────────────────────────────────────────────
+
+export interface QAInvestorRow {
+  id: string;
+  partnerId: string | null;
+  nameEn: string;
+  nameHe: string | null;
+  email: string | null;
+  status: string;
+  currencyClass: string;
+  joinDate: string | null;
+  hasPartnerIdFlag: boolean;
+  hasNameEnFlag: boolean;
+  hasNameHeFlag: boolean;
+  hasEmailFlag: boolean;
+  hasNov25Position: boolean;
+  positionCount: number;
+  lastPositionDate: string | null;
+  issues: string[];
+}
+
+export interface InvestorQAData {
+  investors: QAInvestorRow[];
+  summary: {
+    total: number;
+    active: number;
+    inactive: number;
+    hasPartnerId: number;
+    hasNameEn: number;
+    hasNameHe: number;
+    hasEmail: number;
+    hasNov25: number;
+    score: number; // 0–100
+  };
+  latestImportDate: string | null;
+}
+
+export async function getInvestorQAData(): Promise<ActionResult<InvestorQAData>> {
+  const { error } = await requireAuth();
+  if (error) return actionError(error.code, error.message);
+
+  try {
+    const [allInvestors, nov25Ids, positionStats] = await Promise.all([
+      db.select().from(investors).orderBy(asc(investors.displayName)),
+      // Investor IDs that have at least one November 2025 position
+      db
+        .selectDistinct({ investorId: investorPositions.investorId })
+        .from(investorPositions)
+        .where(sql`${investorPositions.dataDate} >= '2025-11-01'`),
+      // Position count + last date per investor
+      db
+        .select({
+          investorId: investorPositions.investorId,
+          count: sql<number>`count(*)::int`,
+          lastDate: sql<string>`max(${investorPositions.dataDate})`,
+        })
+        .from(investorPositions)
+        .groupBy(investorPositions.investorId),
+    ]);
+
+    const nov25Set = new Set(nov25Ids.map((r) => r.investorId));
+    const posMap = new Map(positionStats.map((r) => [r.investorId, r]));
+
+    const qaRows: QAInvestorRow[] = allInvestors.map((inv) => {
+      const pos = posMap.get(inv.id);
+      const hasPartnerIdFlag = !!inv.partnerId;
+      const hasNameEnFlag = !!(inv.nameEn && inv.nameEn.trim());
+      const hasNameHeFlag = !!(inv.nameHe && inv.nameHe.trim());
+      const hasEmailFlag = !!(inv.email && inv.email.trim());
+      const hasNov25Position = nov25Set.has(inv.id);
+
+      const issues: string[] = [];
+      if (!hasPartnerIdFlag) issues.push("Missing partner ID");
+      if (!hasNameHeFlag) issues.push("Missing Hebrew name");
+      if (!hasEmailFlag) issues.push("No email");
+      if (!hasNov25Position && inv.status === "active") issues.push("No Nov 2025 position");
+
+      return {
+        id: inv.id,
+        partnerId: inv.partnerId,
+        nameEn: inv.nameEn,
+        nameHe: inv.nameHe,
+        email: inv.email,
+        status: inv.status,
+        currencyClass: inv.currencyClass,
+        joinDate: inv.joinDate,
+        hasPartnerIdFlag,
+        hasNameEnFlag,
+        hasNameHeFlag,
+        hasEmailFlag,
+        hasNov25Position,
+        positionCount: pos?.count ?? 0,
+        lastPositionDate: pos?.lastDate ?? null,
+        issues,
+      };
+    });
+
+    const total = qaRows.length;
+    const active = qaRows.filter((r) => r.status === "active").length;
+    const hasPartnerId = qaRows.filter((r) => r.hasPartnerIdFlag).length;
+    const hasNameEn = qaRows.filter((r) => r.hasNameEnFlag).length;
+    const hasNameHe = qaRows.filter((r) => r.hasNameHeFlag).length;
+    const hasEmail = qaRows.filter((r) => r.hasEmailFlag).length;
+    const hasNov25 = qaRows.filter((r) => r.hasNov25Position).length;
+
+    // Score: weighted average of critical field coverage (active investors only)
+    const activeRows = qaRows.filter((r) => r.status === "active");
+    const activeTotal = activeRows.length || 1;
+    const scoreComponents = [
+      (activeRows.filter((r) => r.hasPartnerIdFlag).length / activeTotal) * 30,
+      (activeRows.filter((r) => r.hasNameEnFlag).length / activeTotal) * 25,
+      (activeRows.filter((r) => r.hasNameHeFlag).length / activeTotal) * 20,
+      (activeRows.filter((r) => r.hasEmailFlag).length / activeTotal) * 15,
+      (activeRows.filter((r) => r.hasNov25Position).length / activeTotal) * 10,
+    ];
+    const score = Math.round(scoreComponents.reduce((a, b) => a + b, 0));
+
+    // Most recent import date
+    const latestImportDate = positionStats.length > 0
+      ? positionStats.reduce((max, r) => (r.lastDate > max ? r.lastDate : max), "")
+      : null;
+
+    return actionSuccess({
+      investors: qaRows.sort((a, b) => b.issues.length - a.issues.length),
+      summary: { total, active, inactive: total - active, hasPartnerId, hasNameEn, hasNameHe, hasEmail, hasNov25, score },
+      latestImportDate,
+    });
+  } catch (err) {
+    return actionError("DB_ERROR", err instanceof Error ? err.message : "Failed to fetch QA data");
   }
 }
