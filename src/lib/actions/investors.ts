@@ -514,7 +514,7 @@ export async function getInvestorQAData(): Promise<ActionResult<InvestorQAData>>
       db
         .selectDistinct({ investorId: investorPositions.investorId })
         .from(investorPositions)
-        .where(sql`${investorPositions.dataDate} >= '2025-11-01'`),
+        .where(sql`${investorPositions.dataDate} >= '2025-11-01' AND ${investorPositions.dataDate} <= '2025-11-30'`),
       // Position count + last date per investor
       db
         .select({
@@ -569,7 +569,7 @@ export async function getInvestorQAData(): Promise<ActionResult<InvestorQAData>>
     const hasNameEn = qaRows.filter((r) => r.hasNameEnFlag).length;
     const hasNameHe = qaRows.filter((r) => r.hasNameHeFlag).length;
     const hasEmail = qaRows.filter((r) => r.hasEmailFlag).length;
-    const hasNov25 = qaRows.filter((r) => r.hasNov25Position).length;
+    const hasNov25 = qaRows.filter((r) => r.hasNov25Position && r.status === "active").length;
 
     // Score: weighted average of critical field coverage (active investors only)
     const activeRows = qaRows.filter((r) => r.status === "active");
