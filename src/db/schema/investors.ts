@@ -1,4 +1,4 @@
-import { pgTable, text, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, bigint, boolean, timestamp } from "drizzle-orm/pg-core";
 import { id, timestamps } from "../helpers";
 
 // ─── Distributors ─────────────────────────────────────────────────────────────
@@ -127,13 +127,13 @@ export const investorPositions = pgTable("investor_positions", {
   currencyClass: text("currency_class").notNull().default("ILS"),
   managementFeeClass: text("management_fee_class"),
 
-  // Capital — NIS amounts in agorot, USD in cents
+  // Capital — NIS amounts in agorot, USD in cents (bigint to avoid int4 overflow on large funds)
   /** השקעה מקורית בש"ח */
-  originalInvestmentNis: integer("original_investment_nis"),
-  navNis: integer("nav_nis"),
-  navUsd: integer("nav_usd"),
-  beginningNav: integer("beginning_nav"),
-  endingNav: integer("ending_nav"),
+  originalInvestmentNis: bigint("original_investment_nis", { mode: "number" }),
+  navNis: bigint("nav_nis", { mode: "number" }),
+  navUsd: bigint("nav_usd", { mode: "number" }),
+  beginningNav: bigint("beginning_nav", { mode: "number" }),
+  endingNav: bigint("ending_nav", { mode: "number" }),
   /** Exchange rate × 10000 (e.g. 3.7512 → 37512) */
   exchangeRate: integer("exchange_rate"),
 
@@ -144,12 +144,12 @@ export const investorPositions = pgTable("investor_positions", {
   netItdBps: integer("net_itd_bps"),
 
   // Fees — NIS in agorot
-  monthlyPerfFee: integer("monthly_perf_fee"),
-  cumulativePerfFee: integer("cumulative_perf_fee"),
-  mgmtFeeTotal: integer("mgmt_fee_total"),
-  redemptionFeePayable: integer("redemption_fee_payable"),
-  perfFeePayable: integer("perf_fee_payable"),
-  volumeFeePayable: integer("volume_fee_payable"),
+  monthlyPerfFee: bigint("monthly_perf_fee", { mode: "number" }),
+  cumulativePerfFee: bigint("cumulative_perf_fee", { mode: "number" }),
+  mgmtFeeTotal: bigint("mgmt_fee_total", { mode: "number" }),
+  redemptionFeePayable: bigint("redemption_fee_payable", { mode: "number" }),
+  perfFeePayable: bigint("perf_fee_payable", { mode: "number" }),
+  volumeFeePayable: bigint("volume_fee_payable", { mode: "number" }),
 
   /** אחוז מהקרן in basis points */
   fundAllocationBps: integer("fund_allocation_bps"),
@@ -178,11 +178,11 @@ export const redemptions = pgTable("redemptions", {
   /** ILS | USD */
   currency: text("currency").notNull().default("ILS"),
 
-  amountUsd: integer("amount_usd"),
-  amountNis: integer("amount_nis"),
-  investmentAmountUsd: integer("investment_amount_usd"),
-  investmentAmountNis: integer("investment_amount_nis"),
-  distributionUsd: integer("distribution_usd"),
+  amountUsd: bigint("amount_usd", { mode: "number" }),
+  amountNis: bigint("amount_nis", { mode: "number" }),
+  investmentAmountUsd: bigint("investment_amount_usd", { mode: "number" }),
+  investmentAmountNis: bigint("investment_amount_nis", { mode: "number" }),
+  distributionUsd: bigint("distribution_usd", { mode: "number" }),
 
   status: text("status"),
   /** Source Monday board name, e.g. "חלוקה נובמבר25" */
